@@ -6,9 +6,9 @@ const CONF = {
     fullName: "Wave Coupling and Beyond 2026",
     subtitle: "International Workshop on Wave Coupling, Scattering and Multi-Physics Interactions",
     dates: "August 17 – 21, 2026",
-    city: "Shanghai, China",
+    city: "Bergen, Norway",
     // Replace with the real Google Form link before publishing.
-    registrationUrl: "https://forms.gle/your-google-form-id-here",
+    registrationUrl: "https://forms.gle/oxYy4vD4jwP9nWaH7",
     contactEmail: "wcb2026@example.org",
 };
 
