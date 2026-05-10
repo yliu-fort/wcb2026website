@@ -644,3 +644,24 @@
           font-size: 1rem;
       }
   }
+
+  /* ============ Theme list ============ */
+  .theme-list {
+      list-style: none;
+      padding: 0;
+      margin: 18px 0 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+  }
+
+  .theme-list li {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      font-size: 0.95rem;
+      line-height: 1.5;
+  }
