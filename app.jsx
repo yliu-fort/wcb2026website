@@ -14,8 +14,12 @@ const CONF = {
 };
 
 const KEY_DATES = [
-    { label: "Register your interest by", value: "30 November 2026", deadline: true },
-    { label: "Workshop dates", value: "12 – 15 April 2027" },
+    { label: "Abstract submission opens", value: "Aug 1, 2026" },
+    { label: "Abstract submission deadline", value: "Nov 15, 2026", deadline: true },
+    { label: "Notification of acceptance", value: "Dec 20, 2026" },
+    { label: "Early-bird registration ends", value: "Jan 30, 2027", deadline: true },
+    { label: "Final program release", value: "March 12, 2027" },
+    { label: "Workshop dates", value: "April 12 – 15, 2027" }
 ];
 
 const COMMITTEES = [
@@ -48,6 +52,7 @@ const PAST_EDITIONS = [
 ];
 
 const SPONSORS = [
+    { name: "University of Bergen", logo: "images/logo-uib.png" },
     { name: "University of Melbourne", logo: "images/logo-melbourne.png" },
     { name: "First Institute of Oceanography", logo: "images/logo-fio.png" },
     { name: "Uppsala University", logo: "images/logo-uppsala.jpeg" },
