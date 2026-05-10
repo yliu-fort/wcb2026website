@@ -2,102 +2,62 @@ const { useState } = React;
 
 // ============ Configuration ============
 const CONF = {
-    shortName: "WCB 2026",
-    fullName: "Wave Coupling and Beyond 2026",
-    subtitle: "International Workshop on Wave Coupling, Scattering and Multi-Physics Interactions",
-    dates: "August 17 – 21, 2026",
+    shortName: "WWCP 2027",
+    fullName: "8th Workshop on Waves and Wave-Coupled Processes",
+    subtitle: "Ocean surface waves in the Earth System — dynamics, coupling and large-scale impacts",
+    dates: "12 – 15 April 2027",
     city: "Bergen, Norway",
+    host: "University of Bergen",
     // Replace with the real Google Form link before publishing.
     registrationUrl: "https://forms.gle/oxYy4vD4jwP9nWaH7",
-    contactEmail: "wcb2026@example.org",
+    contactEmail: "wwcp2027@uib.no",
 };
 
 const KEY_DATES = [
-    { label: "Abstract submission opens", value: "Feb 1, 2026" },
-    { label: "Abstract submission deadline", value: "Apr 15, 2026", deadline: true },
-    { label: "Notification of acceptance", value: "May 20, 2026" },
-    { label: "Early-bird registration ends", value: "Jun 30, 2026", deadline: true },
-    { label: "Final program release", value: "Jul 25, 2026" },
-    { label: "Workshop dates", value: "Aug 17 – 21, 2026" },
+    { label: "Abstract submission opens", value: "Aug 1, 2026" },
+    { label: "Abstract submission deadline", value: "Nov 15, 2026", deadline: true },
+    { label: "Notification of acceptance", value: "Dec 20, 2026" },
+    { label: "Early-bird registration ends", value: "Jan 30, 2027", deadline: true },
+    { label: "Final program release", value: "March 12, 2027" },
+    { label: "Workshop dates", value: "April 12 – 15, 2027" }
 ];
 
 const COMMITTEES = [
     {
-        title: "General Chairs",
+        title: "Organising Committee",
         members: [
-            { name: "Prof. A. Researcher", affil: "Tsinghua University" },
-            { name: "Prof. B. Scholar", affil: "MIT" },
-        ],
-    },
-    {
-        title: "Program Committee",
-        members: [
-            { name: "Prof. C. Wave", affil: "ETH Zürich" },
-            { name: "Prof. D. Coupling", affil: "Stanford University" },
-            { name: "Prof. E. Scatter", affil: "University of Tokyo" },
-            { name: "Prof. F. Resonance", affil: "Imperial College London" },
-        ],
-    },
-    {
-        title: "Local Organizers",
-        members: [
-            { name: "Dr. G. Host", affil: "Shanghai Jiao Tong University" },
-            { name: "Dr. H. Liaison", affil: "Fudan University" },
-            { name: "Ms. I. Secretary", affil: "WCB Secretariat" },
+            { name: "A/Prof. Yan Li", affil: "University of Bergen, Norway" },
+            { name: "Prof. Alexander Babanin", affil: "The University of Melbourne, Australia" },
+            { name: "Prof. Fangli Qiao", affil: "First Institute of Oceanography, China" },
+            { name: "Prof. Lichuan Wu", affil: "Uppsala University, Sweden" },
+            { name: "Dr. Jean Bidlot", affil: "ECMWF, UK" },
+            { name: "Dr. Montri Maleewong", affil: "Kasetsart University, Thailand" },
         ],
     },
 ];
 
-const PROGRAM = {
-    "Day 1 · Aug 17": [
-        { time: "08:30 – 09:00", title: "Registration & Welcome Coffee", session: true },
-        { time: "09:00 – 09:20", title: "Opening Remarks", speaker: "General Chairs" },
-        { time: "09:20 – 10:20", title: "Keynote: Multi-scale Wave Coupling in Heterogeneous Media", speaker: "Prof. J. Plenary, Caltech" },
-        { time: "10:20 – 10:50", title: "Coffee Break" },
-        { time: "10:50 – 12:30", title: "Session A — Acoustic–Elastic Coupling", session: true },
-        { time: "12:30 – 14:00", title: "Lunch" },
-        { time: "14:00 – 15:40", title: "Session B — Computational Methods", session: true },
-        { time: "15:40 – 16:10", title: "Coffee Break" },
-        { time: "16:10 – 17:30", title: "Poster Session I" },
-        { time: "18:30 – ", title: "Welcome Reception" },
-    ],
-    "Day 2 · Aug 18": [
-        { time: "09:00 – 10:00", title: "Keynote: Nonlinear Wave Phenomena in Active Matter", speaker: "Prof. K. Dynamics, Oxford" },
-        { time: "10:00 – 10:30", title: "Coffee Break" },
-        { time: "10:30 – 12:30", title: "Session C — Fluid–Structure Interaction", session: true },
-        { time: "12:30 – 14:00", title: "Lunch" },
-        { time: "14:00 – 16:00", title: "Session D — Metamaterials & Phononics", session: true },
-        { time: "16:00 – 16:30", title: "Coffee Break" },
-        { time: "16:30 – 18:00", title: "Industry Panel" },
-    ],
-    "Day 3 · Aug 19": [
-        { time: "09:00 – 12:00", title: "Excursion / Cultural Tour" },
-        { time: "12:00 – 14:00", title: "Lunch (free)" },
-        { time: "14:00 – 17:30", title: "Workshops & Tutorials", session: true },
-        { time: "19:00 – ", title: "Conference Banquet" },
-    ],
-    "Day 4 · Aug 20": [
-        { time: "09:00 – 10:00", title: "Keynote: Inverse Problems for Coupled Wave Systems", speaker: "Prof. L. Inverse, INRIA" },
-        { time: "10:00 – 10:30", title: "Coffee Break" },
-        { time: "10:30 – 12:30", title: "Session E — Geophysical & Oceanic Waves", session: true },
-        { time: "12:30 – 14:00", title: "Lunch" },
-        { time: "14:00 – 16:00", title: "Session F — Quantum & Optical Coupling", session: true },
-        { time: "16:00 – 17:30", title: "Poster Session II" },
-    ],
-    "Day 5 · Aug 21": [
-        { time: "09:00 – 10:30", title: "Session G — Emerging Topics", session: true },
-        { time: "10:30 – 11:00", title: "Coffee Break" },
-        { time: "11:00 – 12:00", title: "Closing Ceremony & Best Paper Awards" },
-        { time: "12:00 – ", title: "Farewell Lunch" },
-    ],
-};
+const THEMES = [
+    "Dynamics of ocean waves and wave breaking, wave–current interactions",
+    "Spectral wave modelling",
+    "Air–sea fluxes and the atmospheric wave boundary layer",
+    "Wave influences in the upper ocean, wave turbulence and mixing",
+    "Wave–ice interactions",
+    "Wave-coupled processes in extreme metocean conditions, tropical cyclones",
+    "Wave-coupled effects in gas transfer, ocean biogeochemistry, ambient noise, and other air–sea interface and upper-ocean processes",
+    "Waves in the large-scale air–sea system, metocean climatology",
+];
+
+const PAST_EDITIONS = [
+    "Melbourne", "Qingdao", "Hangzhou", "Uppsala", "Reading", "Melbourne", "Bangkok",
+];
 
 const SPONSORS = [
-    { name: "Sponsor A", logo: "https://placehold.co/200x80/0b2545/ffffff?text=Sponsor+A" },
-    { name: "Sponsor B", logo: "https://placehold.co/200x80/1d4e89/ffffff?text=Sponsor+B" },
-    { name: "Sponsor C", logo: "https://placehold.co/200x80/2a9d8f/ffffff?text=Sponsor+C" },
-    { name: "Sponsor D", logo: "https://placehold.co/200x80/13315c/ffffff?text=Sponsor+D" },
-    { name: "Sponsor E", logo: "https://placehold.co/200x80/5b6b7d/ffffff?text=Sponsor+E" },
+    { name: "University of Bergen", logo: "images/logo-uib.png" },
+    { name: "University of Melbourne", logo: "images/logo-melbourne.png" },
+    { name: "First Institute of Oceanography", logo: "images/logo-fio.png" },
+    { name: "Uppsala University", logo: "images/logo-uppsala.jpeg" },
+    { name: "ECMWF", logo: "images/logo-ecmwf.png" },
+    { name: "Kasetsart University", logo: "images/logo-kasetsart.jpg" },
 ];
 
 // ============ Components ============
@@ -117,9 +77,9 @@ function TopBar() {
 function Header() {
     const items = [
         ["Introduction", "introduction"],
+        ["Themes", "themes"],
         ["Key Dates", "key-dates"],
-        ["Organization", "organization"],
-        ["Program", "program"],
+        ["Organisation", "organization"],
         ["Venue", "venue"],
         ["Sponsors", "sponsors"],
     ];
@@ -130,7 +90,7 @@ function Header() {
                     <span className="brand-mark" aria-hidden="true"></span>
                     <span className="brand-text">
                         <span className="brand-title">{CONF.shortName}</span>
-                        <span className="brand-sub">Wave Coupling Workshop</span>
+                        <span className="brand-sub">Waves & Wave-Coupled Processes</span>
                     </span>
                 </a>
                 <nav className="nav">
@@ -138,7 +98,7 @@ function Header() {
                         <a key={id} href={`#${id}`}>{label}</a>
                     ))}
                     <a href={CONF.registrationUrl} target="_blank" rel="noopener noreferrer" className="nav-cta">
-                        Register
+                        Register Interest
                     </a>
                 </nav>
             </div>
@@ -158,13 +118,13 @@ function Hero() {
                     <span>·</span>
                     <span><strong>{CONF.city}</strong></span>
                     <span>·</span>
-                    <span>In-person & hybrid</span>
+                    <span>Hosted by {CONF.host}</span>
                 </div>
                 <div className="hero-actions">
                     <a className="btn btn-primary" href={CONF.registrationUrl} target="_blank" rel="noopener noreferrer">
-                        Register via Google Form
+                        Register Your Interest
                     </a>
-                    <a className="btn btn-outline" href="#program">View Program</a>
+                    <a className="btn btn-outline" href="#themes">Research Themes</a>
                 </div>
             </div>
         </section>
@@ -177,20 +137,42 @@ function Introduction() {
             <div className="container">
                 <h2 className="section-title">Introduction</h2>
                 <p className="lead">
-                    The <strong>{CONF.fullName}</strong> ({CONF.shortName}) brings together
-                    mathematicians, physicists, and engineers working on the theory,
-                    computation, and applications of coupled wave systems. Building on the
-                    tradition of the Wave Coupling Workshop series, the 2026 edition will
-                    feature plenary lectures, contributed talks, posters, and tutorials
-                    covering acoustic–elastic interaction, fluid–structure coupling,
-                    metamaterials, geophysical and oceanic waves, and emerging quantum
-                    and photonic platforms.
+                    Over the years, it has become clear that ocean surface waves play a
+                    critical role in the Earth System, modulating many surface exchanges
+                    — from tropical cyclones to the marginal ice zone, as well as acting
+                    in the atmospheric boundary layer and the upper ocean. Accounting for
+                    their impacts in ocean circulation, extreme marine weather, climate
+                    and other large-scale systems has recently attracted renewed interest
+                    and requires much attention.
                 </p>
                 <p>
-                    The workshop is intended as a small-scale, focused gathering of
-                    roughly 80–100 participants, encouraging in-depth discussion and
-                    collaboration. Early-career researchers and PhD students are warmly
-                    welcomed; a limited number of travel grants will be available.
+                    After the previous seven successful workshops in{" "}
+                    {PAST_EDITIONS.join(", ")}, the {CONF.host} will organise the
+                    8<sup>th</sup> Workshop on Waves and Wave-Coupled Processes in{" "}
+                    {CONF.city}, aiming to foster discussion and collaboration within
+                    this field among the wider community. The meeting will be conducted
+                    in plenary, with time reserved for discussion to identify key
+                    research and technological questions relevant for the uptake of
+                    wave information in Earth System models.
+                </p>
+            </div>
+        </section>
+    );
+}
+
+function Themes() {
+    return (
+        <section className="band alt scroll-anchor" id="themes">
+            <div className="container">
+                <h2 className="section-title">Research Themes</h2>
+                <p>The workshop will cover the following research themes:</p>
+                <ul className="theme-list">
+                    {THEMES.map((t, i) => (
+                        <li key={i}>{t}</li>
+                    ))}
+                </ul>
+                <p style={{ marginTop: 18, color: "var(--muted)", fontSize: "0.9rem" }}>
+                    <strong>Keynote speakers:</strong> to be confirmed.
                 </p>
             </div>
         </section>
@@ -199,7 +181,7 @@ function Introduction() {
 
 function KeyDates() {
     return (
-        <section className="band alt scroll-anchor" id="key-dates">
+        <section className="band scroll-anchor" id="key-dates">
             <div className="container">
                 <h2 className="section-title">Key Dates</h2>
                 <div className="dates-grid">
@@ -211,7 +193,8 @@ function KeyDates() {
                     ))}
                 </div>
                 <p style={{ marginTop: 18, color: "var(--muted)", fontSize: "0.9rem" }}>
-                    All deadlines are 23:59 Anywhere on Earth (AoE).
+                    Further deadlines (abstract submission, programme release) will be
+                    announced in due course.
                 </p>
             </div>
         </section>
@@ -220,9 +203,9 @@ function KeyDates() {
 
 function Organization() {
     return (
-        <section className="band scroll-anchor" id="organization">
+        <section className="band alt scroll-anchor" id="organization">
             <div className="container">
-                <h2 className="section-title">Organization</h2>
+                <h2 className="section-title">Organisation</h2>
                 <div className="org-grid">
                     {COMMITTEES.map((c) => (
                         <div key={c.title} className="org-card">
@@ -243,54 +226,6 @@ function Organization() {
     );
 }
 
-function Program() {
-    const days = Object.keys(PROGRAM);
-    const [active, setActive] = useState(days[0]);
-    const rows = PROGRAM[active];
-    return (
-
-        <section className="band alt scroll-anchor" id="program">
-            <div className="container">
-                <h2 className="section-title">Program</h2>
-                <div className="program-tabs">
-                    {days.map((d) => (
-                        <button
-                            key={d}
-                            className={`tab-btn ${d === active ? "active" : ""}`}
-                            onClick={() => setActive(d)}
-                        >
-                            {d}
-                        </button>
-                    ))}
-                </div>
-                <table className="program-table">
-                    <thead>
-                        <tr>
-                            <th style={{ width: 140 }}>Time</th>
-                            <th>Item</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {rows.map((r, i) => (
-                            <tr key={i} className={r.session ? "session" : ""}>
-                                <td className="time">{r.time}</td>
-                                <td>
-                                    {r.title}
-                                    {r.speaker && <div className="speaker">{r.speaker}</div>}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                <p style={{ marginTop: 14, color: "var(--muted)", fontSize: "0.9rem" }}>
-                    The program is tentative and subject to change. Detailed talk titles
-                    and abstracts will be released in late July 2026.
-                </p>
-            </div>
-        </section>
-    );
-}
-
 function Venue() {
     return (
         <section className="band scroll-anchor" id="venue">
@@ -299,26 +234,26 @@ function Venue() {
                 <div className="venue-grid">
                     <div className="venue-info">
                         <p>
-                            <strong>{CONF.shortName}</strong> will be held at the
-                            <strong> International Conference Hall</strong> on the Minhang
-                            campus of Shanghai Jiao Tong University. The campus is well
-                            connected to downtown Shanghai by metro Line 5.
+                            <strong>{CONF.shortName}</strong> will be hosted by the{" "}
+                            <strong>{CONF.host}</strong> in {CONF.city}. Bergen, on
+                            Norway's western coast, is a major centre for ocean and
+                            climate research and is well connected by direct flights to
+                            major European hubs.
                         </p>
                         <div className="addr">
-                            <strong>Address</strong><br />
-                            International Conference Hall<br />
-                            800 Dongchuan Road, Minhang District<br />
-                            Shanghai 200240, China
+                            <strong>Host institution</strong><br />
+                            University of Bergen<br />
+                            Bergen, Norway
                         </div>
                         <p style={{ marginTop: 16 }}>
-                            Recommended hotels and travel information will be provided to
-                            registered participants. The nearest international airport is
-                            Shanghai Pudong International (PVG); Shanghai Hongqiao (SHA) also
-                            offers convenient access via metro.
+                            The full venue address, recommended hotels and travel
+                            information will be provided to participants who have
+                            registered their interest. The nearest international airport
+                            is Bergen Airport, Flesland (BGO).
                         </p>
                         <p>
                             <a
-                                href="https://www.google.com/maps/search/?api=1&query=Shanghai+Jiao+Tong+University+Minhang"
+                                href="https://www.google.com/maps/search/?api=1&query=University+of+Bergen"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
@@ -328,8 +263,8 @@ function Venue() {
                     </div>
                     <img
                         className="venue-map"
-                        src="https://placehold.co/720x520/eef3f8/0b2545?text=Venue+Map+Placeholder"
-                        alt="Venue map placeholder"
+                        src="images/wave-hero.png"
+                        alt="Ocean surface waves"
                     />
                 </div>
             </div>
@@ -341,15 +276,15 @@ function Sponsors() {
     return (
         <section className="band alt scroll-anchor" id="sponsors">
             <div className="container">
-                <h2 className="section-title">Organizers & Sponsors</h2>
+                <h2 className="section-title">Organisers & Partner Institutions</h2>
                 <p>
-                    {CONF.shortName} is jointly organized and supported by the following
-                    institutions and partners.
+                    {CONF.shortName} is organised by {CONF.host} with the support of
+                    partner institutions represented on the Organising Committee.
                 </p>
                 <div className="sponsor-strip">
                     {SPONSORS.map((s) => (
                         <div key={s.name} className="sponsor-logo">
-                            <img src={s.logo} alt={s.name} />
+                            <img src={s.logo} alt={s.name} title={s.name} />
                         </div>
                     ))}
                 </div>
@@ -362,11 +297,11 @@ function Register() {
     return (
         <section className="register scroll-anchor" id="register">
             <div className="container">
-                <h2>Registration</h2>
+                <h2>Register Your Interest</h2>
                 <p className="lead">
-                    Registration is handled via a Google Form. There is <strong>no
-                        payment required at registration</strong>; on-site fee collection
-                    details (if any) will be sent by email after confirmation.
+                    To help us plan the workshop, please register your interest before{" "}
+                    <strong>30 November 2026</strong>. There is no payment required at
+                    this stage; abstract submission and registration details will follow.
                 </p>
                 <a
                     className="btn btn-primary"
@@ -374,10 +309,10 @@ function Register() {
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    Open Registration Form ↗
+                    Open Interest Form ↗
                 </a>
                 <div className="register-note">
-                    The form takes about 3 minutes. For questions, write to{" "}
+                    For questions, write to{" "}
                     <a href={`mailto:${CONF.contactEmail}`} style={{ color: "#fff", textDecoration: "underline" }}>
                         {CONF.contactEmail}
                     </a>.
@@ -402,11 +337,11 @@ function Footer() {
                 </div>
                 <div>
                     <h4>Quick Links</h4>
-                    <div><a href="#program">Program</a> · <a href="#venue">Venue</a> · <a href={CONF.registrationUrl} target="_blank" rel="noopener noreferrer">Register</a></div>
+                    <div><a href="#themes">Themes</a> · <a href="#venue">Venue</a> · <a href={CONF.registrationUrl} target="_blank" rel="noopener noreferrer">Register Interest</a></div>
                 </div>
             </div>
             <div style={{ maxWidth: "var(--maxw)", margin: "20px auto 0", paddingTop: 14, borderTop: "1px solid #14305a", color: "#8aa0bb", fontSize: "0.82rem" }}>
-                © 2026 {CONF.shortName} Organizing Committee. All rights reserved.
+                © 2027 {CONF.shortName} Organising Committee. Hosted by {CONF.host}.
             </div>
         </footer>
     );
@@ -419,9 +354,9 @@ function App() {
             <Header />
             <Hero />
             <Introduction />
+            <Themes />
             <KeyDates />
             <Organization />
-            <Program />
             <Venue />
             <Sponsors />
             <Register />
