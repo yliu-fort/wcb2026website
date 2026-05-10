@@ -8,10 +8,26 @@ const CONF = {
     dates: "12 – 15 April 2027",
     city: "Bergen, Norway",
     host: "University of Bergen",
-    // Replace with the real Google Form link before publishing.
-    registrationUrl: "https://forms.gle/oxYy4vD4jwP9nWaH7",
+    // Replace with the real registration links before publishing.
+    registrationChannels: [
+        {
+            id: "google",
+            label: "Google Form",
+            sub: "Recommended for most participants",
+            url: "https://forms.gle/oxYy4vD4jwP9nWaH7",
+            recommended: true,
+        },
+        {
+            id: "tencent",
+            label: "Tencent Form",
+            sub: "If you have no access to Google, please use this link",
+            url: "https://docs.qq.com/form/page/REPLACE_WITH_REAL_TENCENT_DOC_ID",
+        },
+    ],
     contactEmail: "wwcp2027@uib.no",
 };
+
+const RegisterContext = React.createContext(() => { });
 
 const KEY_DATES = [
     { label: "Abstract submission opens", value: "Aug 1, 2026" },
@@ -61,6 +77,59 @@ const SPONSORS = [
 ];
 
 // ============ Components ============
+function RegisterButton({ className, children }) {
+    const openRegister = React.useContext(RegisterContext);
+    return (
+        <button type="button" className={`register-trigger ${className || ""}`} onClick={openRegister}>
+            {children}
+        </button>
+    );
+}
+
+function RegisterModal({ onClose }) {
+    React.useEffect(() => {
+        const onKey = (e) => { if (e.key === "Escape") onClose(); };
+        document.addEventListener("keydown", onKey);
+        const prev = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.removeEventListener("keydown", onKey);
+            document.body.style.overflow = prev;
+        };
+    }, [onClose]);
+
+    return (
+        <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="register-modal-title" onClick={onClose}>
+            <div className="modal" onClick={(e) => e.stopPropagation()}>
+                <button type="button" className="modal-close" aria-label="Close" onClick={onClose}>×</button>
+                <h3 id="register-modal-title">Choose a registration channel</h3>
+                <p className="modal-sub">
+                    Please use the channel that best suits your location. The information collected is identical.
+                </p>
+                <div className="channel-list">
+                    {CONF.registrationChannels.map((c) => (
+                        <a
+                            key={c.id}
+                            className={`channel-card ${c.recommended ? "recommended" : ""}`}
+                            href={c.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={onClose}
+                        >
+                            <div className="channel-label">
+                                {c.label}
+                                {c.recommended && <span className="channel-tag">Recommended</span>}
+                            </div>
+                            <div className="channel-sub">{c.sub}</div>
+                            <div className="channel-cta">Open form ↗</div>
+                        </a>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 function TopBar() {
     return (
         <div className="topbar">
@@ -97,9 +166,9 @@ function Header() {
                     {items.map(([label, id]) => (
                         <a key={id} href={`#${id}`}>{label}</a>
                     ))}
-                    <a href={CONF.registrationUrl} target="_blank" rel="noopener noreferrer" className="nav-cta">
-                        Register Interest
-                    </a>
+                    <RegisterButton className="nav-cta">
+                        Register
+                    </RegisterButton>
                 </nav>
             </div>
         </header>
@@ -121,9 +190,9 @@ function Hero() {
                     <span>Hosted by {CONF.host}</span>
                 </div>
                 <div className="hero-actions">
-                    <a className="btn btn-primary" href={CONF.registrationUrl} target="_blank" rel="noopener noreferrer">
+                    <RegisterButton className="btn btn-primary">
                         Register Your Interest
-                    </a>
+                    </RegisterButton>
                     <a className="btn btn-outline" href="#themes">Research Themes</a>
                 </div>
             </div>
@@ -303,14 +372,9 @@ function Register() {
                     <strong>30 November 2026</strong>. There is no payment required at
                     this stage; abstract submission and registration details will follow.
                 </p>
-                <a
-                    className="btn btn-primary"
-                    href={CONF.registrationUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
+                <RegisterButton className="btn btn-primary">
                     Open Interest Form ↗
-                </a>
+                </RegisterButton>
                 <div className="register-note">
                     For questions, write to{" "}
                     <a href={`mailto:${CONF.contactEmail}`} style={{ color: "#fff", textDecoration: "underline" }}>
@@ -337,7 +401,7 @@ function Footer() {
                 </div>
                 <div>
                     <h4>Quick Links</h4>
-                    <div><a href="#themes">Themes</a> · <a href="#venue">Venue</a> · <a href={CONF.registrationUrl} target="_blank" rel="noopener noreferrer">Register Interest</a></div>
+                    <div><a href="#themes">Themes</a> · <a href="#venue">Venue</a> · <RegisterButton className="footer-link">Register Interest</RegisterButton></div>
                 </div>
             </div>
             <div style={{ maxWidth: "var(--maxw)", margin: "20px auto 0", paddingTop: 14, borderTop: "1px solid #14305a", color: "#8aa0bb", fontSize: "0.82rem" }}>
@@ -348,8 +412,11 @@ function Footer() {
 }
 
 function App() {
+    const [registerOpen, setRegisterOpen] = useState(false);
+    const openRegister = React.useCallback(() => setRegisterOpen(true), []);
+    const closeRegister = React.useCallback(() => setRegisterOpen(false), []);
     return (
-        <React.Fragment>
+        <RegisterContext.Provider value={openRegister}>
             <TopBar />
             <Header />
             <Hero />
@@ -361,7 +428,8 @@ function App() {
             <Sponsors />
             <Register />
             <Footer />
-        </React.Fragment>
+            {registerOpen && <RegisterModal onClose={closeRegister} />}
+        </RegisterContext.Provider>
     );
 }
 

@@ -30,19 +30,28 @@ will block the JSX fetch — use a local server when in doubt.
 
 ## Configure the registration form
 
-Open `app.jsx` and replace `CONF.registrationUrl` with your real Google Form
-URL:
+Registration uses dual channels — a Google Form for international participants
+and a Tencent Docs form for users in mainland China (where Google services are
+blocked). Clicking any "Register" button opens a modal that lets the visitor
+pick the channel that works for them.
+
+Open `app.jsx` and edit `CONF.registrationChannels`:
 
 ```js
 const CONF = {
   ...
-  registrationUrl: "https://forms.gle/your-google-form-id-here",
+  registrationChannels: [
+    { id: "google",  label: "Google Form", sub: "International participants",
+      url: "https://forms.gle/your-google-form-id-here", recommended: true },
+    { id: "tencent", label: "腾讯文档", sub: "中国大陆用户 (Mainland China users)",
+      url: "https://docs.qq.com/form/page/your-tencent-doc-id-here" },
+  ],
   ...
 };
 ```
 
-The same constant is used by the hero CTA, the navigation "Register" button
-and the dedicated Registration section.
+The same config is used by the hero CTA, the navigation "Register" button,
+the dedicated Registration section, and the footer link.
 
 ## Replace placeholders
 
