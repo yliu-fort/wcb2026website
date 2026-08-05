@@ -32,8 +32,12 @@ jobs:
 
       - run: npm ci
 
+      - run: npm run build
+
       # Guards against re-shipping a placeholder registration link — the bug that
       # left mainland-China visitors with a dead Tencent Docs URL in production.
+      # Runs after the build so one run reports both problems rather than hiding
+      # a build failure behind this check.
       # Delete this step if you would rather not have it gate deploys.
       - name: Check registration URL is a real form
         run: |
@@ -41,8 +45,6 @@ jobs:
             echo "::error file=src/config.js::CONF.registrationUrl is still the Skjemaker service page, not an actual form. Replace it with the real form URL before deploying."
             exit 1
           fi
-
-      - run: npm run build
 
       - uses: actions/upload-pages-artifact@v3
         with:
