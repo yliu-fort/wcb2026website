@@ -1,0 +1,61 @@
+name: Build and deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Allow the deploy job to publish to Pages via OIDC.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race; queue instead of cancelling so a merged PR always
+# reaches production.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Guards against re-shipping a placeholder registration link — the bug that
+      # left mainland-China visitors with a dead Tencent Docs URL in production.
+      # Delete this step if you would rather not have it gate deploys.
+      - name: Check registration URL is a real form
+        run: |
+          if grep -q 'registrationUrl: "https://skjemaker.app.uib.no/"' src/config.js; then
+            echo "::error file=src/config.js::CONF.registrationUrl is still the Skjemaker service page, not an actual form. Replace it with the real form URL before deploying."
+            exit 1
+          fi
+
+      - run: npm run build
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  # Only deploy from main; on pull requests the build job alone acts as a check.
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
