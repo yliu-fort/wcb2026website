@@ -34,15 +34,15 @@ jobs:
 
       - run: npm run build
 
-      # Guards against re-shipping a placeholder registration link — the bug that
-      # left mainland-China visitors with a dead Tencent Docs URL in production.
+      # Guards against shipping placeholder form links — the bug that left
+      # mainland-China visitors with a dead Tencent Docs URL in production.
       # Runs after the build so one run reports both problems rather than hiding
       # a build failure behind this check.
       # Delete this step if you would rather not have it gate deploys.
-      - name: Check registration URL is a real form
+      - name: Check form URLs are real
         run: |
-          if grep -q 'registrationUrl: "https://skjemaker.app.uib.no/"' src/config.js; then
-            echo "::error file=src/config.js::CONF.registrationUrl is still the Skjemaker service page, not an actual form. Replace it with the real form URL before deploying."
+          if grep -q 'REPLACE_WITH_' src/config.js; then
+            echo "::error file=src/config.js::A form URL in src/config.js is still a placeholder (REPLACE_WITH_...). Set the real Nettskjema form URLs before deploying."
             exit 1
           fi
 

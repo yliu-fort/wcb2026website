@@ -1,12 +1,13 @@
-# WWCP 2027 — Conference Website
+# Bergen 2027 — Conference Website
 
-Website for the **8th Workshop on Waves and Wave-Coupled Processes**, 12–15 April
-2027, Bergen, Norway, hosted by the University of Bergen.
+Website for the **8th Workshop on Waves and Wave-Coupled Processes**, 12–15
+April 2027, Bergen, Norway, hosted by the University of Bergen and the
+Norwegian Meteorological Institute.
 
 Live at <https://yliu-fort.github.io/wcb2026website/>.
 
-> The repository name still says `wcb2026website` for historical reasons; the
-> site itself is WWCP 2027.
+> The repository name says `wcb2026website` for historical reasons; the site
+> itself is the Bergen 2027 workshop.
 
 ## Stack
 
@@ -43,25 +44,43 @@ npm run build && npm run preview
 ## Editing content
 
 Nearly everything an organiser needs to change lives in **`src/config.js`**:
-conference name and dates, key dates, committee members, research themes, past
-editions, sponsor logos, contact address, and the registration URL. Component
-code in `src/App.jsx` should not need touching for routine content updates.
+names and dates, key dates, keynote speakers, committee members, research
+themes, hosts and partner logos, venue details, contact address, and the two
+form URLs. Component code in `src/App.jsx` should not need touching for routine
+content updates.
 
-Adding a sponsor logo: drop the file in `public/images/`, then add a line to the
-`SPONSORS` array with its filename.
+Common tasks:
 
-## Registration
+- **Add a speaker photo**: drop the file in `public/images/speakers/` and set
+  `photo: "speakers/<file>"` on the speaker's entry in `SPEAKERS`. Until then
+  the card shows an initials avatar.
+- **Confirm a tentative speaker**: remove `tentative: true` from their entry.
+- **Add a logo**: drop the file in `public/images/`, reference it from `HOSTS`
+  or `PARTNERS`. Entries with `logo: null` render as text tiles.
 
-Registration goes through a single form hosted on
-[UiB Skjemaker](https://skjemaker.app.uib.no/), set via `CONF.registrationUrl`.
+## Forms
 
-A single UiB-hosted form replaced an earlier setup that offered a Google Form
-alongside a Tencent Docs form, because Google services are blocked in mainland
-China. A form on a Norwegian university domain is reachable from everywhere, so
-the second channel is unnecessary.
+Abstract submission and registration each use a
+[Nettskjema](https://nettskjema.no) form — Norwegian-hosted (reachable from
+mainland China, unlike Google Forms), accepts PDF uploads from external
+respondents, and sends an automatic receipt with a reference number, which
+presenting authors quote when registering. Field-by-field specifications for
+both forms are in [`docs/forms.md`](docs/forms.md).
 
-While `registrationUrl` is still the Skjemaker service page rather than a real
-form, `npm run dev` shows a red warning banner and CI refuses to deploy.
+While either URL in `src/config.js` is still a `REPLACE_WITH_…` placeholder,
+`npm run dev` shows a red warning banner and CI refuses to deploy.
+
+Abstract templates offered to authors live in `public/downloads/`
+(`bergen2027-abstract-template.docx` / `.tex`).
+
+## Funding acknowledgment
+
+The Sponsors section follows the EU emblem rules for 2021–2027 programmes: the
+emblem (drawn to the official geometry in `public/images/eu-emblem.svg`)
+carries the spelled-out "Funded by the European Union" statement, the required
+disclaimer is displayed, and the emblem must remain at least as large as any
+other logo in that strip when the ERC and Research Council of Norway logo files
+arrive.
 
 ## Deployment
 
@@ -83,7 +102,9 @@ src/
   config.js                   conference content — edit this for content changes
   styles.css                  full stylesheet
 public/
-  images/                     sponsor logos, hero image
+  images/                     logos, hero image, EU emblem
+  downloads/                  abstract templates (docx / LaTeX)
   favicon.svg
+docs/forms.md                 Nettskjema field specifications for both forms
 .github/workflows/deploy.yml  build + Pages deployment
 ```

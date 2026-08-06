@@ -1,43 +1,114 @@
 // ============================================================================
 // Conference content. Everything an organiser is likely to change lives here —
 // editing this file should never require touching component code.
+//
+// NOTE: this file is in a PUBLIC repository. Never put personal contact
+// details (e.g. speakers' email addresses) in here, not even in comments.
 // ============================================================================
 
 export const CONF = {
-  shortName: "WWCP 2027",
+  shortName: "Bergen 2027",
   fullName: "8th Workshop on Waves and Wave-Coupled Processes",
   subtitle:
     "Ocean surface waves in the Earth System — dynamics, coupling and large-scale impacts",
   dates: "12 – 15 April 2027",
   city: "Bergen, Norway",
-  host: "University of Bergen",
+  host: "the University of Bergen and the Norwegian Meteorological Institute",
 
-  // TODO(before merging to main): replace with the real form URL created in
-  // UiB Skjemaker. The value below is the Skjemaker service page, NOT a form —
-  // shipping it would repeat the broken-link bug currently live on the site.
-  // A visible warning banner is rendered while this placeholder is in place.
-  registrationUrl: "https://skjemaker.app.uib.no/",
-
-  // Deadline quoted in the "Register Your Interest" section. NOTE: this does not
-  // match the abstract-submission deadline in KEY_DATES (15 Nov 2026) — confirm
-  // which is intended.
-  interestDeadline: "30 November 2026",
-
+  // The mailbox predates the current "Bergen 2027" name; replace once a
+  // matching alias exists.
   contactEmail: "wwcp2027@uib.no",
+
+  // Month-precision values are deliberate — the committee will refine them.
+  abstractOpens: "30 August 2026",
+  abstractDeadline: "30 November 2026",
+  decisionDate: "December 2026",
+  presenterRegistrationDeadline: "12 January 2027",
 };
 
-// True while `registrationUrl` is still the Skjemaker service page rather than
-// an actual form. Used to surface an unmissable warning during development.
-export const REGISTRATION_URL_IS_PLACEHOLDER =
-  CONF.registrationUrl === "https://skjemaker.app.uib.no/";
+// Both forms are built in Nettskjema (nettskjema.no): Norwegian-hosted, so
+// reachable from mainland China (Google Forms is not), supports PDF upload by
+// external respondents, and issues an automatic email receipt with a reference
+// number — which the registration form asks presenting authors to quote.
+//
+// TODO(before merging to main): replace both URLs with the real forms. While a
+// URL contains REPLACE_WITH_, `npm run dev` shows a warning banner and CI
+// refuses to deploy.
+export const FORMS = {
+  abstract: {
+    url: "https://nettskjema.no/a/REPLACE_WITH_ABSTRACT_FORM_ID",
+  },
+  registration: {
+    url: "https://nettskjema.no/a/REPLACE_WITH_REGISTRATION_FORM_ID",
+  },
+};
+
+// Names of forms whose URL is still a placeholder (empty array = ready).
+export const placeholderForms = () =>
+  Object.entries(FORMS)
+    .filter(([, f]) => f.url.includes("REPLACE_WITH"))
+    .map(([name]) => name);
 
 export const KEY_DATES = [
-  { label: "Abstract submission opens", value: "Aug 1, 2026" },
-  { label: "Abstract submission deadline", value: "Nov 15, 2026", deadline: true },
-  { label: "Notification of acceptance", value: "Dec 20, 2026" },
-  { label: "Early-bird registration ends", value: "Jan 30, 2027", deadline: true },
-  { label: "Final program release", value: "March 12, 2027" },
-  { label: "Workshop dates", value: "April 12 – 15, 2027" },
+  { label: "Abstract submission opens", value: "30 Aug 2026" },
+  { label: "Abstract submission deadline", value: "30 Nov 2026", deadline: true },
+  { label: "Notification of acceptance", value: "Dec 2026" },
+  {
+    label: "Registration deadline — presenting authors",
+    value: "12 Jan 2027",
+    deadline: true,
+  },
+  { label: "Workshop", value: "12 – 15 April 2027" },
+];
+
+// Alphabetical by surname. `tentative: true` renders a "to be confirmed" tag.
+// Add `photo: "speakers/<file>"` (under public/images/) when portraits arrive —
+// until then the card shows an initials avatar.
+export const SPEAKERS = [
+  {
+    name: "Lotfi Aouf",
+    affil: "Météo-France",
+    topic: "Data assimilation and observations from satellites",
+  },
+  {
+    name: "Simen Ellingsen",
+    affil: "NTNU, Norway",
+    topic:
+      "Wave–current interaction; influences in the upper ocean, wave turbulence and mixing",
+  },
+  {
+    name: "Yuzhu Pearl Li",
+    affil: "National University of Singapore",
+    topic: "Wave breaking and turbulence modelling",
+  },
+  {
+    // TODO: affiliation to be provided by the committee.
+    name: "Al Osborne",
+    affil: "",
+    topic: "Dynamics of nonlinear waves",
+  },
+  {
+    name: "Anna Rutgersson",
+    affil: "Uppsala University, Sweden",
+    topic: "Air–sea gas exchange",
+  },
+  {
+    name: "Zhenya Song",
+    affil: "First Institute of Oceanography, China",
+    topic: "Integrating surface waves into Earth system models",
+  },
+  {
+    name: "Jim Thomson",
+    affil: "University of Washington, USA",
+    topic: "In-situ observations and wave breaking",
+    tentative: true,
+  },
+  {
+    name: "Takuji Waseda",
+    affil: "The University of Tokyo, Japan",
+    topic: "Wave–ice interactions",
+    tentative: true,
+  },
 ];
 
 export const COMMITTEES = [
@@ -69,10 +140,16 @@ export const PAST_EDITIONS = [
   "Melbourne", "Qingdao", "Hangzhou", "Uppsala", "Reading", "Melbourne", "Bangkok",
 ];
 
-// Files live in public/images/ — add a logo by dropping the file there and
-// adding a line below. `asset()` prefixes the deployment base path.
-export const SPONSORS = [
+// Hosts appear in their own row above the partner strip. `logo: null` renders
+// a text tile until an official logo file is supplied.
+export const HOSTS = [
   { name: "University of Bergen", logo: "logo-uib.png" },
+  // TODO: official logo file from MET Norway.
+  { name: "Norwegian Meteorological Institute", logo: null },
+];
+
+// Partner institutions represented on the Organising Committee (hosts excluded).
+export const PARTNERS = [
   { name: "University of Melbourne", logo: "logo-melbourne.png" },
   { name: "First Institute of Oceanography", logo: "logo-fio.png" },
   { name: "Uppsala University", logo: "logo-uppsala.jpeg" },
@@ -80,7 +157,19 @@ export const SPONSORS = [
   { name: "Kasetsart University", logo: "logo-kasetsart.jpg" },
 ];
 
+// Venue. Coordinates drive the OpenStreetMap embed in the Venue section
+// (chosen over a Google Maps embed, which is blocked in mainland China).
+export const VENUE = {
+  name: "Grand Hotel Terminus",
+  address: ["Zander Kaaes gate 6", "5015 Bergen, Norway"],
+  lat: 60.3897,
+  lon: 5.3316,
+};
+
 // Resolves a file in public/images/ to a URL that respects `base` from
 // vite.config.js. Vite rewrites asset paths in HTML but not in JS strings, so
 // anything referenced from a component has to go through this.
 export const asset = (file) => `${import.meta.env.BASE_URL}images/${file}`;
+
+// Same, for files in public/downloads/ (abstract templates).
+export const download = (file) => `${import.meta.env.BASE_URL}downloads/${file}`;
