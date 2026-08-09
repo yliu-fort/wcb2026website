@@ -55,11 +55,23 @@ want_200() {
   else red "  FAIL  $c  $1 (expected 200)"; ((fails++)); fi
 }
 
-# Must NOT be reachable. 403/404 are both fine; 200 is a leak.
+body() { curl -s --path-as-is --max-time 10 "${CURL_EXTRA[@]}" "$BASE$1"; }
+
+# Every unknown path returns index.html with a 200, because the SPA fallback
+# (try_files ... /index.html) is what makes client-side routing work. So a
+# status code cannot tell "not found" apart from "leaked" — compare the body.
+# Serving index.html means the file was not found; serving anything else with a
+# 200 means it was.
+SPA_HASH=$(body /index.html | sha256sum)
+
+# Must NOT be reachable.
 want_blocked() {
-  local c; c=$(code "$BASE$1")
-  if [[ "$c" == 200 ]]; then red "  LEAK  200  $1"; ((fails++))
-  else grn "  ok    $c  $1"; fi
+  local c h
+  c=$(code "$BASE$1")
+  if [[ "$c" != 200 ]]; then grn "  ok    $c  $1"; return; fi
+  h=$(body "$1" | sha256sum)
+  if [[ "$h" == "$SPA_HASH" ]]; then grn "  ok    200  $1 (SPA fallback, not the file)"
+  else red "  LEAK  200  $1"; ((fails++)); fi
 }
 
 echo "== reachability ($BASE)"

@@ -65,8 +65,15 @@ drops the drop-in.
 Layers 0–6 are enforced by the OS and apply to everyone. Layer 7 only constrains
 Claude Code; it is the weakest and the first to go stale, so never rely on it
 alone. It also matches on the whole command string, so it will occasionally
-refuse a command that merely mentions a dangerous pattern. That direction of
-error is the intended one.
+refuse a command that merely mentions a dangerous pattern — it blocked an edit
+to this very paragraph for containing the docroot path. That direction of error
+is the intended one.
+
+Its docroot rule is written inside-out on purpose. Enumerating the write
+commands (`cp|rsync|mv|ln|tee`) let `install -m 644 /dev/stdin …` straight
+through on the first attempt, because any such list is a guess about what
+someone will type next. It now refuses everything that touches the docroot
+except commands opening with a plainly read-only verb.
 
 Two smaller things the config does deliberately:
 
@@ -89,11 +96,26 @@ the certificate and the HTTP→HTTPS redirect; confirms `ProtectHome`,
 bound to a wildcard address. A systemd timer (`verify-exposure.timer`) runs it
 hourly; `systemctl status verify-exposure` shows the last result.
 
-Run the second form **from a different machine**. Probing this host's own public
-IP from the host routes over loopback, which ufw exempts, so every check passes
-for the wrong reason. (Locally the script uses `curl --resolve` to pin the
+Run the second form **from a different machine** — and it has to be a real one.
+This host cannot reach its own public IP at all: NREC does not hairpin, so
+`curl https://oceancoupling.eu/` from here dies in the TLS handshake while the
+site is perfectly healthy. Locally the script uses `curl --resolve` to pin the
 hostname to `127.0.0.1`, which exercises the real server blocks rather than the
-catch-all.)
+catch-all.
+
+Two results are easy to misread:
+
+- **A 200 on a path that should not exist is usually the SPA fallback.**
+  `try_files ... /index.html` is what makes client-side routing work, so every
+  unknown path returns index.html with a 200. The script therefore compares
+  response bodies against index.html instead of trusting the status code — a
+  200 whose body differs is a real leak. Checked in both directions by planting
+  a sentinel file where the `/etc/passwd` probe would find it and confirming the
+  result flips to LEAK.
+- **Free CORS proxies are not a reachability test.** allorigins and codetabs
+  return 520/522 from their own Cloudflare edge whether or not this server is
+  up. The trustworthy signal is `/var/log/nginx/access.log`: if a request from a
+  non-127.0.0.1 address appears there, it arrived.
 
 The hook's own test cases live in `hook-cases.txt`:
 

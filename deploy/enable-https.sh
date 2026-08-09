@@ -64,7 +64,11 @@ sudo certbot certonly \
   --keep-until-expiring \
   --deploy-hook "systemctl reload nginx"
 
-[[ -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]] || die "certbot reported success but no certificate is present"
+# sudo test, not [[ -f ]]: /etc/letsencrypt/live is root-owned 0700, so this
+# script's own user cannot stat inside it and would call a perfectly good
+# certificate missing.
+sudo test -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" \
+  || die "certbot reported success but no certificate is present"
 
 # certonly plus our own config, rather than --nginx: the plugin rewrites the
 # config in place, which would make the tracked file in this repo diverge from
