@@ -1,9 +1,13 @@
-# Self-hosted deployment
+# Self-hosted deployment — https://oceancoupling.eu
 
-Serves the built static site from this machine, alongside the GitHub Pages
-deployment. Same build artifact for both: Vite's `base` stays
-`/wcb2026website/`, and nginx serves that same path prefix, so a link that works
-in one place works in the other.
+Serves the built site from this machine over HTTPS, alongside the GitHub Pages
+copy at `yliu-fort.github.io/wcb2026website/`. The self-hosted origin exists
+because GitHub Pages is unreliable from mainland China, which the conference
+audience includes.
+
+The two copies differ only in Vite's `base`: GitHub Pages serves from a
+sub-path, this one owns the domain root, so `publish.sh` builds with
+`--base=/`. The Pages workflow runs a plain `npm run build` and is unaffected.
 
 ## Publishing
 
@@ -11,20 +15,33 @@ in one place works in the other.
 deploy/publish.sh
 ```
 
-That is the only supported way to change what is public. It builds, scans the
-output, mirrors it into the docroot, reloads nginx, and re-probes the live
-server. `--skip-build` republishes the existing `dist/`.
+The only supported way to change what is public. Builds, scans the output,
+mirrors it into the docroot, reloads nginx, re-probes the live server.
+`--skip-build` republishes the existing `dist/`.
+
+## Going live (one time)
+
+```bash
+deploy/enable-https.sh
+```
+
+Opens 80/443, obtains the Let's Encrypt certificate, installs the HTTPS config,
+arms renewal, publishes, verifies. It refuses to start unless DNS already points
+here — a failed challenge burns one of five Let's Encrypt attempts per domain
+per week.
+
+DNS lives at domene.shop (`ns*.hyp.net`). `A @` and `A www` point to this host.
+There is deliberately **no AAAA record**: the public IPv4 is on `enp3s0` while
+the IPv6 default route is on `enp4s0`, so inbound IPv6 would likely be dropped
+as asymmetric — and since Let's Encrypt prefers IPv6 when a AAAA exists, a
+broken one fails issuance outright rather than degrading gracefully.
 
 ## Why the guardrails are shaped this way
 
 This host has a routable public IP and holds credentials and session
 transcripts in `~/.claude`. The risk worth engineering against is not an
 attacker finding a novel nginx bug — it is *us* pointing something at the wrong
-directory. So each layer below assumes the layer above was configured wrong.
-
-(The host's address is not written down anywhere in this repo, which is public.
-Naming it here would pair a scannable target with a precise inventory of what is
-running on it.)
+directory. So each layer assumes the one above was configured wrong.
 
 | Layer | Mechanism | Holds when… |
 |---|---|---|
@@ -37,34 +54,46 @@ running on it.)
 | 6 | `verify-exposure.sh`, hourly | any of the above silently regresses |
 | 7 | Claude Code PreToolUse hook | the assistant is about to undo one of these |
 
-Layer 2 is the load-bearing one, because it is the only layer that survives a
+Layer 2 is load-bearing, because it is the only one that survives a
 configuration mistake. It was verified empirically, not assumed: an nginx server
-block with `root /home/ubuntu/.claude` and `autoindex on` returns 404 for
+block with `root /home/ubuntu/.claude` and `autoindex on` returned 404 for
 `/settings.json`, because `/home` is empty inside the unit's mount namespace
 while the file plainly exists on the host. Re-run that check after any nginx
-package upgrade — a `.service` file replaced by the package manager would drop
-the drop-in.
+package upgrade — a `.service` file replaced by the package manager silently
+drops the drop-in.
 
 Layers 0–6 are enforced by the OS and apply to everyone. Layer 7 only constrains
 Claude Code; it is the weakest and the first to go stale, so never rely on it
-alone.
+alone. It also matches on the whole command string, so it will occasionally
+refuse a command that merely mentions a dangerous pattern. That direction of
+error is the intended one.
+
+Two smaller things the config does deliberately:
+
+- **The catch-all returns 444.** Requests to the bare IP, or to any hostname we
+  do not serve, get nothing at all. Without it nginx would answer them from the
+  first server block and tie the address to the site for anyone scanning.
+- **`/.well-known/acme-challenge/` uses `^~`.** It has to outrank the dotfile
+  deny, or renewal breaks silently two months from now.
 
 ## Checking
 
 ```bash
-deploy/verify-exposure.sh                       # against localhost
-deploy/verify-exposure.sh http://<public-ip>    # what the internet sees
+deploy/verify-exposure.sh                          # locally, via --resolve
+deploy/verify-exposure.sh https://oceancoupling.eu # from another machine
 ```
 
-Run the second form **from a different machine**. Probing this host's own public
-IP from the host itself routes over loopback, which ufw exempts, so everything
-passes for the wrong reason.
+Probes traversal toward `~/.claude`, `.git`, dotfiles and `/etc/passwd`; checks
+the certificate and the HTTP→HTTPS redirect; confirms `ProtectHome`,
+`ProtectSystem`, ufw, `~/.claude` permissions, and that nothing unexpected is
+bound to a wildcard address. A systemd timer (`verify-exposure.timer`) runs it
+hourly; `systemctl status verify-exposure` shows the last result.
 
-Probes traversal toward `~/.claude`, `.git`, dotfiles and `/etc/passwd`, then
-confirms `ProtectHome`, `ProtectSystem`, ufw, `~/.claude` permissions, and that
-nothing unexpected is bound to a wildcard address. A systemd timer
-(`verify-exposure.timer`) runs it hourly; `systemctl status verify-exposure`
-shows the last result.
+Run the second form **from a different machine**. Probing this host's own public
+IP from the host routes over loopback, which ufw exempts, so every check passes
+for the wrong reason. (Locally the script uses `curl --resolve` to pin the
+hostname to `127.0.0.1`, which exercises the real server blocks rather than the
+catch-all.)
 
 The hook's own test cases live in `hook-cases.txt`:
 
@@ -77,26 +106,22 @@ while IFS='|' read -r want c; do [ -z "$c" ] && continue; \
 
 ## Files
 
-Tracked here, installed to the system by hand (see git log for the commands):
+Tracked here, installed to the system by `enable-https.sh`:
 
 - `nginx-bergen2027.conf` → `/etc/nginx/sites-available/bergen2027`
+- `nginx-bootstrap-http.conf` → same path, temporarily, to answer the first
+  ACME challenge before any certificate exists
 - `nginx-hardening.conf` → `/etc/systemd/system/nginx.service.d/hardening.conf`
-- `publish.sh`, `verify-exposure.sh` — run from the repo
+- `publish.sh`, `verify-exposure.sh`, `enable-https.sh` — run from the repo
 - `~/.claude/hooks/guard-public-exposure.sh` — untracked, outside the repo
 
 ## Still open
 
-Port 80 is **closed at the firewall**. Nothing is public yet. To open it:
-
-```bash
-sudo ufw allow 80/tcp comment 'http'
-```
-
-Before doing that, two things are worth settling:
-
-- **No HTTPS.** Plain HTTP is modifiable in transit by any intermediary, which
-  matters more than usual given the site needs to be reachable from China. A
-  domain name pointed here plus Caddy (or certbot) would fix it; serving a bare
-  IP cannot get a certificate.
+- **IPv6.** No AAAA record until inbound IPv6 is confirmed working on this host;
+  see above for why the interface split makes that non-obvious.
 - **`build.sourcemap` is `true`,** so `dist/` ships source maps. Harmless while
-  the GitHub repo is public, but revisit if it ever goes private.
+  the GitHub repo is public; revisit if it ever goes private.
+- **China reachability is the reason this origin exists but is not yet
+  measured.** HTTPS prevents content injection in transit, which is the part we
+  control; it does nothing about SNI-based filtering or latency. Worth testing
+  from inside before relying on it.

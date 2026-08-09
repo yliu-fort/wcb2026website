@@ -7,20 +7,46 @@
 # this host's own public IP from the host routes over loopback, which ufw
 # exempts, and every check would pass for the wrong reason:
 #
-#     deploy/verify-exposure.sh http://<public-ip>
+#     deploy/verify-exposure.sh https://oceancoupling.eu
 #
-# The address is deliberately not hardcoded: this repo is public, and naming the
-# host here would hand a scanner the target plus the stack documented in
-# README.md. Keep it in your shell history or a local untracked file.
+# The host's IP is deliberately not written down here: this repo is public, and
+# naming it would hand a scanner the target plus README.md's inventory of what
+# runs on it.
 
 set -uo pipefail
-BASE="${1:-${SITE_URL:-http://127.0.0.1}}"
+
+DOMAIN=oceancoupling.eu
+LOCAL=0
+CURL_EXTRA=()
+
+if [[ -n "${1:-${SITE_URL:-}}" ]]; then
+  # Explicit target: whatever the caller named, over the real network.
+  BASE="${1:-$SITE_URL}"
+else
+  # No argument — this is the post-publish and hourly-timer path, running on the
+  # host. The config answers only to the real hostname (everything else gets a
+  # 444 from the catch-all), so pin the name to loopback rather than requesting
+  # 127.0.0.1 directly, which would fail for the wrong reason. Falls back to
+  # plain HTTP if TLS is not up yet.
+  LOCAL=1
+  if ss -tlnH 2>/dev/null | grep -q ':443 '; then
+    BASE="https://$DOMAIN"
+    CURL_EXTRA=(--resolve "$DOMAIN:443:127.0.0.1" --resolve "$DOMAIN:80:127.0.0.1")
+  else
+    BASE="http://$DOMAIN"
+    CURL_EXTRA=(--resolve "$DOMAIN:80:127.0.0.1")
+  fi
+fi
+
 fails=0
 
 red() { printf '\033[31m%s\033[0m\n' "$*"; }
 grn() { printf '\033[32m%s\033[0m\n' "$*"; }
 
-code() { curl -s -o /dev/null -w '%{http_code}' --path-as-is --max-time 10 "$1"; }
+code() {
+  curl -s -o /dev/null -w '%{http_code}' --path-as-is --max-time 10 \
+       "${CURL_EXTRA[@]}" "$1"
+}
 
 # Must be reachable.
 want_200() {
@@ -37,29 +63,51 @@ want_blocked() {
 }
 
 echo "== reachability ($BASE)"
-want_200 /wcb2026website/
-want_200 /wcb2026website/index.html
+want_200 /
+want_200 /index.html
 
 echo "== path traversal toward the home directory"
 want_blocked /.claude/settings.json
 want_blocked /../.claude/settings.json
-want_blocked /wcb2026website/../../../home/ubuntu/.claude/settings.json
-want_blocked /wcb2026website/../../../home/ubuntu/.claude/.credentials.json
-want_blocked /wcb2026website/..%2f..%2f..%2fhome/ubuntu/.claude/settings.json
+want_blocked /../../../home/ubuntu/.claude/settings.json
+want_blocked /../../../home/ubuntu/.claude/.credentials.json
+want_blocked /..%2f..%2f..%2fhome/ubuntu/.claude/settings.json
 want_blocked /home/ubuntu/.claude/settings.json
 
 echo "== repository and dotfile exposure"
 want_blocked /.git/config
-want_blocked /wcb2026website/.git/config
 want_blocked /.env
-want_blocked /wcb2026website/.env
+want_blocked /.well-known/../.env
 
 echo "== system files"
-want_blocked /wcb2026website/../../../etc/passwd
+want_blocked /../../../etc/passwd
 want_blocked /etc/passwd
 
+# Transport checks, only meaningful against the real name.
+if [[ "$BASE" == https://* ]]; then
+  host=${BASE#https://}; host=${host%%/*}
+
+  echo "== TLS"
+  if curl -s -o /dev/null --max-time 10 "${CURL_EXTRA[@]}" "https://$host/"; then grn "  ok    certificate validates"
+  else red "  FAIL  certificate does not validate"; ((fails++)); fi
+
+  connect="$host:443"; (( LOCAL )) && connect="127.0.0.1:443"
+  days=$(echo | openssl s_client -servername "$host" -connect "$connect" 2>/dev/null \
+         | openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2)
+  if [[ -n "$days" ]]; then
+    left=$(( ( $(date -d "$days" +%s) - $(date +%s) ) / 86400 ))
+    if (( left > 20 )); then grn "  ok    cert valid for $left more days"
+    else red "  WARN  cert expires in $left days — check certbot.timer"; fi
+  fi
+
+  # Plain HTTP must not serve content; it must hand visitors to HTTPS.
+  rc=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "${CURL_EXTRA[@]}" "http://$host/")
+  if [[ "$rc" =~ ^30 ]]; then grn "  ok    http -> https redirect ($rc)"
+  else red "  FAIL  http://$host/ returned $rc, expected a redirect"; ((fails++)); fi
+fi
+
 # Only meaningful on the host itself.
-if [[ "$BASE" == http://127.0.0.1* ]]; then
+if (( LOCAL )); then
   echo "== host controls"
   ph=$(systemctl show nginx -p ProtectHome --value 2>/dev/null)
   if [[ "$ph" == "yes" ]]; then grn "  ok    nginx ProtectHome=yes (/home invisible to the process)"
@@ -74,7 +122,7 @@ if [[ "$BASE" == http://127.0.0.1* ]]; then
 
   # Anything listening on 0.0.0.0 that is not nginx:80 or sshd:22 is a service
   # someone bound too widely — ufw is blocking it today, but it should not exist.
-  stray=$(ss -tlnH 2>/dev/null | awk '$4 ~ /^(0\.0\.0\.0|\[::\]):/ {split($4,a,":"); p=a[length(a)]; if (p!="22" && p!="80") print p}' | sort -u)
+  stray=$(ss -tlnH 2>/dev/null | awk '$4 ~ /^(0\.0\.0\.0|\[::\]):/ {split($4,a,":"); p=a[length(a)]; if (p!="22" && p!="80" && p!="443") print p}' | sort -u)
   if [[ -z "$stray" ]]; then grn "  ok    no unexpected wildcard listeners"
   else red "  WARN  services bound to all interfaces on port(s): $stray"; fi
 

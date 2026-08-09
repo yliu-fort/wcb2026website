@@ -12,7 +12,7 @@ set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SRC="$REPO/dist"
 DOCROOT=/var/www/bergen2027
-TARGET="$DOCROOT/wcb2026website"
+TARGET="$DOCROOT"
 
 red()  { printf '\033[31m%s\033[0m\n' "$*"; }
 grn()  { printf '\033[32m%s\033[0m\n' "$*"; }
@@ -21,7 +21,10 @@ die()  { red "REFUSED: $*"; exit 1; }
 # --- build ------------------------------------------------------------------
 if [[ "${1:-}" != "--skip-build" ]]; then
   echo "==> building"
-  ( cd "$REPO" && npm run build )
+  # --base=/ overrides the '/wcb2026website/' in vite.config.js. That default is
+  # right for GitHub Pages, which serves from a sub-path; here we own the domain
+  # root. The GH Pages workflow runs a plain `npm run build` and is unaffected.
+  ( cd "$REPO" && npm run build -- --base=/ )
 fi
 
 [[ -d "$SRC" ]]             || die "no dist/ — run npm run build"
