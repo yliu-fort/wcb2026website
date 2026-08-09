@@ -14,7 +14,12 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DOMAIN=oceancoupling.eu
-EMAIL="${LETSENCRYPT_EMAIL:-liuyx430@gmail.com}"
+# Let's Encrypt wants an address for expiry warnings, but this repo is public and
+# a plaintext address in it is just something to be scraped. Take it from the
+# environment, falling back to the committer's git identity — which is already
+# in every commit here, so it leaks nothing new.
+EMAIL="${LETSENCRYPT_EMAIL:-$(git -C "$REPO" config user.email 2>/dev/null)}"
+[[ -n "$EMAIL" ]] || die "set LETSENCRYPT_EMAIL, or configure git user.email — Let's Encrypt needs an address for expiry notices"
 
 red() { printf '\033[31m%s\033[0m\n' "$*"; }
 grn() { printf '\033[32m%s\033[0m\n' "$*"; }
