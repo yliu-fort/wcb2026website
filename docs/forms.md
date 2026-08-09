@@ -5,8 +5,10 @@ and withdrawal — and the record of what was decided and why. Written to be
 followed field-by-field while building the forms, so that the site copy, the
 emails and the forms cannot drift apart.
 
-**Status: not built yet.** `FORMS` in `src/config.js` still holds placeholders,
-which is what keeps CI red and `robots.txt` closed.
+**Status: none of them built yet.** `FORMS` in `src/config.js` still holds
+placeholders, which is what keeps CI red. Forms 1 and 2 are the first round;
+Form 3 is deferred by decision and withdrawal runs by email until then.
+`robots.txt` is closed separately, via `SITE.indexable`.
 
 ## Platform
 
@@ -71,12 +73,15 @@ programme.
 So the abstract form carries a replacement question (fields 12–13 below), the
 auto-responder tells authors to use it, and the site says the same.
 
-Withdrawal is self-service through a separate form (Form 3), not through editing
-— which keeps MachForm's edit-submission feature switched off, so the mechanism
-does not depend on which version UiB runs, and produces an auditable record
-instead of free-form mail to whichever committee member the author happens to
-know. The one exception is an author who has already registered and paid: a
-refund cannot be handled by a form, so that case goes to the shared mailbox.
+**Withdrawal is by email to `wwcp2027@uib.no` for now.** A self-service form is
+designed (Form 3) but deliberately not built yet — see that section.
+
+The interim path inherits one rule from that design, and it is the rule that is
+easiest to get wrong over email: **confirm to the address on the original
+submission, not to whoever sent the withdrawal request.** Replying to the sender
+is the natural thing to do with mail, and it is precisely what lets someone
+withdraw an abstract that is not theirs. A conference programme is public;
+titles and author addresses are not secrets.
 
 ## Form 1 — Abstract submission
 
@@ -148,7 +153,15 @@ required to register in connection with it — so **co-authors who plan to atten
 register here as ordinary attendees.** Say so on the site, or badge and catering
 counts will be short.
 
-## Form 3 — Withdrawal
+## Form 3 — Withdrawal (deferred, do not build yet)
+
+**Not being built in the first round.** Withdrawal goes to `wwcp2027@uib.no`
+until the design is settled. Kept here because the reasoning below applies to
+the email path too, and because deferring a form is cheap while retro-fitting
+the confirmation step onto a live one is not.
+
+Two things to settle before building it: the withdrawal deadline (below), and
+whether requests from authors who have already paid belong in the form at all.
 
 A withdrawal request, not an instruction the system carries out. Small, and the
 confirmation step is the part that matters.
@@ -195,12 +208,13 @@ should stop being self-service at that point.
 > not need to do anything until then, and you do not need to register yet.
 >
 > This submission cannot be edited. If you need to correct it, submit the form
-> again and answer "Yes" to the replacement question. To withdraw it, use the
-> withdrawal form: `<link>`
+> again and answer "Yes" to the replacement question. To withdraw it, email
+> wwcp2027@uib.no.
 
-Keep the withdrawal link in the receipt rather than only on the site. It is the
-one message the author is certain to still have, and an author hunting for how
-to withdraw is an author about to email someone at random.
+Keep the withdrawal instruction in the receipt rather than only on the site. It
+is the one message the author is certain to still have, and an author hunting
+for how to withdraw is an author about to email someone at random. Swap the
+address for a link if Form 3 is ever built.
 
 **Acceptance (manual, December 2026).** Where the ID is issued.
 
@@ -214,8 +228,9 @@ to withdraw is an author about to email someone at random.
 abstract IDs, so a mistyped ID is visible to the author while it can still be
 fixed.
 
-**Withdrawal acknowledgement (auto-responder, Form 3).** Must say that the
-request is *not yet* effective:
+**Withdrawal acknowledgement** — for Form 3 when it exists; until then the
+committee sends the equivalent by hand. Either way it must say that the request
+is *not yet* effective:
 
 > We have received a request to withdraw `{title}`. To confirm it is genuinely
 > from you, we will email the address on the original submission. The abstract
@@ -303,7 +318,7 @@ Settled:
 | Multiple abstracts per person | Allowed; registration accepts several IDs |
 | Co-author registration | Only the presenting author registers per abstract |
 | Edit after submission | Not offered; corrections via a replacement submission |
-| Withdraw after submission | Self-service via Form 3, confirmed by reply to the original submitter. Already registered and paid: by email, because of the refund |
+| Withdraw after submission | By email to the shared mailbox for now. Self-service (Form 3) is designed but deferred until the rules are settled. Either way, confirmation goes to the address on the original submission |
 | Notification recipient | Shared mailbox, `wwcp2027@uib.no` — never a personal address |
 | Form interface language | English |
 | Data protection | Confirmed by the organiser; treated as compliant here |
@@ -317,7 +332,8 @@ Open:
 | Timeline: registration opening, non-presenter deadline | Site copy |
 | Fee model | Opening registration; **must be settled before December 2026** |
 | Cap on presentations per person | Field 6 help text, site copy |
-| Withdrawal deadline, and whether self-service stops once the programme is published | Form 3 availability, site copy |
+| Withdrawal deadline, and whether self-service stops once the programme is published | Building Form 3 |
+| Whether post-payment withdrawals belong in Form 3 or stay on email | Building Form 3 |
 | Whether travel support or a prize exists | Field 11 of Form 1 |
 | China reachability of `skjemaker.app.uib.no` | Being checked by the organiser |
 | `wwcp2027@uib.no` alias predates the "Bergen 2027" name | Replace once a matching alias exists |
