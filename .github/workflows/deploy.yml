@@ -40,11 +40,7 @@ jobs:
       # a build failure behind this check.
       # Delete this step if you would rather not have it gate deploys.
       - name: Check form URLs are real
-        run: |
-          if grep -q 'REPLACE_WITH_' src/config.js; then
-            echo "::error file=src/config.js::A form URL in src/config.js is still a placeholder (REPLACE_WITH_...). Set the real Nettskjema form URLs before deploying."
-            exit 1
-          fi
+        run: node scripts/check-form-urls.mjs
 
       - uses: actions/upload-pages-artifact@v3
         with:

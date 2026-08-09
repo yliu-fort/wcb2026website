@@ -62,15 +62,38 @@ fi
 #    is exactly how it went live with REPLACE_WITH_ABSTRACT_FORM_ID in the
 #    bundle. A dead registration link on a conference site is worse than a
 #    missing one — visitors think they signed up.
-if grep -rIlq 'REPLACE_WITH_' "$SRC" 2>/dev/null; then
+#    Asks config.js rather than grepping the bundle: the bundle contains the
+#    detector string and the source map contains the comment explaining it, so
+#    a text search matches itself and stays red forever.
+if node "$REPO/scripts/check-form-urls.mjs" >/dev/null 2>&1; then
+  placeholders=0
+else
+  placeholders=1
+fi
+
+if (( placeholders )); then
   if [[ "${ALLOW_PLACEHOLDERS:-}" == 1 ]]; then
     printf '\033[33m    WARN: publishing with placeholder form URLs (ALLOW_PLACEHOLDERS=1)\033[0m\n'
   else
-    die "placeholder form URL (REPLACE_WITH_...) in the bundle. Set the real Nettskjema URLs in src/config.js, or re-run with ALLOW_PLACEHOLDERS=1 to ship anyway."
+    node "$REPO/scripts/check-form-urls.mjs" || true
+    die "placeholder form URL in src/config.js. Set the real URLs, or re-run with ALLOW_PLACEHOLDERS=1 to ship anyway."
   fi
 fi
 
 grn "    preflight clean ($(find "$SRC" -type f | wc -l) files)"
+
+# robots.txt tracks the same signal as the guard above rather than being a flag
+# someone has to remember to flip. While the form URLs are placeholders the site
+# is unfinished, and a conference page indexed with dead registration links is
+# worse than one that is not indexed at all — search results outlive the fix.
+# Setting the real URLs clears this by itself on the next publish.
+if (( placeholders )); then
+  printf 'User-agent: *\nDisallow: /\n' > "$SRC/robots.txt"
+  printf '\033[33m    robots.txt: Disallow / (placeholder form URLs present)\033[0m\n'
+else
+  printf 'User-agent: *\nAllow: /\n' > "$SRC/robots.txt"
+  grn "    robots.txt: indexable"
+fi
 
 # --- publish ----------------------------------------------------------------
 echo "==> mirroring dist/ -> $TARGET"
