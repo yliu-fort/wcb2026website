@@ -57,6 +57,19 @@ if hits=$(grep -rIlE 'sk-ant-|ghp_|github_pat_|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-
   [[ -n "$hits" ]] && die "possible secret baked into the bundle: $hits"
 fi
 
+# 5. Placeholder form URLs. CI blocks these on the GitHub Pages path; without
+#    the same check here the self-hosted origin happily ships dead links, which
+#    is exactly how it went live with REPLACE_WITH_ABSTRACT_FORM_ID in the
+#    bundle. A dead registration link on a conference site is worse than a
+#    missing one — visitors think they signed up.
+if grep -rIlq 'REPLACE_WITH_' "$SRC" 2>/dev/null; then
+  if [[ "${ALLOW_PLACEHOLDERS:-}" == 1 ]]; then
+    printf '\033[33m    WARN: publishing with placeholder form URLs (ALLOW_PLACEHOLDERS=1)\033[0m\n'
+  else
+    die "placeholder form URL (REPLACE_WITH_...) in the bundle. Set the real Nettskjema URLs in src/config.js, or re-run with ALLOW_PLACEHOLDERS=1 to ship anyway."
+  fi
+fi
+
 grn "    preflight clean ($(find "$SRC" -type f | wc -l) files)"
 
 # --- publish ----------------------------------------------------------------
