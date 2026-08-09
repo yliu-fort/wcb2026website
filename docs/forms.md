@@ -1,8 +1,9 @@
-# Abstract submission and registration forms
+# Abstract submission, registration and withdrawal forms
 
-Build spec for the two Skjemaker forms, and the record of what was decided and
-why. Written to be followed field-by-field while building the forms, so that the
-site copy, the emails and the forms cannot drift apart.
+Build spec for the three Skjemaker forms — abstract submission, registration,
+and withdrawal — and the record of what was decided and why. Written to be
+followed field-by-field while building the forms, so that the site copy, the
+emails and the forms cannot drift apart.
 
 **Status: not built yet.** `FORMS` in `src/config.js` still holds placeholders,
 which is what keeps CI red and `robots.txt` closed.
@@ -56,7 +57,7 @@ If MachForm supports pre-filling fields from URL query parameters — open
 question for UiB IT — put a registration link with the ID already filled into
 the acceptance email and transcription errors disappear.
 
-## Consequence of "multiple abstracts allowed" + "no edit or withdraw"
+## Consequence of "multiple abstracts allowed" + "no editing"
 
 These two decisions interact, and the interaction needs an explicit field or it
 becomes an unresolvable mess at reconciliation time.
@@ -68,10 +69,14 @@ across a hundred submissions is exactly the kind of work that produces a wrong
 programme.
 
 So the abstract form carries a replacement question (fields 12–13 below), the
-auto-responder tells authors to use it, and the site says the same. Withdrawal
-has no self-service path at all and goes to the shared mailbox — worth stating
-explicitly, because people do withdraw and they will otherwise resubmit an empty
-form or email a random committee member.
+auto-responder tells authors to use it, and the site says the same.
+
+Withdrawal is self-service through a separate form (Form 3), not through editing
+— which keeps MachForm's edit-submission feature switched off, so the mechanism
+does not depend on which version UiB runs, and produces an auditable record
+instead of free-form mail to whichever committee member the author happens to
+know. The one exception is an author who has already registered and paid: a
+refund cannot be handled by a form, so that case goes to the shared mailbox.
 
 ## Form 1 — Abstract submission
 
@@ -134,14 +139,47 @@ and in this field's help text.
 **Field 7 exists now even though registration is currently designed as free.**
 Adding it later means re-contacting everyone who already registered.
 
-**Field 6 cannot be validated.** The two forms are separate with no integration,
-so the ID is free text and is checked during reconciliation.
+**Field 6 cannot be validated.** Forms 1 and 2 are separate with no integration
+between them, so the ID is free text and is checked during reconciliation.
 
 **Non-presenting attendees must be able to complete this form**, which is what
 the conditional on field 5 is for. Only the presenting author of an abstract is
 required to register in connection with it — so **co-authors who plan to attend
 register here as ordinary attendees.** Say so on the site, or badge and catering
 counts will be short.
+
+## Form 3 — Withdrawal
+
+A withdrawal request, not an instruction the system carries out. Small, and the
+confirmation step is the part that matters.
+
+| # | Field | Type | Required | Notes |
+|---|---|---|---|---|
+| 1 | Your email | Email | ✓ | For the acknowledgement. **Not** used to authorise the withdrawal |
+| 2 | Abstract title | Text | ✓ | The identifier before acceptance, when no ID exists yet |
+| 3 | Abstract ID | Text | | Only exists after acceptance; ask for it when available |
+| 4 | Have you already registered **and paid**? | Radio | ✓ | Yes / No |
+| 5 | Reason (optional) | Paragraph | | Useful for the committee, never required |
+
+When field 4 is **Yes**, show text directing the author to email
+`wwcp2027@uib.no` instead: a refund has to be arranged by hand and a form cannot
+do it. (Accepting the submission anyway and flagging it "refund required" in the
+committee notification would capture the request with less friction and the same
+audit trail — worth reconsidering if withdrawals after payment turn out to be
+common.)
+
+**Why this is a request and not an action.** Before acceptance an abstract is
+identified only by title and author email, and both are things other people can
+know — a conference programme is public. Acting on the form directly would let
+anyone withdraw someone else's abstract. So the committee confirms by email to
+the address captured on the *original submission*, and the abstract stays in the
+programme until that reply arrives. Field 1 exists only so the requester gets an
+acknowledgement; it carries no authority. Getting this backwards — confirming to
+the address typed into the withdrawal form — reintroduces the whole problem.
+
+**A withdrawal deadline is still undecided.** Once the programme is published, a
+withdrawal is a scheduling change rather than a database edit, and it probably
+should stop being self-service at that point.
 
 ## Emails
 
@@ -157,8 +195,12 @@ counts will be short.
 > not need to do anything until then, and you do not need to register yet.
 >
 > This submission cannot be edited. If you need to correct it, submit the form
-> again and answer "Yes" to the replacement question. To withdraw an abstract,
-> email wwcp2027@uib.no.
+> again and answer "Yes" to the replacement question. To withdraw it, use the
+> withdrawal form: `<link>`
+
+Keep the withdrawal link in the receipt rather than only on the site. It is the
+one message the author is certain to still have, and an author hunting for how
+to withdraw is an author about to email someone at random.
 
 **Acceptance (manual, December 2026).** Where the ID is issued.
 
@@ -171,6 +213,17 @@ counts will be short.
 **Registration receipt (auto-responder, Form 2).** Echo the category and any
 abstract IDs, so a mistyped ID is visible to the author while it can still be
 fixed.
+
+**Withdrawal acknowledgement (auto-responder, Form 3).** Must say that the
+request is *not yet* effective:
+
+> We have received a request to withdraw `{title}`. To confirm it is genuinely
+> from you, we will email the address on the original submission. The abstract
+> stays in the programme until you reply to that message.
+
+**Withdrawal confirmation (manual).** Sent by the committee **to the email
+address on the original abstract submission** — never to the address typed into
+the withdrawal form. See the note under Form 3.
 
 ## Timeline
 
@@ -227,12 +280,14 @@ Export both forms to CSV, then:
 
 1. Drop abstract rows superseded by a replacement (field 12 = Yes; match on
    field 13 plus the author's email).
-2. Join registrations to abstracts on the abstract ID, splitting field 6 on
+2. Drop withdrawn abstracts — **only those whose withdrawal was confirmed by
+   reply**, not every row in Form 3. An unconfirmed request is not a withdrawal.
+3. Join registrations to abstracts on the abstract ID, splitting field 6 on
    commas.
-3. Check both directions. **A presenting author with no registration** must be
+4. Check both directions. **A presenting author with no registration** must be
    chased before the programme is fixed. **A registration quoting an unknown
    ID** is usually a typo, occasionally someone who was not accepted.
-4. Match on email as a fallback where an ID is missing or wrong.
+5. Match on email as a fallback where an ID is missing or wrong.
 
 ## Decision record
 
@@ -247,7 +302,8 @@ Settled:
 | Who builds the forms | Organiser, with their own UiB account |
 | Multiple abstracts per person | Allowed; registration accepts several IDs |
 | Co-author registration | Only the presenting author registers per abstract |
-| Edit / withdraw after submission | Not offered; corrections via replacement, withdrawal by email |
+| Edit after submission | Not offered; corrections via a replacement submission |
+| Withdraw after submission | Self-service via Form 3, confirmed by reply to the original submitter. Already registered and paid: by email, because of the refund |
 | Notification recipient | Shared mailbox, `wwcp2027@uib.no` — never a personal address |
 | Form interface language | English |
 | Data protection | Confirmed by the organiser; treated as compliant here |
@@ -261,6 +317,7 @@ Open:
 | Timeline: registration opening, non-presenter deadline | Site copy |
 | Fee model | Opening registration; **must be settled before December 2026** |
 | Cap on presentations per person | Field 6 help text, site copy |
+| Withdrawal deadline, and whether self-service stops once the programme is published | Form 3 availability, site copy |
 | Whether travel support or a prize exists | Field 11 of Form 1 |
 | China reachability of `skjemaker.app.uib.no` | Being checked by the organiser |
 | `wwcp2027@uib.no` alias predates the "Bergen 2027" name | Replace once a matching alias exists |
