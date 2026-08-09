@@ -82,17 +82,19 @@ fi
 
 grn "    preflight clean ($(find "$SRC" -type f | wc -l) files)"
 
-# robots.txt tracks the same signal as the guard above rather than being a flag
-# someone has to remember to flip. While the form URLs are placeholders the site
-# is unfinished, and a conference page indexed with dead registration links is
-# worse than one that is not indexed at all — search results outlive the fix.
-# Setting the real URLs clears this by itself on the next publish.
-if (( placeholders )); then
-  printf 'User-agent: *\nDisallow: /\n' > "$SRC/robots.txt"
-  printf '\033[33m    robots.txt: Disallow / (placeholder form URLs present)\033[0m\n'
-else
+# robots.txt comes from SITE.indexable, which is an explicit launch switch and
+# not inferred from the placeholder state above. Those are different questions:
+# the registration URL is legitimately a placeholder until December while
+# abstract submission is open from August, and inferring one from the other
+# would hide the site from search for exactly the months authors are looking for
+# it. Printed on every publish, loudly while it is off, so it is hard to leave
+# wrong in either direction.
+if node "$REPO/scripts/site-indexable.mjs" >/dev/null 2>&1; then
   printf 'User-agent: *\nAllow: /\n' > "$SRC/robots.txt"
   grn "    robots.txt: indexable"
+else
+  printf 'User-agent: *\nDisallow: /\n' > "$SRC/robots.txt"
+  printf '\033[33m    robots.txt: Disallow / — set SITE.indexable = true in src/config.js at launch\033[0m\n'
 fi
 
 # --- publish ----------------------------------------------------------------

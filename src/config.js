@@ -6,6 +6,19 @@
 // details (e.g. speakers' email addresses) in here, not even in comments.
 // ============================================================================
 
+// Whether search engines may index the site. Flip to true at launch — the
+// deploy writes robots.txt from this, and every publish prints the current
+// state so it is hard to leave wrong.
+//
+// Deliberately its own switch rather than being inferred from whether the form
+// URLs are still placeholders. Those are two different questions: abstract
+// submission opens 30 Aug 2026 while registration does not open until December,
+// so the registration URL is legitimately a placeholder during the months when
+// authors most need to find this site in a search.
+export const SITE = {
+  indexable: false,
+};
+
 export const CONF = {
   shortName: "Bergen 2027",
   fullName: "8th Workshop on Waves and Wave-Coupled Processes",
