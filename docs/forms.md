@@ -241,6 +241,40 @@ should stop being self-service at that point.
 
 ## Emails
 
+### Who sends what
+
+| Message | Sent by | When |
+|---|---|---|
+| Abstract receipt | **Skjemaker**, automatically | On submission of Form 1 |
+| Registration receipt | **Skjemaker**, automatically | On submission of Form 2 |
+| Acceptance / rejection | **Committee**, by hand | December 2026, mail-merged from the CSV export |
+| Withdrawal acknowledgement | Committee, by hand | On a withdrawal request (Skjemaker would do it if Form 3 is ever built) |
+| Withdrawal confirmation | **Committee**, by hand | Always manual — it is the authentication step |
+
+Only the two receipts are automatic, and both are sent by UiB's server, not by
+this site and not by anyone on the committee. That is also why the reference has
+to come from Skjemaker: nothing else is in the loop at the moment the receipt
+goes out.
+
+### From and Reply-To
+
+MachForm's documentation says a **self-hosted install must send from its own
+domain** — customisable From addresses are a cloud-plan feature. If that holds
+for Skjemaker, receipts arrive from something like `…@app.uib.no`, which is an
+address no author recognises, and replies land in a mailbox nobody reads. Both
+are avoidable:
+
+- **Set Reply-To to `wwcp2027@uib.no`.** Reply-To is customisable
+  independently of From, and authors do reply to receipts.
+- **Name the workshop in the From display name and the subject**, so the message
+  is recognisable even when the address is not.
+- Confirm the actual From address with UiB IT (question 7) and put it in the
+  site's submission instructions, so authors know what to whitelist. A receipt
+  in a spam folder is the failure this whole design is trying to avoid.
+
+Deliverability itself is not a worry: mail from UiB's own server carries UiB's
+SPF and DKIM, which is a good deal better than anything sent from this VM.
+
 **Abstract receipt (auto-responder, Form 1).** Carries the reference, and says
 plainly that a reference is not a decision.
 
@@ -341,6 +375,9 @@ One email covers all of them:
    design section.
 5. Is payment collection available, or should a fee go through UiB invoicing?
 6. Retention: how long are submissions kept, and who at UiB can access them?
+7. What From address do auto-responders use, and can Reply-To be set to
+   `wwcp2027@uib.no`? We need the From address to publish it as something for
+   authors to whitelist.
 
 The English-interface question is settled — it can be switched.
 
