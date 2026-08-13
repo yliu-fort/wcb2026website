@@ -110,3 +110,12 @@ fi
 
 printf '%s\n' "$remote_sha" > "$STATE"
 log "published ${remote_sha:0:12}"
+
+# The unit runs an installed copy of this script, so a merged improvement to it
+# does not take effect until someone reinstalls. That is intended — see the
+# service file — but silent drift is not, so say so once per publish.
+installed=/usr/local/sbin/bergen2027-autopublish
+if [[ -f "$installed" ]] && ! cmp -s "$CLONE/deploy/autopublish.sh" "$installed"; then
+  log "NOTE: $installed differs from deploy/autopublish.sh at ${remote_sha:0:12}."
+  log "      Reinstall to pick it up: sudo install -m 755 deploy/autopublish.sh $installed"
+fi

@@ -8,11 +8,23 @@ Wants=network-online.target
 Type=oneshot
 User=ubuntu
 
-# Runs the copy in the human's checkout, not the one in /srv/bergen2027-publish
-# that the script itself resets — bash reads a script incrementally, so
-# rewriting the running file mid-execution is a way to get very strange errors.
-# Same pattern as verify-exposure.service.
-ExecStart=/home/ubuntu/wcb2026website/deploy/autopublish.sh
+# An installed copy, deliberately not a path inside a git working tree.
+#
+# It first pointed at ~/wcb2026website/deploy/autopublish.sh, matching
+# verify-exposure.service. That broke within minutes of being armed: checking
+# out a branch that predates the script leaves ExecStart pointing at nothing,
+# and the timer fails every five minutes until someone notices. A working tree
+# is a human's scratch space, not a stable interface.
+#
+# Pointing at /srv/bergen2027-publish is worse — the script resets that clone,
+# and bash reads a script incrementally, so it would be rewriting the file it is
+# still executing.
+#
+# The cost is that changing the mechanism needs a human to reinstall:
+#   sudo install -m 755 deploy/autopublish.sh /usr/local/sbin/bergen2027-autopublish
+# which is the right side to err on. Content reaches production automatically;
+# changes to *how* it gets there do not.
+ExecStart=/usr/local/sbin/bergen2027-autopublish
 
 # The build is not worth blocking a shutdown for, and a wedged npm should not
 # hold the timer forever.

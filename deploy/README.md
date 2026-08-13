@@ -35,6 +35,13 @@ Three things worth knowing:
 - **It works from its own clone in `/srv/bergen2027-publish`,** never
   `~/wcb2026website`. That working tree belongs to a human who may be mid-edit on
   another branch, and `git reset --hard` in it would be an expensive surprise.
+- **The unit runs an installed copy** at `/usr/local/sbin/bergen2027-autopublish`,
+  not the script in the repo. The first version pointed `ExecStart` at
+  `~/wcb2026website/deploy/autopublish.sh` and broke within minutes of being
+  armed: checking out a branch that predates the script leaves `ExecStart`
+  pointing at nothing. So changing the *mechanism* takes a deliberate reinstall
+  — content reaches production automatically, changes to how it gets there do
+  not. The script warns on each publish if the two have drifted.
 - **It is pull-based.** An Action pushing over SSH would want an inbound port, a
   deploy key on the runner and a secret in the repo. Here the VM asks GitHub what
   `main` is and GitHub is told nothing, which keeps the surface at 22/80/443 with
