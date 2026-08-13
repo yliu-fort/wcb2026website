@@ -1,0 +1,26 @@
+[Unit]
+Description=Probe the public site for accidental exposure
+Documentation=file:///home/ubuntu/wcb2026website/deploy/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ubuntu
+
+# An installed copy, for the same reason as bergen2027-autopublish.service:
+# this used to point into ~/wcb2026website, and a path inside a git working
+# tree stops existing the moment someone checks out a branch that predates the
+# file. For the autopublish timer that means a missed publish; here it means the
+# hourly *exposure* check silently stops running, which is the failure you would
+# least like to be silent.
+#
+#   sudo install -m 755 deploy/verify-exposure.sh /usr/local/sbin/bergen2027-verify-exposure
+#
+# The script is self-contained — no sibling files, no $REPO — so a lone copy
+# behaves exactly like the one in the repo.
+ExecStart=/usr/local/sbin/bergen2027-verify-exposure
+
+# The probes have their own --max-time; this is only a backstop against a hung
+# curl holding the unit open until the next hourly run.
+TimeoutStartSec=10min

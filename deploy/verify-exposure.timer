@@ -1,0 +1,13 @@
+[Unit]
+Description=Hourly exposure check
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=1h
+
+# Catch up after the VM has been off, so a reboot does not silently skip the
+# check that would notice the reboot broke something.
+Persistent=true
+
+[Install]
+WantedBy=timers.target
