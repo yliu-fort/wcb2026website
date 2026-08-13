@@ -74,6 +74,20 @@ While either URL in `src/config.js` is still a `REPLACE_WITH_…` placeholder,
 Abstract templates offered to authors live in `public/downloads/`
 (`bergen2027-abstract-template.docx` / `.tex`).
 
+## Fonts
+
+Inter and Lora are **self-hosted** from `public/fonts/`, not loaded from Google.
+Same constraint as the forms and the venue map: `fonts.gstatic.com` is
+unreachable from mainland China, and a `preconnect` to a blocked host is the
+first thing a visitor there hits. Self-hosting also keeps visitor IP addresses
+out of Google's logs, which is the part European institutions care about.
+
+Both ship as variable fonts, so one file per subset covers every weight
+(`@font-face` details and update instructions are at the top of
+`src/styles.css`). `deploy/publish.sh` refuses to publish a build that fetches
+from `fonts.googleapis.com`, `fonts.gstatic.com` or `ajax.googleapis.com`, so
+this cannot quietly come back.
+
 ## Funding acknowledgment
 
 The Sponsors section follows the EU emblem rules for 2021–2027 programmes: the
@@ -105,6 +119,7 @@ src/
 public/
   images/                     logos, hero image, EU emblem
   downloads/                  abstract templates (docx / LaTeX)
+  fonts/                      self-hosted Inter + Lora (OFL, see LICENSE there)
   favicon.svg
 docs/forms.md                 Skjemaker field specifications for both forms
 .github/workflows/deploy.yml  build + Pages deployment

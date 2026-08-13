@@ -80,6 +80,20 @@ if (( placeholders )); then
   fi
 fi
 
+# 6. Anything the page would fetch from Google. Mainland-China reachability is a
+#    hard constraint for this audience, which is why the forms are Skjemaker and
+#    the venue map is OpenStreetMap — but the fonts were loaded from
+#    fonts.gstatic.com for months, and a preconnect to a blocked host is the
+#    first thing every visitor there hits. Fonts are self-hosted now; this stops
+#    the next stylesheet or embed from quietly reintroducing the problem.
+#    Matches only the host in URL position (`//fonts.gstatic.com`), never bare
+#    prose, so the comment in src/styles.css explaining all this does not make
+#    the check match itself — the trap that rule 5 documents.
+if goog=$(grep -rIlE '//(fonts\.googleapis\.com|fonts\.gstatic\.com|ajax\.googleapis\.com)' \
+      --exclude='*.map' "$SRC" 2>/dev/null); then
+  [[ -n "$goog" ]] && die "bundle fetches from Google, which mainland China cannot reach: $goog"
+fi
+
 grn "    preflight clean ($(find "$SRC" -type f | wc -l) files)"
 
 # robots.txt comes from SITE.indexable, which is an explicit launch switch and
