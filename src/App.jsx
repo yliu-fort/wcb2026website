@@ -24,7 +24,7 @@ function ConfigWarning() {
   return (
     <div className="config-warning">
       <strong>Placeholder form URL{missing.length > 1 ? 's' : ''}:</strong>{' '}
-      {missing.join(' & ')} — set the real Nettskjema links in{' '}
+      {missing.join(' & ')} — set the real Skjemaker links in{' '}
       <code>src/config.js</code> before deploying.
     </div>
   );

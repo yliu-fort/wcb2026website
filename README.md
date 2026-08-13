@@ -60,12 +60,13 @@ Common tasks:
 
 ## Forms
 
-Abstract submission and registration each use a
-[Nettskjema](https://nettskjema.no) form — Norwegian-hosted (reachable from
-mainland China, unlike Google Forms), accepts PDF uploads from external
-respondents, and sends an automatic receipt with a reference number, which
-presenting authors quote when registering. Field-by-field specifications for
-both forms are in [`docs/forms.md`](docs/forms.md).
+Abstract submission and registration each use a form in
+[Skjemaker](https://skjemaker.app.uib.no), UiB's self-hosted MachForm —
+university-hosted (reachable from mainland China, unlike Google Forms), accepts
+PDF/DOCX uploads from external respondents with no login, and sends an automatic
+receipt carrying the submission reference, which presenting authors quote when
+registering. Field-by-field specifications for both forms are in
+[`docs/forms.md`](docs/forms.md).
 
 While either URL in `src/config.js` is still a `REPLACE_WITH_…` placeholder,
 `npm run dev` shows a red warning banner and CI refuses to deploy.
@@ -105,6 +106,6 @@ public/
   images/                     logos, hero image, EU emblem
   downloads/                  abstract templates (docx / LaTeX)
   favicon.svg
-docs/forms.md                 Nettskjema field specifications for both forms
+docs/forms.md                 Skjemaker field specifications for both forms
 .github/workflows/deploy.yml  build + Pages deployment
 ```
