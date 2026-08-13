@@ -19,11 +19,13 @@
     <meta property="og:image" content="https://yliu-fort.github.io/wcb2026website/images/wave-hero.png" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
-        rel="stylesheet" />
+    <!-- Fonts are self-hosted; see the @font-face block at the top of
+         src/styles.css for why. These two carry the whole first screen, so
+         preloading them removes the flash of fallback text that font-display:
+         swap would otherwise show. The latin-ext files are deliberately not
+         preloaded: unicode-range means most visitors never fetch them. -->
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/lora-latin.woff2" as="font" type="font/woff2" crossorigin />
 </head>
 
 <body>
