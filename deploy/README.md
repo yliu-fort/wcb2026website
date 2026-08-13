@@ -35,6 +35,13 @@ Three things worth knowing:
 - **It works from its own clone in `/srv/bergen2027-publish`,** never
   `~/wcb2026website`. That working tree belongs to a human who may be mid-edit on
   another branch, and `git reset --hard` in it would be an expensive surprise.
+- **The unit runs an installed copy** at `/usr/local/sbin/bergen2027-autopublish`,
+  not the script in the repo. The first version pointed `ExecStart` at
+  `~/wcb2026website/deploy/autopublish.sh` and broke within minutes of being
+  armed: checking out a branch that predates the script leaves `ExecStart`
+  pointing at nothing. So changing the *mechanism* takes a deliberate reinstall
+  — content reaches production automatically, changes to how it gets there do
+  not. The script warns on each publish if the two have drifted.
 - **It is pull-based.** An Action pushing over SSH would want an inbound port, a
   deploy key on the runner and a secret in the repo. Here the VM asks GitHub what
   `main` is and GitHub is told nothing, which keeps the surface at 22/80/443 with
@@ -170,17 +177,30 @@ Tracked here, installed to the system by `enable-https.sh`:
 - `nginx-bootstrap-http.conf` → same path, temporarily, to answer the first
   ACME challenge before any certificate exists
 - `nginx-hardening.conf` → `/etc/systemd/system/nginx.service.d/hardening.conf`
-- `bergen2027-autopublish.service` / `.timer` → `/etc/systemd/system/`, installed
-  with `sudo install -m 644 deploy/bergen2027-autopublish.* /etc/systemd/system/`
-  then `sudo systemctl enable --now bergen2027-autopublish.timer`
-- `publish.sh`, `autopublish.sh`, `verify-exposure.sh`, `enable-https.sh` — run
-  from the repo
+- `publish.sh`, `enable-https.sh` — run from the repo
 - `~/.claude/hooks/guard-public-exposure.sh` — untracked, outside the repo
 
-`verify-exposure.timer` predates this and is **not** tracked here; its unit was
-written straight into `/etc`. Worth pulling into the repo the next time it is
-touched, for the same reason these two are: a unit only in `/etc` is invisible to
-review and lost with the VM.
+The two timers and the scripts they run are installed rather than executed from
+the repo, because a path inside a git working tree stops existing the moment
+someone checks out a branch that predates the file:
+
+```bash
+sudo install -m 755 deploy/autopublish.sh      /usr/local/sbin/bergen2027-autopublish
+sudo install -m 755 deploy/verify-exposure.sh  /usr/local/sbin/bergen2027-verify-exposure
+sudo install -m 644 deploy/bergen2027-autopublish.service deploy/bergen2027-autopublish.timer \
+                    deploy/verify-exposure.service deploy/verify-exposure.timer \
+                    /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now bergen2027-autopublish.timer verify-exposure.timer
+```
+
+Re-run the relevant line after changing a script or a unit; nothing picks those
+up on its own, deliberately. `autopublish.sh` warns on each publish if its
+installed copy has drifted from `main`.
+
+`verify-exposure`'s units used to exist only in `/etc`, written there by hand and
+never tracked — invisible to review and lost with the VM. They are in the repo
+now, so all four unit files can be diffed and rebuilt from a clone.
 
 ## Still open
 
