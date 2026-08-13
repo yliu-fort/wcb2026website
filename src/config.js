@@ -39,20 +39,18 @@ export const CONF = {
   presenterRegistrationDeadline: "12 January 2027",
 };
 
-// Both forms are built in Nettskjema (nettskjema.no): Norwegian-hosted, so
-// reachable from mainland China (Google Forms is not), supports PDF upload by
-// external respondents, and issues an automatic email receipt with a reference
-// number — which the registration form asks presenting authors to quote.
-//
-// TODO(before merging to main): replace both URLs with the real forms. While a
-// URL contains REPLACE_WITH_, `npm run dev` shows a warning banner and CI
-// refuses to deploy.
+// Both forms are built in Skjemaker (skjemaker.app.uib.no), UiB's self-hosted
+// MachForm: hosted by the university rather than Google, so not blocked from
+// mainland China; accepts submissions with no login; takes PDF/DOCX upload from
+// external respondents; and merges the entry number into its auto-responder,
+// which is how the abstract receipt issues the B27-… reference the registration
+// form asks presenting authors to quote. See docs/forms.md.
 export const FORMS = {
   abstract: {
-    url: "https://nettskjema.no/a/REPLACE_WITH_ABSTRACT_FORM_ID",
+    url: "https://skjemaker.app.uib.no/view.php?id=21385291",
   },
   registration: {
-    url: "https://nettskjema.no/a/REPLACE_WITH_REGISTRATION_FORM_ID",
+    url: "https://skjemaker.app.uib.no/view.php?id=21386961",
   },
 };
 

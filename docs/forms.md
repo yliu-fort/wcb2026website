@@ -5,10 +5,26 @@ and withdrawal — and the record of what was decided and why. Written to be
 followed field-by-field while building the forms, so that the site copy, the
 emails and the forms cannot drift apart.
 
-**Status: none of them built yet.** `FORMS` in `src/config.js` still holds
-placeholders, which is what keeps CI red. Forms 1 and 2 are the first round;
+**Status: Forms 1 and 2 are built** (13 August 2026), and their URLs are now in
+`FORMS` in `src/config.js`:
+
+| Form | URL |
+|---|---|
+| 1 — Abstract submission | `https://skjemaker.app.uib.no/view.php?id=21385291` |
+| 2 — Registration | `https://skjemaker.app.uib.no/view.php?id=21386961` |
+
 Form 3 is deferred by decision and withdrawal runs by email until then.
 `robots.txt` is closed separately, via `SITE.indexable`.
+
+Both forms accept submissions from the moment someone has the link, and the
+abstract window does not open until 30 August 2026. Neither URL is published
+yet, so nothing is exposed. Until they open, each form carries a red **TEST
+PERIOD** box above the description saying it is not open, that anything sent is
+a test, will not be reviewed, and may be deleted — and the submission
+confirmation page repeats it, so a test submission is not mistaken for a real
+one. Skjemaker's description field accepts HTML including inline styles, which
+is what the box is made of. **Remove both notices when the forms open**, or the
+first real authors will be told their abstract does not count.
 
 ## Platform
 
@@ -26,14 +42,17 @@ Verified by fetching a live UiB form anonymously:
   the form** and is configured under Notifications → "Send Confirmation Email to
   User".
 
-Not established, and the design now depends on it:
+Established while building Form 1, and the design depended on it:
 
-- **Whether a submission reference can reach the author.** MachForm keeps an
-  entry number, but only form owners see it, in the Entries table. Its merge
-  tags are documented as field-based, there is no "unique ID" field type, and
-  recurring requests on MachForm's own forums suggest exposing the entry number
-  is not built in. Question 4 to UiB IT settles it; see the design section for
-  what to do with either answer.
+- **A submission reference can reach the author.** `{entry_no}` is a valid merge
+  tag in the respondent auto-responder, alongside `{element_N}` for each field —
+  the Merge Tags Lookup in Notification Settings lists it under "Entry
+  Information". The received wisdom that MachForm only exposes the entry number
+  to form owners is wrong for this version. This is what settles question 4
+  below, and no fallback is needed.
+- **Auto-responder From is `noreply@uib.no` and cannot be changed**, which
+  confirms the self-hosted-install limitation. **Reply-To is customisable**, and
+  is set as the Emails section describes.
 
 ## Design: one reference, issued at submission
 
@@ -69,35 +88,15 @@ table to keep.
 **The reference should be the Skjemaker entry number, prefixed** — unique,
 stable, already in the CSV export, nothing assigned by hand.
 
-### This depends on an unanswered question, and it is now blocking
+### This was the blocking question, and it is settled
 
-MachForm exposes the entry number to *form owners* in the Entries table. What is
-not established is whether it can be **merged into the auto-responder** — its
-merge tags are documented as field-based, and there is no "unique ID" field
-type. So the design above cannot be built until UiB IT answers question 4 below.
-Ask that before building Form 1, not after.
-
-Fallbacks, best first, if the answer is no:
-
-1. **Custom confirmation page.** MachForm shows a page after submission; if the
-   entry number can appear there, the author sees it immediately and the receipt
-   email carries title and filename as before. Screen-only, so weaker than
-   email, but no moving parts. Worth asking in the same message.
-2. **A reference minted by this site.** The abstract page links to the form with
-   `?ref=B27-XXXXXX`; a hidden field on the form captures it, and the
-   auto-responder echoes it like any other field. Depends on URL pre-fill
-   (question 3). **Caveat that rules it out unless handled:** an author who
-   reaches the form from a bookmark or a link a colleague forwarded arrives with
-   no token, or worse, with someone else's — so the reference stops being
-   unique exactly when people start sharing the link, which they will.
-3. **Keep the number at acceptance only**, i.e. the previous design, and accept
-   title-matching for replacements.
-
-A webhook from Skjemaker to a script on this server could mint and mail
-references, but it would put abstract data through infrastructure outside UiB,
-needs its own mail deliverability and secret handling, and is far more machinery
-than a workshop needs. Not recommended unless 1–3 all fail and the committee
-still wants it.
+The design above needed the entry number to reach the author, which meant
+merging it into the auto-responder. It does: `{entry_no}` is a documented merge
+tag in Skjemaker's Notification Settings, and Form 1's receipt is built on it.
+The three fallbacks this section used to carry — entry number on the
+confirmation page, a reference minted by this site and passed through a hidden
+field, and keeping the number until acceptance — are all unnecessary, and so is
+the webhook-to-this-server variant that was never recommended anyway.
 
 If URL pre-fill (question 3) works, put a registration link with the reference
 already filled into the acceptance email, and transcription errors disappear.
@@ -144,7 +143,7 @@ titles and author addresses are not secrets.
 | 10 | Abstract text | Paragraph | | Optional but strongly wanted — see below |
 | 11 | Early-career researcher | Checkbox | | Only if travel support or a prize exists |
 | 12 | Is this a replacement for an abstract you already submitted? | Radio | ✓ | Yes / No |
-| 13 | Reference of the submission it replaces | Text | conditional | Shown only when 12 = Yes. From the earlier receipt, e.g. `B27-042`. Falls back to the title if the reference design cannot be built |
+| 13 | Reference of the submission it replaces | Text | conditional | Shown only when 12 = Yes, via Skjemaker's Logic Builder. Help text: from the receipt email of the abstract being replaced, e.g. `B27-042`, or the exact title if the author no longer has the reference |
 | 14 | Consent to data processing | Checkbox | ✓ | |
 
 **Field 10 is what actually buys flexibility.** The decision on file formats is
@@ -158,6 +157,10 @@ settled): accept PDF and DOCX rather than PDF alone; treat the repository
 templates in `public/downloads/` as recommended rather than mechanically
 enforced; request the largest size limit UiB will permit. Tightening later is
 easy; loosening after authors have hit a wall is not.
+
+As built: accepted types `pdf, docx, doc`, one file per submission, and no
+size cap set on the field, so the server default applies — question 1 to UiB IT
+is what says whether that default is generous enough to leave alone.
 
 **Theme drift.** The dropdown in Skjemaker is a manual copy of `THEMES` in
 `src/config.js`. There is no mechanism keeping them in sync. Change one, change
@@ -259,18 +262,33 @@ goes out.
 ### From and Reply-To
 
 MachForm's documentation says a **self-hosted install must send from its own
-domain** — customisable From addresses are a cloud-plan feature. If that holds
-for Skjemaker, receipts arrive from something like `…@app.uib.no`, which is an
-address no author recognises, and replies land in a mailbox nobody reads. Both
-are avoidable:
+domain** — customisable From addresses are a cloud-plan feature. That holds for
+Skjemaker: **From is `noreply@uib.no` and the field is locked.** It is an
+address no author recognises, so the three mitigations below are all load-bearing
+rather than nice-to-have. As built:
 
-- **Set Reply-To to `wwcp2027@uib.no`.** Reply-To is customisable
+- **Reply-To is `wwcp2027@uib.no`** on both receipts. Reply-To is customisable
   independently of From, and authors do reply to receipts.
-- **Name the workshop in the From display name and the subject**, so the message
-  is recognisable even when the address is not.
-- Confirm the actual From address with UiB IT (question 7) and put it in the
-  site's submission instructions, so authors know what to whitelist. A receipt
-  in a spam folder is the failure this whole design is trying to avoid.
+- **The workshop is named in the From display name and the subject**, so the
+  message is recognisable even when the address is not — From "Bergen 2027 —
+  Waves and Wave-Coupled Processes", subjects "Abstract received — your
+  reference is B27-{entry_no} (Bergen 2027)" and "Registration received —
+  Bergen 2027 [#{entry_no}]".
+- Put `noreply@uib.no` in the site's submission instructions, so authors know
+  what to whitelist. A receipt in a spam folder is the failure this whole design
+  is trying to avoid.
+
+**`wwcp2027@uib.no` does not exist yet**, so every use of it above is currently a
+bounce: the two Reply-To addresses, the withdrawal instruction in Form 1's
+description, and the same instruction in Form 1's receipt.
+
+The committee notification inbox is **`wwcp2027@gmail.com`** in the meantime, as
+a throwaway for testing. Two reasons that has to be temporary rather than
+convenient: it is not the shared UiB mailbox the decision below calls for, and
+because notifications carry `{entry_data}` — the whole submission — every real
+abstract that arrives while it is pointed there puts author names, addresses and
+affiliations on Google's servers rather than UiB's. Point it at the UiB alias
+before either URL is published.
 
 Deliverability itself is not a worry: mail from UiB's own server carries UiB's
 SPF and DKIM, which is a good deal better than anything sent from this VM.
@@ -370,14 +388,14 @@ One email covers all of them:
 1. File upload: maximum size and permitted types for respondents?
 2. Which MachForm version is Skjemaker running?
 3. Can fields be pre-filled from URL query parameters?
-4. **Is the entry number available as a merge tag in the auto-responder, or
-   displayable on the confirmation page?** This one blocks Form 1 — see the
-   design section.
+4. ~~Is the entry number available as a merge tag in the auto-responder?~~
+   **Answered by building it: yes, `{entry_no}`.** No longer needs asking.
 5. Is payment collection available, or should a fee go through UiB invoicing?
 6. Retention: how long are submissions kept, and who at UiB can access them?
-7. What From address do auto-responders use, and can Reply-To be set to
-   `wwcp2027@uib.no`? We need the From address to publish it as something for
-   authors to whitelist.
+7. ~~What From address do auto-responders use, and can Reply-To be set?~~
+   **Answered by building it: From is `noreply@uib.no` and is locked; Reply-To
+   is customisable and is set.** What is left of this one is the mailbox itself:
+   `wwcp2027@uib.no` still has to be created.
 
 The English-interface question is settled — it can be switched.
 
@@ -407,14 +425,14 @@ Settled:
 |---|---|
 | Review step | Yes — committee reviews, acceptance notification sent |
 | Form structure | Two separate forms |
-| Abstract reference | One reference for the whole lifecycle, issued in the submission receipt and reused in the acceptance email. Skjemaker entry number, prefixed — **conditional on UiB IT question 4** |
+| Abstract reference | One reference for the whole lifecycle, issued in the submission receipt and reused in the acceptance email. Skjemaker entry number, prefixed: `B27-{entry_no}` — **built and working** |
 | Registration fee | Will be charged; model undecided; designed as free for now |
 | Who builds the forms | Organiser, with their own UiB account |
 | Multiple abstracts per person | Allowed; registration accepts several IDs |
 | Co-author registration | Only the presenting author registers per abstract |
 | Edit after submission | Not offered; corrections via a replacement submission |
 | Withdraw after submission | By email to the shared mailbox for now. Self-service (Form 3) is designed but deferred until the rules are settled. Either way, confirmation goes to the address on the original submission |
-| Notification recipient | Shared mailbox, `wwcp2027@uib.no` — never a personal address |
+| Notification recipient | Shared mailbox, `wwcp2027@uib.no` — never a personal address. Temporarily `wwcp2027@gmail.com` for testing because the alias does not exist yet; swap it back before publishing either URL |
 | Form interface language | English |
 | Data protection | Confirmed by the organiser; treated as compliant here |
 | Search engine indexing | Blocked until launch, via `SITE.indexable` in `src/config.js` |
@@ -423,13 +441,14 @@ Open:
 
 | Decision | Blocking what |
 |---|---|
-| Whether the entry number can reach the author (UiB IT q4) | Building Form 1 — the reference design falls back if not |
-| File formats, template enforcement, size limits | Building Form 1; permissive until settled |
+| File formats, template enforcement, size limits | Built permissively (`pdf, docx, doc`, one file, no cap); tighten once UiB IT answers q1 |
 | Timeline: registration opening, non-presenter deadline | Site copy |
 | Fee model | Opening registration; **must be settled before December 2026** |
 | Cap on presentations per person | Field 6 help text, site copy |
 | Withdrawal deadline, and whether self-service stops once the programme is published | Building Form 3 |
 | Whether post-payment withdrawals belong in Form 3 or stay on email | Building Form 3 |
-| Whether travel support or a prize exists | Field 11 of Form 1 |
+| Whether travel support or a prize exists | Field 11 of Form 1 — built, delete it if neither exists |
+| Whether a conference dinner is held | Field 10 of Form 2 — built, delete it if there is none |
 | China reachability of `skjemaker.app.uib.no` | Being checked by the organiser |
+| `wwcp2027@uib.no` does not exist yet | Reply-To and the withdrawal instruction on both forms; until it exists the notification inbox is a throwaway Gmail account, so submissions must not open |
 | `wwcp2027@uib.no` alias predates the "Bergen 2027" name | Replace once a matching alias exists |
