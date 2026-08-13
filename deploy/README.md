@@ -19,6 +19,42 @@ The only supported way to change what is public. Builds, scans the output,
 mirrors it into the docroot, reloads nginx, re-probes the live server.
 `--skip-build` republishes the existing `dist/`.
 
+### Automatically, from `main`
+
+`bergen2027-autopublish.timer` runs `autopublish.sh` every five minutes. If
+`origin/main` has moved since the last publish, it takes the new commit and runs
+`publish.sh`. Nothing else is needed after a merge.
+
+This exists because the two origins used to drift. GitHub Pages redeploys itself
+through Actions; this one did not, and on 2026-08-13 it spent a day serving a
+build whose form links were still `REPLACE_WITH_ABSTRACT_FORM_ID` — dead links
+on a live conference site — because a merge landed and nobody ran `publish.sh`.
+
+Three things worth knowing:
+
+- **It works from its own clone in `/srv/bergen2027-publish`,** never
+  `~/wcb2026website`. That working tree belongs to a human who may be mid-edit on
+  another branch, and `git reset --hard` in it would be an expensive surprise.
+- **It is pull-based.** An Action pushing over SSH would want an inbound port, a
+  deploy key on the runner and a secret in the repo. Here the VM asks GitHub what
+  `main` is and GitHub is told nothing, which keeps the surface at 22/80/443 with
+  no secrets on disk.
+- **A refusal is safe.** `publish.sh` runs its whole preflight before it touches
+  the docroot, so a bad `main` fails without changing what is public, and the
+  state file is not advanced — the next tick retries. Verified by pointing the
+  script at a scratch origin whose `publish.sh` always exits 1: the run failed,
+  the state stayed empty, the docroot did not move.
+
+```bash
+systemctl status bergen2027-autopublish.timer     # is it armed
+journalctl -u bergen2027-autopublish.service -n 50  # what did it do
+deploy/autopublish.sh --force                     # publish now, ignoring state
+```
+
+State lives in `/var/lib/bergen2027-autopublish/`: `last-published` is the SHA
+that reached the docroot, `npm-lock-hash` is what decides whether `npm ci` needs
+to run again, `lock` serialises overlapping ticks.
+
 ## Going live (one time)
 
 ```bash
@@ -134,8 +170,17 @@ Tracked here, installed to the system by `enable-https.sh`:
 - `nginx-bootstrap-http.conf` → same path, temporarily, to answer the first
   ACME challenge before any certificate exists
 - `nginx-hardening.conf` → `/etc/systemd/system/nginx.service.d/hardening.conf`
-- `publish.sh`, `verify-exposure.sh`, `enable-https.sh` — run from the repo
+- `bergen2027-autopublish.service` / `.timer` → `/etc/systemd/system/`, installed
+  with `sudo install -m 644 deploy/bergen2027-autopublish.* /etc/systemd/system/`
+  then `sudo systemctl enable --now bergen2027-autopublish.timer`
+- `publish.sh`, `autopublish.sh`, `verify-exposure.sh`, `enable-https.sh` — run
+  from the repo
 - `~/.claude/hooks/guard-public-exposure.sh` — untracked, outside the repo
+
+`verify-exposure.timer` predates this and is **not** tracked here; its unit was
+written straight into `/etc`. Worth pulling into the repo the next time it is
+touched, for the same reason these two are: a unit only in `/etc` is invisible to
+review and lost with the VM.
 
 ## Still open
 

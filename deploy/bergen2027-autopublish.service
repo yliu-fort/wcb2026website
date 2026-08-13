@@ -1,0 +1,19 @@
+[Unit]
+Description=Publish oceancoupling.eu from origin/main when it moves
+Documentation=file:///home/ubuntu/wcb2026website/deploy/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ubuntu
+
+# Runs the copy in the human's checkout, not the one in /srv/bergen2027-publish
+# that the script itself resets — bash reads a script incrementally, so
+# rewriting the running file mid-execution is a way to get very strange errors.
+# Same pattern as verify-exposure.service.
+ExecStart=/home/ubuntu/wcb2026website/deploy/autopublish.sh
+
+# The build is not worth blocking a shutdown for, and a wedged npm should not
+# hold the timer forever.
+TimeoutStartSec=15min
