@@ -1,73 +1,111 @@
-# WCB 2026 — Conference Website (Demo)
+# Bergen 2027 — Conference Website
 
-A fully static academic-conference site for the (fictional) **Wave Coupling and
-Beyond 2026** workshop. No build step required: React 18 is loaded from a CDN
-and JSX is transpiled in the browser by `@babel/standalone`.
+Website for the **8th Workshop on Waves and Wave-Coupled Processes**, 12–15
+April 2027, Bergen, Norway, hosted by the University of Bergen and the
+Norwegian Meteorological Institute.
 
-## Files
+Live at <https://yliu-fort.github.io/wcb2026website/>.
 
-- `index.html` — entry point. Loads React, ReactDOM, Babel-standalone, the
-  stylesheet, and the JSX app.
-- `styles.css` — academic style inspired by past Wave Coupling Workshop sites
-  (navy / ocean / teal palette, serif headings, generous whitespace).
-- `app.jsx` — all React components and the conference data (key dates,
-  committees, program, sponsors). Edit the constants at the top of the file
-  to customize.
+> The repository name says `wcb2026website` for historical reasons; the site
+> itself is the Bergen 2027 workshop.
 
-## Run locally
+## Stack
 
-The site is fully static. From the project directory:
+A React 18 single-page site built with [Vite](https://vite.dev). The build
+produces plain static files — no server-side component.
+
+## Local development
+
+Requires Node.js 20.19+ (22 LTS recommended).
 
 ```bash
-# Python 3
-python3 -m http.server 8000
-# then open http://localhost:8000
+npm install
+npm run dev
 ```
 
-Or any other static server (e.g. `npx serve`, `php -S`, VS Code Live Server).
-Opening `index.html` directly via `file://` works in most browsers but some
-will block the JSX fetch — use a local server when in doubt.
+The dev server binds to `127.0.0.1:5173` only, deliberately: the host it runs on
+has a public IP and no firewall. Reach it from your own machine with an SSH
+tunnel:
 
-## Configure the registration form
-
-Registration uses dual channels — a Google Form for international participants
-and a Tencent Docs form for users in mainland China (where Google services are
-blocked). Clicking any "Register" button opens a modal that lets the visitor
-pick the channel that works for them.
-
-Open `app.jsx` and edit `CONF.registrationChannels`:
-
-```js
-const CONF = {
-  ...
-  registrationChannels: [
-    { id: "google",  label: "Google Form", sub: "International participants",
-      url: "https://forms.gle/your-google-form-id-here", recommended: true },
-    { id: "tencent", label: "腾讯文档", sub: "中国大陆用户 (Mainland China users)",
-      url: "https://docs.qq.com/form/page/your-tencent-doc-id-here" },
-  ],
-  ...
-};
+```bash
+ssh -L 5173:localhost:5173 <user>@<host>
 ```
 
-The same config is used by the hero CTA, the navigation "Register" button,
-the dedicated Registration section, and the footer link.
+Then open <http://localhost:5173/wcb2026website/>. Note the `/wcb2026website/`
+path — `base` in `vite.config.js` matches the GitHub Pages sub-path, so local
+URLs are identical to production.
 
-## Replace placeholders
+To check a production build locally:
 
-- **Logos**: edit the `SPONSORS` array in `app.jsx`. Logos use
-  `placehold.co` images — swap in real URLs or local files (e.g.
-  `./logos/foo.png`).
-- **Venue map**: replace the `<img className="venue-map" src="..." />` URL in
-  the `Venue` component with a real map image or an embedded `<iframe>` from
-  Google Maps.
-- **Committees / Program / Key Dates**: edit the `COMMITTEES`, `PROGRAM`, and
-  `KEY_DATES` constants at the top of `app.jsx`.
+```bash
+npm run build && npm run preview
+```
 
-## Notes for production
+## Editing content
 
-This demo is intentionally simple to suit ~100 visitors. For a small academic
-audience the CDN + Babel-in-the-browser setup is fine, but if you want to
-deploy at scale or strip the runtime transpile cost you can pre-build the JSX
-with `esbuild app.jsx --bundle --outfile=app.js` and include the result
-directly via a regular `<script>` tag.
+Nearly everything an organiser needs to change lives in **`src/config.js`**:
+names and dates, key dates, keynote speakers, committee members, research
+themes, hosts and partner logos, venue details, contact address, and the two
+form URLs. Component code in `src/App.jsx` should not need touching for routine
+content updates.
+
+Common tasks:
+
+- **Add a speaker photo**: drop the file in `public/images/speakers/` and set
+  `photo: "speakers/<file>"` on the speaker's entry in `SPEAKERS`. Until then
+  the card shows an initials avatar.
+- **Confirm a tentative speaker**: remove `tentative: true` from their entry.
+- **Add a logo**: drop the file in `public/images/`, reference it from `HOSTS`
+  or `PARTNERS`. Entries with `logo: null` render as text tiles.
+
+## Forms
+
+Abstract submission and registration each use a form in
+[Skjemaker](https://skjemaker.app.uib.no), UiB's self-hosted MachForm —
+university-hosted (reachable from mainland China, unlike Google Forms), accepts
+PDF/DOCX uploads from external respondents with no login, and sends an automatic
+receipt carrying the submission reference, which presenting authors quote when
+registering. Field-by-field specifications for both forms are in
+[`docs/forms.md`](docs/forms.md).
+
+While either URL in `src/config.js` is still a `REPLACE_WITH_…` placeholder,
+`npm run dev` shows a red warning banner and CI refuses to deploy.
+
+Abstract templates offered to authors live in `public/downloads/`
+(`bergen2027-abstract-template.docx` / `.tex`).
+
+## Funding acknowledgment
+
+The Sponsors section follows the EU emblem rules for 2021–2027 programmes: the
+emblem (drawn to the official geometry in `public/images/eu-emblem.svg`)
+carries the spelled-out "Funded by the European Union" statement, the required
+disclaimer is displayed, and the emblem must remain at least as large as any
+other logo in that strip when the ERC and Research Council of Norway logo files
+arrive.
+
+## Deployment
+
+Pushing to `main` triggers `.github/workflows/deploy.yml`, which builds the site
+and publishes it to GitHub Pages. Pull requests run the same build as a check but
+do not deploy.
+
+Work on a branch and merge via pull request — `main` is published automatically,
+so anything landing there is immediately public.
+
+## Repository layout
+
+```
+index.html                    Vite entry point
+vite.config.js                base path, dev server binding, build options
+src/
+  main.jsx                    mounts <App> into #root
+  App.jsx                     all page components
+  config.js                   conference content — edit this for content changes
+  styles.css                  full stylesheet
+public/
+  images/                     logos, hero image, EU emblem
+  downloads/                  abstract templates (docx / LaTeX)
+  favicon.svg
+docs/forms.md                 Skjemaker field specifications for both forms
+.github/workflows/deploy.yml  build + Pages deployment
+```

@@ -4,41 +4,31 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WWCP 2027 — 8th Workshop on Waves and Wave-Coupled Processes</title>
-    <meta name="description" content="The 8th Workshop on Waves and Wave-Coupled Processes, 12–15 April 2027, Bergen, Norway. Hosted by the University of Bergen." />
+    <title>Bergen 2027 — 8th Workshop on Waves and Wave-Coupled Processes</title>
+    <meta name="description"
+        content="The 8th Workshop on Waves and Wave-Coupled Processes, 12–15 April 2027, Bergen, Norway. Hosted by the University of Bergen." />
+    <!-- %BASE_URL% is substituted by Vite, so this follows `base` in vite.config.js. -->
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+
+    <!-- Link previews when the site is shared in email, Slack, X, etc. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Bergen 2027 — 8th Workshop on Waves and Wave-Coupled Processes" />
+    <meta property="og:description"
+        content="12–15 April 2027, Bergen, Norway. Hosted by the University of Bergen." />
+    <meta property="og:url" content="https://yliu-fort.github.io/wcb2026website/" />
+    <meta property="og:image" content="https://yliu-fort.github.io/wcb2026website/images/wave-hero.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
         href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
-
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 
 <body>
     <div id="root"></div>
-    <script>
-        // Transpile app.jsx in the browser with @babel/standalone.
-        // We force the CLASSIC JSX runtime so JSX compiles to React.createElement
-        // (using the React UMD global loaded above) instead of an ES-module
-        // `import { jsx } from "react/jsx-runtime"`. A module import injected into a
-        // classic script throws "Cannot use import statement outside a module".
-        fetch('app.jsx')
-            .then((res) => res.text())
-            .then((src) => {
-                const output = Babel.transform(src, {
-                    filename: 'app.jsx',
-                    presets: [['react', { runtime: 'classic' }]],
-                }).code;
-                const script = document.createElement('script');
-                script.text = output;
-                document.body.appendChild(script);
-            })
-            .catch((err) => console.error('Failed to load app.jsx:', err));
-    </script>
+    <script type="module" src="/src/main.jsx"></script>
 </body>
 
 </html>

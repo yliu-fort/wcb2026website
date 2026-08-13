@@ -1,0 +1,21 @@
+2|npm run dev -- --host
+2|npm run dev -- --host --port 5173
+2|vite --host 0.0.0.0
+2|vite --host=0.0.0.0
+2|npm run preview -- --host ::
+2|sudo ufw disable
+2|python3 -m http.server 8000
+2|chmod -R 777 /home/ubuntu/.claude
+2|sudo rsync -a dist/ /var/www/bergen2027/
+0|npm run dev -- --host 127.0.0.1 --port 5173
+0|vite --host=127.0.0.1
+0|npm run build
+0|./deploy/publish.sh --skip-build
+0|python3 -m http.server 8000 --bind 127.0.0.1
+0|ls -la /var/www/bergen2027
+2|sudo -n install -m 644 /dev/stdin /var/www/bergen2027/x.txt
+2|echo hi > /var/www/bergen2027/x.txt
+2|sudo dd of=/var/www/bergen2027/x.txt
+0|sudo -n ls -la /var/www/bergen2027/
+0|cat /var/www/bergen2027/index.html
+0|deploy/publish.sh --skip-build
