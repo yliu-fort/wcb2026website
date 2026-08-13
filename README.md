@@ -103,8 +103,12 @@ Pushing to `main` triggers `.github/workflows/deploy.yml`, which builds the site
 and publishes it to GitHub Pages. Pull requests run the same build as a check but
 do not deploy.
 
-Work on a branch and merge via pull request — `main` is published automatically,
-so anything landing there is immediately public.
+The self-hosted origin at [oceancoupling.eu](https://oceancoupling.eu) follows
+`main` too, but on a five-minute timer rather than through Actions — see
+[`deploy/README.md`](deploy/README.md).
+
+Work on a branch and merge via pull request — `main` is published automatically
+to **both** origins, so anything landing there is immediately public.
 
 ## Repository layout
 

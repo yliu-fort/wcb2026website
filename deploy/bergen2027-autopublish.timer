@@ -1,0 +1,17 @@
+[Unit]
+Description=Check origin/main for the self-hosted origin every five minutes
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=5min
+
+# Catch up after the VM has been off; a merge that landed meanwhile should not
+# wait for the next tick.
+Persistent=true
+
+# Nothing else runs on this box on a five-minute cadence, but a little jitter
+# keeps the fetch off the same second as anything that appears later.
+RandomizedDelaySec=30
+
+[Install]
+WantedBy=timers.target
