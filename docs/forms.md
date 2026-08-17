@@ -16,11 +16,13 @@ emails and the forms cannot drift apart.
 Form 3 is deferred by decision and withdrawal runs by email until then.
 `robots.txt` is closed separately, via `SITE.indexable`.
 
-The abstract receipt was rewritten on 17 August 2026 and **the live
-auto-responder, both receipt subjects and the two "reference" field labels were
-edited to match on the same day** — so this document and Skjemaker currently
-agree. Anything changed here from now on has to be carried into Skjemaker by
-hand; nothing in this repository can do it.
+The abstract receipt was rewritten on 17 August 2026 and **Skjemaker was edited to
+match on the same day**, so this document and the live forms currently agree. What
+was touched, since nothing in this repository can do it and the next person will
+want the list: on Form 1, the auto-responder body and subject, field 13's label
+and help text, and the confirmation text; on Form 2, field 6's label and help
+text, the registration receipt body, and the description's mention of the
+identifier. Anything changed here from now on has to be carried across by hand.
 
 Both forms accept submissions from the moment someone has the link, and the
 abstract window does not open until 30 August 2026. Neither URL is published
@@ -32,20 +34,26 @@ one. Skjemaker's description field accepts HTML including inline styles, which
 is what the box is made of. **Remove both notices when the forms open**, or the
 first real authors will be told their abstract does not count.
 
-**Do not simply delete Form 1's confirmation text, or the page goes blank.**
-Found by test submission on 17 August 2026: Form 1's Submission Confirmation is
-*only* the TEST PERIOD notice, with no success message underneath, while Form 2's
-is the notice followed by a real one. So Form 1 needs replacement text written in
-the same edit that removes its notice — mirroring the wording already approved on
-Form 2:
+**Form 1's Submission Confirmation was only the TEST PERIOD notice** — no success
+message underneath, unlike Form 2's — so deleting the notice at opening would
+have left authors staring at a blank page, which reads as a failed submission and
+is answered by submitting again. Found by test submission on 17 August 2026 and
+fixed the same day: the confirmation now carries the notice *followed by*
 
 > Thank you — your abstract has been received. A confirmation email carrying your
 > abstract ID is on its way to the address you gave; if it does not arrive, check
 > your spam folder before contacting wwcp2027@uib.no.
 
-A blank page after submitting reads as a failed submission, and the author's
-response to that is to submit again — which is the one thing this form cannot
-sort out automatically.
+so at opening **delete only the notice sentence and leave the paragraph after
+it.** Both forms now have the same shape here.
+
+**The two fields handle line breaks differently, and they sit next to each other
+in Form Properties.** Blank lines in *Description* become paragraphs; blank lines
+in *Submission Confirmation* are collapsed, so its text renders as one run. That
+is why the confirmation currently reads as a single block during the test period,
+and why it comes out clean once the notice sentence goes. Whether that field
+accepts HTML is untested — verifying it costs a test submission, and there is no
+need while the remaining text is one paragraph.
 
 ## Platform
 
