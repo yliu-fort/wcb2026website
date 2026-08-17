@@ -32,6 +32,21 @@ one. Skjemaker's description field accepts HTML including inline styles, which
 is what the box is made of. **Remove both notices when the forms open**, or the
 first real authors will be told their abstract does not count.
 
+**Do not simply delete Form 1's confirmation text, or the page goes blank.**
+Found by test submission on 17 August 2026: Form 1's Submission Confirmation is
+*only* the TEST PERIOD notice, with no success message underneath, while Form 2's
+is the notice followed by a real one. So Form 1 needs replacement text written in
+the same edit that removes its notice — mirroring the wording already approved on
+Form 2:
+
+> Thank you — your abstract has been received. A confirmation email carrying your
+> abstract ID is on its way to the address you gave; if it does not arrive, check
+> your spam folder before contacting wwcp2027@uib.no.
+
+A blank page after submitting reads as a failed submission, and the author's
+response to that is to submit again — which is the one thing this form cannot
+sort out automatically.
+
 ## Platform
 
 Skjemaker (`skjemaker.app.uib.no`) is UiB's self-hosted **MachForm** (the UiB
