@@ -327,23 +327,34 @@ echoes the four fields an author is most likely to have got wrong, so a mistake
 is visible while a replacement submission can still fix it.
 
 > Thank you for your abstract for the 8th Workshop on Waves and Wave-Coupled
-> Processes, Bergen, 12–15 April 2027. We confirm receipt of the following
-> abstract:
+> Processes, Bergen, 12–15 April 2027. We hereby confirm the receipt of the
+> following abstract:
 >
 > **Abstract ID: `{abstract_id}`**
 > Title: `{title}`
 > Presenting author: `{presenting_author}`
-> Presentation type requested: `{presentation_type}`
+> Selected Presentation type: `{presentation_type}`
 > File: `{filename}`
 >
-> The committee will notify all authors of its decision in December 2026. To be
-> included in the final programme, an abstract must have at least one author
-> registered and presenting it; abstracts with no registered author by the
-> registration deadline (12 January 2027 for presenting authors) will be removed
-> from the programme.
+> The committee will notify the acceptance of abstracts in December 2026. In order
+> to be considered in the final program for presentation, the abstract is required
+> to be registered and presented by at least 1 author. The abstracts that fail to
+> be registered by the registration deadline will be removed from the program.
 >
-> To correct this abstract, submit the form again, answer "Yes" to the
-> replacement question, and give this abstract ID.
+> For a re-submission of an abstract, follow the website instructions to submit an
+> abstract again, and answer "Yes" to the replacement question with the assigned
+> abstract ID.
+>
+> All are welcome to register for the workshop, if interested, after it is open
+> for registration later this year.
+
+**This is the committee's wording, edited for grammar only** (17 August 2026).
+Four fixes were applied to the text as supplied and nothing else: `of abstract` →
+`of abstracts`, `abstracts who fail` → `abstracts that fail`, `website
+instruction` → `instructions`, and an `and` to join the two imperatives in the
+re-submission sentence. Left as written by decision, so do not "tidy" them:
+`notify the acceptance` (rather than *notify authors of*), the American `program`
+against this repository's `programme`, and the numeral in `1 author`.
 
 **The five merge tags, as built.** `{abstract_id}` is `B27-{entry_no}`; the other
 four are `{element_1}` (presenting author), `{element_5}` (title), `{element_8}`
@@ -355,10 +366,23 @@ rather than counting rows** if a field is ever inserted or deleted. The author
 and format tags are new; the first version of this receipt echoed only title and
 file.
 
-"Presentation type **requested**" is deliberate. The committee assigns the
-format in December and the site says so; "selected" reads as though the receipt
-has granted an oral slot. Field 8's third option is *Either*, which prints as
-such.
+**"Selected Presentation type" is the committee's phrasing**, kept over a
+suggestion to say "requested" instead. The reason for the suggestion, in case the
+question returns: the committee assigns formats in December and the site says so,
+so "selected" can read as though the receipt has already granted an oral slot.
+Field 8's third option is *Either*, which prints as written.
+
+**Two things the receipt no longer states, both by decision.** It does not name
+the registration deadline — authors who want the date go to the site — even though
+receipts go out from August, months before registration opens. And it does not say
+that arriving is not being accepted; see the note below the merge tags.
+
+**The closing paragraph commits the workshop to opening registration in 2026.**
+"Later this year", in a message sent throughout the abstract window. There is
+still no decided registration-opening date (see the timeline gaps below) and the
+fee has to be settled first, so if registration slips into January every receipt
+already sent will have said something untrue. The repair is one phrase in this
+text, but only if someone notices in time.
 
 **Two sentences were deliberately dropped** (committee decision, 17 August 2026):
 the withdrawal address, and an explicit "arriving is not being accepted" line.
