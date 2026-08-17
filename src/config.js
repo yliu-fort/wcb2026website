@@ -43,7 +43,7 @@ export const CONF = {
 // MachForm: hosted by the university rather than Google, so not blocked from
 // mainland China; accepts submissions with no login; takes PDF/DOCX upload from
 // external respondents; and merges the entry number into its auto-responder,
-// which is how the abstract receipt issues the B27-… reference the registration
+// which is how the abstract receipt issues the B27-… abstract ID the registration
 // form asks presenting authors to quote. See docs/forms.md.
 export const FORMS = {
   abstract: {
@@ -88,6 +88,11 @@ export const SPEAKERS = [
       "Wave–current interaction; influences in the upper ocean, wave turbulence and mixing",
   },
   {
+    name: "Peter Janssen",
+    affil: "ECMWF, UK",
+    topic: "Air–sea interaction",
+  },
+  {
     name: "Yuzhu Pearl Li",
     affil: "National University of Singapore",
     topic: "Wave breaking and turbulence modelling",
@@ -97,11 +102,6 @@ export const SPEAKERS = [
     name: "Al Osborne",
     affil: "",
     topic: "Dynamics of nonlinear waves",
-  },
-  {
-    name: "Anna Rutgersson",
-    affil: "Uppsala University, Sweden",
-    topic: "Air–sea gas exchange",
   },
   {
     name: "Zhenya Song",
