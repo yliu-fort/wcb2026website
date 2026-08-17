@@ -16,6 +16,12 @@ emails and the forms cannot drift apart.
 Form 3 is deferred by decision and withdrawal runs by email until then.
 `robots.txt` is closed separately, via `SITE.indexable`.
 
+The abstract receipt was rewritten on 17 August 2026 and **the live
+auto-responder, both receipt subjects and the two "reference" field labels were
+edited to match on the same day** — so this document and Skjemaker currently
+agree. Anything changed here from now on has to be carried into Skjemaker by
+hand; nothing in this repository can do it.
+
 Both forms accept submissions from the moment someone has the link, and the
 abstract window does not open until 30 August 2026. Neither URL is published
 yet, so nothing is exposed. Until they open, each form carries a red **TEST
@@ -316,12 +322,15 @@ is visible while a replacement submission can still fix it.
 > To correct this abstract, submit the form again, answer "Yes" to the
 > replacement question, and give this abstract ID.
 
-**The five merge tags.** `{abstract_id}` is `B27-{entry_no}`. The other four are
-`{element_N}` tags for fields 5, 1, 8 and 9 of Form 1 — but `N` is Skjemaker's
-internal element id, **not** the field number in the table above, so read the
-four values from Merge Tags Lookup in the form's Notification Settings before
-pasting this in. Two of them are new: the presenting author's name and the
-presentation format were not echoed by the first version of this receipt.
+**The five merge tags, as built.** `{abstract_id}` is `B27-{entry_no}`; the other
+four are `{element_1}` (presenting author), `{element_5}` (title), `{element_8}`
+(presentation format) and `{element_9}` (file). Read off Merge Tags Lookup in the
+form's Notification Settings, where they are confirmed against the field names —
+`N` is Skjemaker's internal element id and only coincides with this table's field
+numbers because Form 1's fields were created in order. **Check the Lookup again
+rather than counting rows** if a field is ever inserted or deleted. The author
+and format tags are new; the first version of this receipt echoed only title and
+file.
 
 "Presentation type **requested**" is deliberate. The committee assigns the
 format in December and the site says so; "selected" reads as though the receipt
