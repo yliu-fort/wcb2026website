@@ -231,8 +231,8 @@ function AbstractsRegistration() {
               <a href="#for-authors">Information for Authors</a>.
             </p>
             <p>
-              Every submission receives an email receipt with a reference
-              number — keep it for later.
+              Every submission receives an email receipt with an abstract
+              ID — keep it for later.
             </p>
             <a
               className="btn btn-primary"
@@ -248,7 +248,7 @@ function AbstractsRegistration() {
             <p>
               <strong>Presenting authors</strong> must register by{' '}
               <strong>{CONF.presenterRegistrationDeadline}</strong>. The
-              registration form asks for the reference number issued with your
+              registration form asks for the abstract ID issued with your
               abstract receipt.
             </p>
             <p>
@@ -295,7 +295,7 @@ function InfoForAuthors() {
             <strong>Submission.</strong> Abstracts are submitted through the{' '}
             <a href="#registration">abstract submission form</a> between{' '}
             {CONF.abstractOpens} and {CONF.abstractDeadline}. You will receive
-            an email receipt with a reference number; it is required when
+            an email receipt with an abstract ID; it is required when
             registering as a presenting author.
           </li>
           <li>

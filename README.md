@@ -64,7 +64,7 @@ Abstract submission and registration each use a form in
 [Skjemaker](https://skjemaker.app.uib.no), UiB's self-hosted MachForm —
 university-hosted (reachable from mainland China, unlike Google Forms), accepts
 PDF/DOCX uploads from external respondents with no login, and sends an automatic
-receipt carrying the submission reference, which presenting authors quote when
+receipt carrying the abstract ID, which presenting authors quote when
 registering. Field-by-field specifications for both forms are in
 [`docs/forms.md`](docs/forms.md).
 
