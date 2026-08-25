@@ -237,11 +237,6 @@ function AbstractsRegistration() {
               <code>noreply@uib.no</code>; add it to your contacts so the
               receipt is not filtered as spam.
             </p>
-            <p className="absreg-contact">
-              Questions about an abstract, including replacements and
-              withdrawals:{' '}
-              <a href={`mailto:${EMAILS.abstract}`}>{EMAILS.abstract}</a>
-            </p>
             <a
               className="btn btn-primary"
               href={FORMS.abstract.url}
@@ -264,13 +259,6 @@ function AbstractsRegistration() {
               welcome. The participant registration deadline and further
               details, including any fees, will be announced.
             </p>
-            <p className="absreg-contact">
-              Questions about registration, fees or an invitation letter for a
-              visa:{' '}
-              <a href={`mailto:${EMAILS.registration}`}>
-                {EMAILS.registration}
-              </a>
-            </p>
             <a
               className="btn btn-primary"
               href={FORMS.registration.url}
@@ -282,7 +270,8 @@ function AbstractsRegistration() {
           </div>
         </div>
         <div className="register-note">
-          For anything else, write to{' '}
+          Questions — about an abstract, registration, fees, or an invitation
+          letter for a visa — go to{' '}
           <a href={`mailto:${EMAILS.information}`} className="register-note-link">
             {EMAILS.information}
           </a>.
@@ -318,7 +307,7 @@ function InfoForAuthors() {
             edited. To correct one, submit again and answer “Yes” to the
             replacement question, quoting the abstract ID of the submission it
             replaces. To withdraw an abstract, write to{' '}
-            <a href={`mailto:${EMAILS.abstract}`}>{EMAILS.abstract}</a> — the
+            <a href={`mailto:${EMAILS.information}`}>{EMAILS.information}</a> — the
             committee confirms every withdrawal to the address on the original
             submission before it takes effect.
           </li>
@@ -512,18 +501,7 @@ function Footer() {
         </div>
         <div>
           <h4>Contact</h4>
-          <div>
-            Abstracts:{' '}
-            <a href={`mailto:${EMAILS.abstract}`}>{EMAILS.abstract}</a>
-          </div>
-          <div>
-            Registration:{' '}
-            <a href={`mailto:${EMAILS.registration}`}>{EMAILS.registration}</a>
-          </div>
-          <div>
-            General:{' '}
-            <a href={`mailto:${EMAILS.information}`}>{EMAILS.information}</a>
-          </div>
+          <div><a href={`mailto:${EMAILS.information}`}>{EMAILS.information}</a></div>
         </div>
         <div>
           <h4>Quick Links</h4>

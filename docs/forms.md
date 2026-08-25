@@ -42,7 +42,7 @@ fixed the same day: the confirmation now carries the notice *followed by*
 
 > Thank you — your abstract has been received. A confirmation email carrying your
 > abstract ID is on its way to the address you gave; if it does not arrive, check
-> your spam folder before contacting abstract@wavecoupling2027.eu.
+> your spam folder before contacting information@wavecoupling2027.eu.
 
 so at opening **delete only the notice sentence and leave the paragraph after
 it.** Both forms now have the same shape here.
@@ -146,7 +146,7 @@ auto-responder tells authors to use it, and the site says the same. The
 abstract ID is what makes field 13 exact rather than a title match —
 see the design section.
 
-**Withdrawal is by email to `abstract@wavecoupling2027.eu` for now.** A
+**Withdrawal is by email to `information@wavecoupling2027.eu` for now.** A
 self-service form is designed (Form 3) but deliberately not built yet — see that
 section.
 
@@ -234,7 +234,7 @@ counts will be short.
 ## Form 3 — Withdrawal (deferred, do not build yet)
 
 **Not being built in the first round.** Withdrawal goes to
-`abstract@wavecoupling2027.eu` until the design is settled. Kept here because
+`information@wavecoupling2027.eu` until the design is settled. Kept here because
 the reasoning below applies to the email path too, and because deferring a form
 is cheap while retro-fitting the confirmation step onto a live one is not.
 
@@ -253,9 +253,8 @@ confirmation step is the part that matters.
 | 5 | Reason (optional) | Paragraph | | Useful for the committee, never required |
 
 When field 4 is **Yes**, show text directing the author to email
-`registration@wavecoupling2027.eu` instead — a refund is a registration matter,
-not an abstract one — because it has to be arranged by hand and a form cannot
-do it. (Accepting the submission anyway and flagging it "refund required" in the
+`information@wavecoupling2027.eu` instead: a refund has to be arranged by hand
+and a form cannot do it. (Accepting the submission anyway and flagging it "refund required" in the
 committee notification would capture the request with less friction and the same
 audit trail — worth reconsidering if withdrawals after payment turn out to be
 common.)
@@ -298,10 +297,9 @@ Skjemaker: **From is `noreply@uib.no` and the field is locked.** It is an
 address no author recognises, so the three mitigations below are all load-bearing
 rather than nice-to-have. As built:
 
-- **Reply-To is per form**, because the replies differ: Form 1's receipt
-  answers to `abstract@wavecoupling2027.eu`, Form 2's to
-  `registration@wavecoupling2027.eu`. Reply-To is customisable independently of
-  From, and authors do reply to receipts.
+- **Reply-To is `information@wavecoupling2027.eu` on both receipts.** A reply to
+  a receipt is a question, and questions go to one place. Reply-To is
+  customisable independently of From, and authors do reply to receipts.
 - **The workshop is named in the From display name and the subject**, so the
   message is recognisable even when the address is not — From "Bergen 2027 —
   Waves and Wave-Coupled Processes", subjects "Abstract received — your
@@ -316,11 +314,17 @@ into the site and both forms but never actually created, so every use of it was 
 bounce. It is replaced by three mailboxes on the conference's own domain, routed
 by purpose:
 
-| Address | Used for |
-|---|---|
-| `abstract@wavecoupling2027.eu` | Form 1 Reply-To and notifications; replacements and withdrawals |
-| `registration@wavecoupling2027.eu` | Form 2 Reply-To and notifications; fees, refunds, visa letters |
-| `information@wavecoupling2027.eu` | Everything else; the address in the site header and footer |
+| Address | Used for | Shown to visitors? |
+|---|---|---|
+| `abstract@wavecoupling2027.eu` | Where Form 1 delivers submissions | No |
+| `registration@wavecoupling2027.eu` | Where Form 2 delivers registrations | No |
+| `information@wavecoupling2027.eu` | Every question, whatever it is about: site header and footer, both forms' Reply-To, the withdrawal instruction, and the "if your receipt does not arrive" line on both confirmation pages | Yes — the only one |
+
+**The split is by direction, not by topic.** One published address means nobody
+has to decide which mailbox their question belongs in, and a question about
+registration that arrives while someone is reading abstracts is not lost. The
+other two are delivery addresses only — publishing one would collect questions
+there whether or not that was intended, which is the situation this avoids.
 
 They are the same three in `EMAILS` in `src/config.js`. Nothing keeps the two in
 sync — change one, change the other.
@@ -521,7 +525,7 @@ Settled:
 | Co-author registration | Only the presenting author registers per abstract |
 | Edit after submission | Not offered; corrections via a replacement submission |
 | Withdraw after submission | By email to the shared mailbox for now. Self-service (Form 3) is designed but deferred until the rules are settled. Either way, confirmation goes to the address on the original submission |
-| Notification recipient | Shared mailbox on the conference domain, never a personal address: `abstract@wavecoupling2027.eu` for Form 1, `registration@wavecoupling2027.eu` for Form 2 |
+| Notification recipient | Shared mailbox on the conference domain, never a personal address: `abstract@wavecoupling2027.eu` for Form 1, `registration@wavecoupling2027.eu` for Form 2. Neither is published — `information@wavecoupling2027.eu` is the only address visitors are given |
 | Form interface language | English |
 | Data protection | Confirmed by the organiser; treated as compliant here |
 | Search engine indexing | Blocked until launch, via `SITE.indexable` in `src/config.js` |

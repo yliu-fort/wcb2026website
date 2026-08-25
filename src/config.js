@@ -42,22 +42,25 @@ export const CONF = {
 // external respondents; and merges the entry number into its auto-responder,
 // which is how the abstract receipt issues the B27-… abstract ID the registration
 // form asks presenting authors to quote. See docs/forms.md.
-// Three mailboxes on the conference domain, routed by purpose rather than one
-// catch-all, so an author chasing a submission and a delegate asking about the
-// fee do not land in the same thread. They replaced wwcp2027@uib.no, an alias
-// that was written into the site and both forms but never actually created --
-// every use of it bounced.
+// Three mailboxes on the conference domain. They replaced wwcp2027@uib.no, an
+// alias that was written into the site and both forms but never actually
+// created -- every use of it bounced.
 //
-// Whatever changes here has to be carried across to Skjemaker by hand: these
-// same addresses are the Reply-To and the notification recipient on both forms.
-// See docs/forms.md.
+// The split is by *direction*, not by topic. `information` is the only address
+// a visitor is ever shown: every question, whatever it is about, goes there, so
+// nobody has to guess which mailbox their question belongs in. The other two are
+// delivery addresses for the forms and are deliberately never published — a
+// published address collects questions whether you want it to or not.
+//
+// Whatever changes here has to be carried across to Skjemaker by hand. See
+// docs/forms.md.
 export const EMAILS = {
-  // Abstract submission: replacements, withdrawals, anything about a submitted
-  // abstract. Reply-To on Form 1's receipt.
+  // Where Form 1 delivers submissions. Not shown on the site.
   abstract: "abstract@wavecoupling2027.eu",
-  // Registration, fees, invitation letters for visas. Reply-To on Form 2.
+  // Where Form 2 delivers registrations. Not shown on the site.
   registration: "registration@wavecoupling2027.eu",
-  // Everything else, and the address shown in the header and the footer.
+  // The published contact address: header, footer, both forms' Reply-To, and
+  // every "write to us" on the site.
   information: "information@wavecoupling2027.eu",
 };
 

@@ -877,18 +877,6 @@
       text-decoration: underline;
   }
 
-  /* The per-purpose contact address on each card. Quieter than the body copy,
-     and given the larger bottom margin so the button below it still reads as
-     the card's last element rather than as part of this line.
-
-     Qualified with the element selector because `.absreg-card p` would
-     otherwise win on specificity and put the size and colour back. */
-  .absreg-card p.absreg-contact {
-      font-size: 0.85rem;
-      color: #c2d2e4;
-      margin-bottom: 18px;
-  }
-
   /* noreply@uib.no is set as code so it reads as an address to whitelist
      rather than one to write to — it is a send-only mailbox. */
   .absreg-card code {
