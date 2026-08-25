@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import {
   CONF,
   EMAILS,
@@ -44,36 +46,73 @@ function TopBar() {
   );
 }
 
+// Nav labels are shorter than the section headings they point at, which is
+// what lets eight of them sit on one row inside the 1100px column. Two are not
+// just abbreviations: 'Abstracts' points at the section headed 'Abstracts &
+// Registration', because a nav item called 'Registration' next to a 'Register'
+// button that opens a different thing (the form) is a genuine trap.
+const NAV_ITEMS = [
+  ['Introduction', 'introduction'],
+  ['Speakers', 'speakers'],
+  ['Key Dates', 'key-dates'],
+  ['Abstracts', 'registration'],
+  ['Authors', 'for-authors'],
+  ['Venue', 'venue'],
+  ['Organisation', 'organization'],
+  ['Sponsors', 'sponsors'],
+];
+
 function Header() {
-  const items = [
-    ['Introduction', 'introduction'],
-    ['Keynote Speakers', 'speakers'],
-    ['Key Dates', 'key-dates'],
-    ['Registration', 'registration'],
-    ['For Authors', 'for-authors'],
-    ['Venue', 'venue'],
-    ['Organisation', 'organization'],
-    ['Sponsors', 'sponsors'],
-  ];
+  // Below the width where the full row fits, the nav collapses behind this
+  // toggle. It used to be `display: none` with nothing in its place, so a phone
+  // got a header with no navigation in it at all.
+  const [open, setOpen] = useState(false);
+
+  // Escape closes it, which is the one keyboard behaviour a disclosure like
+  // this is expected to have and the one that is easiest to leave out.
+  useEffect(() => {
+    if (!open) return undefined;
+    const onKey = (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open]);
+
   return (
     <header className="site-header">
       <div className="site-header-inner">
-        <a href="#top" className="brand">
+        <a href="#top" className="brand" onClick={() => setOpen(false)}>
           <span className="brand-mark" aria-hidden="true"></span>
           <span className="brand-text">
             <span className="brand-title">{CONF.shortName}</span>
             <span className="brand-sub">Waves &amp; Wave-Coupled Processes</span>
           </span>
         </a>
-        <nav className="nav">
-          {items.map(([label, id]) => (
-            <a key={id} href={`#${id}`}>{label}</a>
+        <button
+          type="button"
+          className="nav-toggle"
+          aria-expanded={open}
+          aria-controls="site-nav"
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          onClick={() => setOpen((v) => !v)}
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
+        <nav className={`nav${open ? ' nav-open' : ''}`} id="site-nav">
+          {NAV_ITEMS.map(([label, id]) => (
+            <a key={id} href={`#${id}`} onClick={() => setOpen(false)}>
+              {label}
+            </a>
           ))}
           <a
             className="nav-cta"
             href={FORMS.registration.url}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => setOpen(false)}
           >
             Register
           </a>
@@ -90,11 +129,12 @@ function Hero() {
         <span className="tag">{CONF.shortName}</span>
         <h1>{CONF.fullName}</h1>
         <p className="lede">{CONF.subtitle}</p>
+        {/* No separator elements: the dots are drawn by CSS on the item that
+            follows them, so a wrap can never leave one stranded on a line of
+            its own — which is what happened at 375px. */}
         <div className="hero-meta">
           <span><strong>{CONF.dates}</strong></span>
-          <span>·</span>
           <span><strong>{CONF.city}</strong></span>
-          <span>·</span>
           <span>Hosted by {CONF.host}</span>
         </div>
         <div className="hero-actions">

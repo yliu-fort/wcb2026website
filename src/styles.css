@@ -157,6 +157,8 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
+      /* Anchors the collapsed nav panel, which hangs below the bar. */
+      position: relative;
   }
 
   .brand {
@@ -164,6 +166,8 @@
       align-items: center;
       gap: 12px;
       text-decoration: none;
+      /* The nav is what gives way when the row is tight, never the wordmark. */
+      flex-shrink: 0;
   }
 
   .brand-mark {
@@ -172,6 +176,10 @@
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, var(--accent) 0%, var(--ocean) 60%, var(--navy) 100%);
       box-shadow: var(--shadow);
+      /* Without this the mark is a flex item like any other and squeezes to an
+         ellipse when the header row runs out of room — 34x42 at 1280px, which
+         is how it shipped. A circle has to be told not to shrink. */
+      flex-shrink: 0;
   }
 
   .brand-text {
@@ -187,26 +195,37 @@
       color: var(--navy);
   }
 
+  /* Held to two lines on purpose. Measured at 1100px, the three options are:
+     one line puts the wordmark at 283px and the nav 6px past the edge of the
+     column; three lines (any max-width under 20ch) makes the header 86px tall;
+     two lines gives a 199px wordmark, a 74px header and 77px of slack for the
+     nav. 20ch is the widest value that still breaks after WAVE-COUPLED. */
   .brand-sub {
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       color: var(--muted);
-      letter-spacing: 0.04em;
+      letter-spacing: 0.03em;
       text-transform: uppercase;
+      max-width: 20ch;
   }
 
+  /* nowrap, not wrap: with eight items plus the CTA, `wrap` silently produced a
+     two-row header rather than telling us the row was too small. If it does not
+     fit now it is a bug to fix, not something to absorb. */
   .nav {
       display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
+      flex-wrap: nowrap;
+      align-items: center;
+      gap: 2px;
   }
 
   .nav a {
       color: var(--navy-2);
-      font-size: 0.92rem;
-      padding: 8px 12px;
+      font-size: 0.86rem;
+      padding: 8px 9px;
       border-radius: var(--radius);
       text-decoration: none;
       font-weight: 500;
+      white-space: nowrap;
   }
 
   .nav a:hover {
@@ -224,11 +243,103 @@
       padding: 8px 14px;
       border-radius: var(--radius);
       font-weight: 600;
+      margin-left: 6px;
   }
 
   .nav .nav-cta:hover {
       background: #248579;
       color: white !important;
+  }
+
+  /* --- the collapsed-nav toggle ------------------------------------------
+     Hidden until the breakpoint below takes the inline nav away. Three bars
+     that become a cross; `aria-expanded` drives both, so the visual state
+     cannot disagree with what a screen reader is told. */
+  .nav-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 44px;
+      height: 44px;
+      padding: 10px;
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      cursor: pointer;
+  }
+
+  .nav-toggle span {
+      display: block;
+      height: 2px;
+      width: 100%;
+      background: var(--navy);
+      border-radius: 2px;
+      transition: transform 0.18s ease, opacity 0.18s ease;
+  }
+
+  .nav-toggle[aria-expanded="true"] span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+  }
+
+  .nav-toggle[aria-expanded="true"] span:nth-child(2) {
+      opacity: 0;
+  }
+
+  .nav-toggle[aria-expanded="true"] span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+      .nav-toggle span {
+          transition: none;
+      }
+  }
+
+  /* --- collapsed nav -----------------------------------------------------
+     Measured, not guessed. The row costs 199px of wordmark + 16px gap + 760px
+     of nav + 48px of column padding, so it needs 1023px of viewport. 1060 is
+     that number with enough slack that a different font stack or a browser
+     zoom step does not push the last item out of the column — the failure this
+     replaced was exactly that, silently absorbed by `flex-wrap: wrap`. */
+  @media (max-width: 1060px) {
+      .nav-toggle {
+          display: flex;
+      }
+
+      .nav {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0;
+          background: #fff;
+          border-top: 1px solid var(--line);
+          border-bottom: 1px solid var(--line);
+          box-shadow: 0 14px 24px rgba(11, 37, 69, 0.12);
+          padding: 8px;
+      }
+
+      .nav.nav-open {
+          display: flex;
+      }
+
+      .nav a {
+          font-size: 1rem;
+          padding: 12px 14px;
+      }
+
+      /* Matches the padding of the links above it. Without this the CTA keeps
+         the 8px of the desktop rule, which wins on specificity, and comes out
+         42px tall — under the 44px a finger needs. */
+      .nav .nav-cta {
+          margin: 6px 0 2px;
+          padding: 12px 14px;
+          text-align: center;
+      }
   }
 
 
@@ -291,10 +402,20 @@
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 28px;
+      align-items: baseline;
+      /* Row gap only. The horizontal spacing comes from the separator's own
+         margins, so the dot sits in the middle of the gap rather than needing
+         a gap of its own. */
+      gap: 6px 0;
       margin-top: 8px;
       color: #d6e2f0;
       font-size: 0.95rem;
+  }
+
+  .hero-meta > * + *::before {
+      content: "·";
+      margin: 0 14px;
+      color: #9fb4cc;
   }
 
   .hero-meta strong {
@@ -707,16 +828,30 @@
           font-size: 2.1rem;
       }
 
-      .nav {
+      .brand-title {
+          font-size: 1rem;
+      }
+
+      /* The strapline is the widest part of the wordmark and the least load
+         bearing; the hero says the same thing two hundred pixels below. */
+      .brand-sub {
           display: none;
       }
 
-      .site-header-inner {
-          justify-content: space-between;
+      /* Three lines rather than a wrapped row: at this width the row broke
+         after every item anyway, and stacking drops the separators, which read
+         as clutter once nothing is actually being separated on one line. */
+      .hero-meta {
+          flex-direction: column;
+          /* Cross axis is horizontal once the direction flips, and the baseline
+             value inherited from the row layout resolves to start there, which
+             left-aligned the lines inside a centred hero. */
+          align-items: center;
+          gap: 6px;
       }
 
-      .brand-title {
-          font-size: 1rem;
+      .hero-meta > * + *::before {
+          content: none;
       }
   }
 
