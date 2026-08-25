@@ -246,27 +246,40 @@ function Portrait({ name, photo, credit, size }) {
   const flipX = tip && tip.x > window.innerWidth - 190;
   const flipY = tip && tip.y > window.innerHeight - 60;
 
+  // Two spans, and the split matters. The inner one is clipped to the circle so
+  // that only the visible portrait answers the pointer — the square's corners
+  // and the empty width of the card do not. The label cannot live inside it: a
+  // clip-path clips its descendants, fixed-position ones included, so the label
+  // would be cut away the moment it appeared. It sits outside as a sibling.
+  //
+  // Focus is on the outer span for the same reason: an outline drawn on the
+  // clipped element would be clipped off with everything else outside the
+  // circle. Pointer in, keyboard out.
   return (
     <span
       ref={wrapRef}
       className="portrait-credited"
       tabIndex={0}
       aria-describedby={creditId}
-      onPointerEnter={(e) => e.pointerType === 'mouse' && show(e.clientX, e.clientY)}
-      onPointerMove={onMove}
-      onPointerLeave={hide}
-      onPointerDown={onDown}
-      onPointerUp={hide}
-      onPointerCancel={hide}
       onFocus={fromFocus}
       onBlur={hide}
-      onContextMenu={(e) => {
-        // Only while our own long press is open, so right-click still offers
-        // "save image" on a desktop.
-        if (tip) e.preventDefault();
-      }}
     >
-      {img}
+      <span
+        className="portrait-hit"
+        onPointerEnter={(e) => e.pointerType === 'mouse' && show(e.clientX, e.clientY)}
+        onPointerMove={onMove}
+        onPointerLeave={hide}
+        onPointerDown={onDown}
+        onPointerUp={hide}
+        onPointerCancel={hide}
+        onContextMenu={(e) => {
+          // Only while our own long press is open, so right-click still offers
+          // "save image" on a desktop.
+          if (tip) e.preventDefault();
+        }}
+      >
+        {img}
+      </span>
       <span id={creditId} className="visually-hidden">
         Photograph by {credit}
       </span>
