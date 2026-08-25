@@ -42,7 +42,7 @@ fixed the same day: the confirmation now carries the notice *followed by*
 
 > Thank you — your abstract has been received. A confirmation email carrying your
 > abstract ID is on its way to the address you gave; if it does not arrive, check
-> your spam folder before contacting wwcp2027@uib.no.
+> your spam folder before contacting information@wavecoupling2027.eu.
 
 so at opening **delete only the notice sentence and leave the paragraph after
 it.** Both forms now have the same shape here.
@@ -146,8 +146,9 @@ auto-responder tells authors to use it, and the site says the same. The
 abstract ID is what makes field 13 exact rather than a title match —
 see the design section.
 
-**Withdrawal is by email to `wwcp2027@uib.no` for now.** A self-service form is
-designed (Form 3) but deliberately not built yet — see that section.
+**Withdrawal is by email to `information@wavecoupling2027.eu` for now.** A
+self-service form is designed (Form 3) but deliberately not built yet — see that
+section.
 
 The interim path inherits one rule from that design, and it is the rule that is
 easiest to get wrong over email: **confirm to the address on the original
@@ -232,10 +233,10 @@ counts will be short.
 
 ## Form 3 — Withdrawal (deferred, do not build yet)
 
-**Not being built in the first round.** Withdrawal goes to `wwcp2027@uib.no`
-until the design is settled. Kept here because the reasoning below applies to
-the email path too, and because deferring a form is cheap while retro-fitting
-the confirmation step onto a live one is not.
+**Not being built in the first round.** Withdrawal goes to
+`information@wavecoupling2027.eu` until the design is settled. Kept here because
+the reasoning below applies to the email path too, and because deferring a form
+is cheap while retro-fitting the confirmation step onto a live one is not.
 
 Two things to settle before building it: the withdrawal deadline (below), and
 whether requests from authors who have already paid belong in the form at all.
@@ -252,8 +253,8 @@ confirmation step is the part that matters.
 | 5 | Reason (optional) | Paragraph | | Useful for the committee, never required |
 
 When field 4 is **Yes**, show text directing the author to email
-`wwcp2027@uib.no` instead: a refund has to be arranged by hand and a form cannot
-do it. (Accepting the submission anyway and flagging it "refund required" in the
+`information@wavecoupling2027.eu` instead: a refund has to be arranged by hand
+and a form cannot do it. (Accepting the submission anyway and flagging it "refund required" in the
 committee notification would capture the request with less friction and the same
 audit trail — worth reconsidering if withdrawals after payment turn out to be
 common.)
@@ -296,8 +297,9 @@ Skjemaker: **From is `noreply@uib.no` and the field is locked.** It is an
 address no author recognises, so the three mitigations below are all load-bearing
 rather than nice-to-have. As built:
 
-- **Reply-To is `wwcp2027@uib.no`** on both receipts. Reply-To is customisable
-  independently of From, and authors do reply to receipts.
+- **Reply-To is `information@wavecoupling2027.eu` on both receipts.** A reply to
+  a receipt is a question, and questions go to one place. Reply-To is
+  customisable independently of From, and authors do reply to receipts.
 - **The workshop is named in the From display name and the subject**, so the
   message is recognisable even when the address is not — From "Bergen 2027 —
   Waves and Wave-Coupled Processes", subjects "Abstract received — your
@@ -307,17 +309,34 @@ rather than nice-to-have. As built:
   what to whitelist. A receipt in a spam folder is the failure this whole design
   is trying to avoid.
 
-**`wwcp2027@uib.no` does not exist yet**, so every use of it above is currently a
-bounce: the two Reply-To addresses, the withdrawal instruction in Form 1's
-description, and the same instruction in Form 1's receipt.
+**The addresses changed on 25 August 2026.** `wwcp2027@uib.no` was written
+into the site and both forms but never actually created, so every use of it was a
+bounce. It is replaced by three mailboxes on the conference's own domain, routed
+by purpose:
 
-The committee notification inbox is **`wwcp2027@gmail.com`** in the meantime, as
-a throwaway for testing. Two reasons that has to be temporary rather than
-convenient: it is not the shared UiB mailbox the decision below calls for, and
-because notifications carry `{entry_data}` — the whole submission — every real
-abstract that arrives while it is pointed there puts author names, addresses and
-affiliations on Google's servers rather than UiB's. Point it at the UiB alias
-before either URL is published.
+| Address | Used for | Shown to visitors? |
+|---|---|---|
+| `abstract@wavecoupling2027.eu` | Where Form 1 delivers submissions | No |
+| `registration@wavecoupling2027.eu` | Where Form 2 delivers registrations | No |
+| `information@wavecoupling2027.eu` | Every question, whatever it is about: site header and footer, both forms' Reply-To, the withdrawal instruction, and the "if your receipt does not arrive" line on both confirmation pages | Yes — the only one |
+
+**The split is by direction, not by topic.** One published address means nobody
+has to decide which mailbox their question belongs in, and a question about
+registration that arrives while someone is reading abstracts is not lost. The
+other two are delivery addresses only — publishing one would collect questions
+there whether or not that was intended, which is the situation this avoids.
+
+They are the same three in `EMAILS` in `src/config.js`. Nothing keeps the two in
+sync — change one, change the other.
+
+**All three currently forward a copy to `wwcp2027@gmail.com`,** which was the
+throwaway debugging inbox. That is fine while the forms carry only test
+submissions and it is what makes the wiring checkable. It must be switched off
+before 30 August 2026, when abstract submission opens: notifications carry
+`{entry_data}`, the whole submission, so every real abstract arriving while the
+forward is live copies author names, addresses and affiliations onto Google's
+servers. Avoiding exactly that is why the notification inbox was never supposed
+to stay on Gmail.
 
 Deliverability itself is not a worry: mail from UiB's own server carries UiB's
 SPF and DKIM, which is a good deal better than anything sent from this VM.
@@ -467,8 +486,9 @@ One email covers all of them:
 6. Retention: how long are submissions kept, and who at UiB can access them?
 7. ~~What From address do auto-responders use, and can Reply-To be set?~~
    **Answered by building it: From is `noreply@uib.no` and is locked; Reply-To
-   is customisable and is set.** What is left of this one is the mailbox itself:
-   `wwcp2027@uib.no` still has to be created.
+   is customisable and is set.** The mailbox half of this is settled too: the
+   three `@wavecoupling2027.eu` addresses exist, so nothing here bounces any
+   more.
 
 The English-interface question is settled — it can be switched.
 
@@ -505,7 +525,7 @@ Settled:
 | Co-author registration | Only the presenting author registers per abstract |
 | Edit after submission | Not offered; corrections via a replacement submission |
 | Withdraw after submission | By email to the shared mailbox for now. Self-service (Form 3) is designed but deferred until the rules are settled. Either way, confirmation goes to the address on the original submission |
-| Notification recipient | Shared mailbox, `wwcp2027@uib.no` — never a personal address. Temporarily `wwcp2027@gmail.com` for testing because the alias does not exist yet; swap it back before publishing either URL |
+| Notification recipient | Shared mailbox on the conference domain, never a personal address: `abstract@wavecoupling2027.eu` for Form 1, `registration@wavecoupling2027.eu` for Form 2. Neither is published — `information@wavecoupling2027.eu` is the only address visitors are given |
 | Form interface language | English |
 | Data protection | Confirmed by the organiser; treated as compliant here |
 | Search engine indexing | Blocked until launch, via `SITE.indexable` in `src/config.js` |
@@ -523,5 +543,4 @@ Open:
 | Whether travel support or a prize exists | Field 11 of Form 1 — built, delete it if neither exists |
 | Whether a conference dinner is held | Field 10 of Form 2 — built, delete it if there is none |
 | China reachability of `skjemaker.app.uib.no` | Being checked by the organiser |
-| `wwcp2027@uib.no` does not exist yet | Reply-To and the withdrawal instruction on both forms; until it exists the notification inbox is a throwaway Gmail account, so submissions must not open |
-| `wwcp2027@uib.no` alias predates the "Bergen 2027" name | Replace once a matching alias exists |
+| The `wwcp2027@gmail.com` forward on all three mailboxes | Opening submissions. Harmless for test traffic, but it copies every real submission to Google once the abstract window opens on 30 Aug 2026 — turn it off first |

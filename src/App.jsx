@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react';
+
 import {
   CONF,
+  EMAILS,
   FORMS,
   KEY_DATES,
   SPEAKERS,
@@ -36,43 +39,80 @@ function TopBar() {
       <div className="topbar-inner">
         <span>{CONF.dates} · {CONF.city}</span>
         <span>
-          Contact: <a href={`mailto:${CONF.contactEmail}`}>{CONF.contactEmail}</a>
+          Contact: <a href={`mailto:${EMAILS.information}`}>{EMAILS.information}</a>
         </span>
       </div>
     </div>
   );
 }
 
+// Nav labels are shorter than the section headings they point at, which is
+// what lets eight of them sit on one row inside the 1100px column. Two are not
+// just abbreviations: 'Abstracts' points at the section headed 'Abstracts &
+// Registration', because a nav item called 'Registration' next to a 'Register'
+// button that opens a different thing (the form) is a genuine trap.
+const NAV_ITEMS = [
+  ['Introduction', 'introduction'],
+  ['Speakers', 'speakers'],
+  ['Key Dates', 'key-dates'],
+  ['Abstracts', 'registration'],
+  ['Authors', 'for-authors'],
+  ['Venue', 'venue'],
+  ['Organisation', 'organization'],
+  ['Sponsors', 'sponsors'],
+];
+
 function Header() {
-  const items = [
-    ['Introduction', 'introduction'],
-    ['Keynote Speakers', 'speakers'],
-    ['Key Dates', 'key-dates'],
-    ['Registration', 'registration'],
-    ['For Authors', 'for-authors'],
-    ['Venue', 'venue'],
-    ['Organisation', 'organization'],
-    ['Sponsors', 'sponsors'],
-  ];
+  // Below the width where the full row fits, the nav collapses behind this
+  // toggle. It used to be `display: none` with nothing in its place, so a phone
+  // got a header with no navigation in it at all.
+  const [open, setOpen] = useState(false);
+
+  // Escape closes it, which is the one keyboard behaviour a disclosure like
+  // this is expected to have and the one that is easiest to leave out.
+  useEffect(() => {
+    if (!open) return undefined;
+    const onKey = (e) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open]);
+
   return (
     <header className="site-header">
       <div className="site-header-inner">
-        <a href="#top" className="brand">
+        <a href="#top" className="brand" onClick={() => setOpen(false)}>
           <span className="brand-mark" aria-hidden="true"></span>
           <span className="brand-text">
             <span className="brand-title">{CONF.shortName}</span>
             <span className="brand-sub">Waves &amp; Wave-Coupled Processes</span>
           </span>
         </a>
-        <nav className="nav">
-          {items.map(([label, id]) => (
-            <a key={id} href={`#${id}`}>{label}</a>
+        <button
+          type="button"
+          className="nav-toggle"
+          aria-expanded={open}
+          aria-controls="site-nav"
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          onClick={() => setOpen((v) => !v)}
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
+        <nav className={`nav${open ? ' nav-open' : ''}`} id="site-nav">
+          {NAV_ITEMS.map(([label, id]) => (
+            <a key={id} href={`#${id}`} onClick={() => setOpen(false)}>
+              {label}
+            </a>
           ))}
           <a
             className="nav-cta"
             href={FORMS.registration.url}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => setOpen(false)}
           >
             Register
           </a>
@@ -89,11 +129,12 @@ function Hero() {
         <span className="tag">{CONF.shortName}</span>
         <h1>{CONF.fullName}</h1>
         <p className="lede">{CONF.subtitle}</p>
+        {/* No separator elements: the dots are drawn by CSS on the item that
+            follows them, so a wrap can never leave one stranded on a line of
+            its own — which is what happened at 375px. */}
         <div className="hero-meta">
           <span><strong>{CONF.dates}</strong></span>
-          <span>·</span>
           <span><strong>{CONF.city}</strong></span>
-          <span>·</span>
           <span>Hosted by {CONF.host}</span>
         </div>
         <div className="hero-actions">
@@ -134,16 +175,28 @@ function Introduction() {
   );
 }
 
+// Academic titles carried in the name string. Committee members are listed with
+// one, keynote speakers are not, and the initials have to come from the person's
+// own name either way — without this, "A/Prof. Yan Li" initials to "AL".
+const TITLE = /^(a\/prof|assoc|associate|prof|professor|dr|mr|ms|mrs|mx)\.?$/i;
+
 // Circular portrait with the name plate below. Until a portrait file is
-// supplied the circle carries the speaker's initials.
-function SpeakerPortrait({ name, photo }) {
+// supplied the circle carries the person's initials.
+//
+// Shared by the keynote grid and the organisation grid so the two cannot drift;
+// `size` picks the modifier class rather than a second implementation.
+function Portrait({ name, photo, size }) {
+  const cls = `portrait${size === 'sm' ? ' portrait-sm' : ''}`;
   if (photo) {
-    return <img className="speaker-photo" src={asset(photo)} alt={name} />;
+    return <img className={cls} src={asset(photo)} alt={name} />;
   }
-  const parts = name.split(/\s+/).filter(Boolean);
-  const initials = (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  const parts = name.split(/\s+/).filter(Boolean).filter((p) => !TITLE.test(p));
+  const initials =
+    parts.length === 0
+      ? '?'
+      : (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   return (
-    <div className="speaker-photo speaker-initials" aria-hidden="true">
+    <div className={`${cls} portrait-initials`} aria-hidden="true">
       {initials}
     </div>
   );
@@ -157,7 +210,7 @@ function Speakers() {
         <div className="speakers-grid">
           {SPEAKERS.map((s) => (
             <div key={s.name} className="speaker-card">
-              <SpeakerPortrait name={s.name} photo={s.photo} />
+              <Portrait name={s.name} photo={s.photo} />
               <div className="speaker-name">{s.name}</div>
               {s.affil && <div className="speaker-affil">{s.affil}</div>}
               <div className="speaker-topic">{s.topic}</div>
@@ -232,7 +285,9 @@ function AbstractsRegistration() {
             </p>
             <p>
               Every submission receives an email receipt with an abstract
-              ID — keep it for later.
+              ID — keep it for later. The receipt is sent automatically from{' '}
+              <code>noreply@uib.no</code>; add it to your contacts so the
+              receipt is not filtered as spam.
             </p>
             <a
               className="btn btn-primary"
@@ -267,9 +322,10 @@ function AbstractsRegistration() {
           </div>
         </div>
         <div className="register-note">
-          For questions, write to{' '}
-          <a href={`mailto:${CONF.contactEmail}`} className="register-note-link">
-            {CONF.contactEmail}
+          Questions — about an abstract, registration, fees, or an invitation
+          letter for a visa — go to{' '}
+          <a href={`mailto:${EMAILS.information}`} className="register-note-link">
+            {EMAILS.information}
           </a>.
         </div>
       </div>
@@ -297,6 +353,15 @@ function InfoForAuthors() {
             {CONF.abstractOpens} and {CONF.abstractDeadline}. You will receive
             an email receipt with an abstract ID; it is required when
             registering as a presenting author.
+          </li>
+          <li>
+            <strong>Corrections and withdrawals.</strong> Submissions cannot be
+            edited. To correct one, submit again and answer “Yes” to the
+            replacement question, quoting the abstract ID of the submission it
+            replaces. To withdraw an abstract, write to{' '}
+            <a href={`mailto:${EMAILS.information}`}>{EMAILS.information}</a> — the
+            committee confirms every withdrawal to the address on the original
+            submission before it takes effect.
           </li>
           <li>
             <strong>Decisions.</strong> Notifications of acceptance are
@@ -373,21 +438,20 @@ function Organization() {
     <section className="band scroll-anchor" id="organization">
       <div className="container">
         <h2 className="section-title">Organisation</h2>
-        <div className="org-grid">
-          {COMMITTEES.map((c) => (
-            <div key={c.title} className="org-card">
-              <h3>{c.title}</h3>
-              <ul>
-                {c.members.map((m) => (
-                  <li key={m.name}>
-                    {m.name}
-                    <span className="affil">{m.affil}</span>
-                  </li>
-                ))}
-              </ul>
+        {COMMITTEES.map((c) => (
+          <div key={c.title} className="org-block">
+            <h3 className="org-block-title">{c.title}</h3>
+            <div className="people-grid">
+              {c.members.map((m) => (
+                <div key={m.name} className="person-card">
+                  <Portrait name={m.name} photo={m.photo} size="sm" />
+                  <div className="person-name">{m.name}</div>
+                  <div className="person-affil">{m.affil}</div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </section>
   );
@@ -439,20 +503,29 @@ function Sponsors() {
               number to this acknowledgment once provided. */}
         </p>
         <div className="funding-strip">
-          {/* EU emblem rules (2021–2027): the emblem carries the spelled-out
-              funding statement and must be at least as large as the biggest
-              other logo in this strip — keep that invariant when the ERC and
-              RCN logo files arrive. */}
-          <div className="funding-item eu-lockup">
-            <img src={asset('eu-emblem.svg')} alt="Flag of the European Union" />
-            <span>Funded by<br />the European Union</span>
+          {/* ERC publishes this as one file: the EU emblem with the spelled-out
+              funding statement, a rule, then the ERC logo. Using it rather than
+              composing the two by hand is what satisfies "the EU emblem and the
+              ERC logo should always be represented together in equal sizing" —
+              the proportions are the ones ERC ships, not ones we chose.
+
+              It also carries the 2021–2027 obligation to spell out "Funded by
+              the European Union" next to the emblem. Sizing against the RCN mark
+              beside it is set in styles.css. */}
+          <div className="funding-item erc-eu-lockup">
+            <img
+              src={asset('logo-erc-eu.png')}
+              alt="Funded by the European Union — European Research Council, established by the European Commission"
+            />
           </div>
-          {/* TODO: replace with the official ERC logo from the grantee brand
-              pack — ERC projects display the EU emblem and ERC logo together. */}
-          <div className="funding-item text-logo">European Research Council</div>
-          {/* TODO: official logo file from the Research Council of Norway. */}
-          <div className="funding-item text-logo">
-            The Research Council of Norway
+          {/* Not the Research Council's institutional logo: their brand rules say
+              a funded project must use this dedicated "Funded by" mark instead.
+              English version of Forskningsradet_Stottet-logo. */}
+          <div className="funding-item rcn-mark">
+            <img
+              src={asset('logo-rcn-funded.svg')}
+              alt="Funded by The Research Council of Norway"
+            />
             <span className="funding-sub">EVALMIT network</span>
           </div>
         </div>
@@ -479,7 +552,7 @@ function Footer() {
         </div>
         <div>
           <h4>Contact</h4>
-          <div><a href={`mailto:${CONF.contactEmail}`}>{CONF.contactEmail}</a></div>
+          <div><a href={`mailto:${EMAILS.information}`}>{EMAILS.information}</a></div>
         </div>
         <div>
           <h4>Quick Links</h4>

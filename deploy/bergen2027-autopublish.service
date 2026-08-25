@@ -1,5 +1,5 @@
 [Unit]
-Description=Publish oceancoupling.eu from origin/main when it moves
+Description=Publish wavecoupling2027.eu from origin/main when it moves
 Documentation=file:///home/ubuntu/wcb2026website/deploy/README.md
 After=network-online.target
 Wants=network-online.target

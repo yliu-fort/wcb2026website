@@ -28,9 +28,6 @@ export const CONF = {
   city: "Bergen, Norway",
   host: "the University of Bergen and the Norwegian Meteorological Institute",
 
-  // The mailbox predates the current "Bergen 2027" name; replace once a
-  // matching alias exists.
-  contactEmail: "wwcp2027@uib.no",
 
   // Month-precision values are deliberate — the committee will refine them.
   abstractOpens: "30 August 2026",
@@ -45,6 +42,28 @@ export const CONF = {
 // external respondents; and merges the entry number into its auto-responder,
 // which is how the abstract receipt issues the B27-… abstract ID the registration
 // form asks presenting authors to quote. See docs/forms.md.
+// Three mailboxes on the conference domain. They replaced wwcp2027@uib.no, an
+// alias that was written into the site and both forms but never actually
+// created -- every use of it bounced.
+//
+// The split is by *direction*, not by topic. `information` is the only address
+// a visitor is ever shown: every question, whatever it is about, goes there, so
+// nobody has to guess which mailbox their question belongs in. The other two are
+// delivery addresses for the forms and are deliberately never published — a
+// published address collects questions whether you want it to or not.
+//
+// Whatever changes here has to be carried across to Skjemaker by hand. See
+// docs/forms.md.
+export const EMAILS = {
+  // Where Form 1 delivers submissions. Not shown on the site.
+  abstract: "abstract@wavecoupling2027.eu",
+  // Where Form 2 delivers registrations. Not shown on the site.
+  registration: "registration@wavecoupling2027.eu",
+  // The published contact address: header, footer, both forms' Reply-To, and
+  // every "write to us" on the site.
+  information: "information@wavecoupling2027.eu",
+};
+
 export const FORMS = {
   abstract: {
     url: "https://skjemaker.app.uib.no/view.php?id=21385291",
@@ -122,14 +141,34 @@ export const SPEAKERS = [
   },
 ];
 
+// Two groups, as the committee lists them. Order within each group follows the
+// committee's own announcement rather than being alphabetised -- the local
+// hosts lead, and the two host institutions appear in the order they are named
+// throughout the site.
+//
+// Rendered as portrait tiles, the same treatment as SPEAKERS. Add
+// `photo: "organisers/<file>"` (under public/images/) when a portrait arrives;
+// until then the tile shows an initials avatar. The title in `name` is stripped
+// before the initials are taken, so "A/Prof. Yan Li" gives YL, not AL.
 export const COMMITTEES = [
+  {
+    title: "Local Organisers",
+    members: [
+      { name: "A/Prof. Yan Li", affil: "University of Bergen, Norway" },
+      { name: "Dr. Yuxuan Liu", affil: "University of Bergen, Norway" },
+      { name: "Prof. Henrik Kalisch", affil: "University of Bergen, Norway" },
+      {
+        name: "Prof. \u00d8yvind Breivik",
+        affil: "Norwegian Meteorological Institute, Norway",
+      },
+    ],
+  },
   {
     title: "Organising Committee",
     members: [
-      { name: "A/Prof. Yan Li", affil: "University of Bergen, Norway" },
       { name: "Prof. Alexander Babanin", affil: "The University of Melbourne, Australia" },
       { name: "Prof. Fangli Qiao", affil: "First Institute of Oceanography, China" },
-      { name: "Prof. Lichuan Wu", affil: "Uppsala University, Sweden" },
+      { name: "A/Prof. Lichuan Wu", affil: "Uppsala University, Sweden" },
       { name: "Dr. Jean Bidlot", affil: "ECMWF, UK" },
       { name: "Dr. Montri Maleewong", affil: "Kasetsart University, Thailand" },
     ],
@@ -155,8 +194,10 @@ export const PAST_EDITIONS = [
 // a text tile until an official logo file is supplied.
 export const HOSTS = [
   { name: "University of Bergen", logo: "logo-uib.png" },
-  // TODO: official logo file from MET Norway.
-  { name: "Norwegian Meteorological Institute", logo: null },
+  // Met_RGB_Horisontal_ENG from met.no's own logo page. The English horizontal
+  // lockup, not the SVG in the site header — that one reads "Meteorologisk
+  // institutt" and this site is in English throughout.
+  { name: "Norwegian Meteorological Institute", logo: "logo-met.jpg" },
 ];
 
 // Partner institutions represented on the Organising Committee (hosts excluded).

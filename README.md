@@ -54,6 +54,9 @@ Common tasks:
 - **Add a speaker photo**: drop the file in `public/images/speakers/` and set
   `photo: "speakers/<file>"` on the speaker's entry in `SPEAKERS`. Until then
   the card shows an initials avatar.
+- **Add an organiser photo**: the same, in `public/images/organisers/` with
+  `photo: "organisers/<file>"` on the member's entry in `COMMITTEES`. Both
+  sections render through one `Portrait` component, so they stay consistent.
 - **Confirm a tentative speaker**: remove `tentative: true` from their entry.
 - **Add a logo**: drop the file in `public/images/`, reference it from `HOSTS`
   or `PARTNERS`. Entries with `logo: null` render as text tiles.
@@ -90,12 +93,31 @@ this cannot quietly come back.
 
 ## Funding acknowledgment
 
-The Sponsors section follows the EU emblem rules for 2021–2027 programmes: the
-emblem (drawn to the official geometry in `public/images/eu-emblem.svg`)
-carries the spelled-out "Funded by the European Union" statement, the required
-disclaimer is displayed, and the emblem must remain at least as large as any
-other logo in that strip when the ERC and Research Council of Norway logo files
-arrive.
+The Sponsors section uses each funder's own published file rather than a
+composition of our own, because in both cases the rules are about the file, not
+just the artwork:
+
+- **ERC + EU** is one image, `logo-erc-eu.png`, taken from
+  [erc.europa.eu/support/logos](https://erc.europa.eu/support/logos). ERC
+  requires that "the EU emblem and the ERC logo should always be represented
+  together in equal sizing", and their combined file already is. It also carries
+  the 2021–2027 obligation to spell out "Funded by the European Union" beside the
+  emblem. This replaced a hand-drawn `eu-emblem.svg` plus a separate ERC text
+  tile.
+- **Research Council of Norway** is `logo-rcn-funded.svg`, the English "Funded by
+  The Research Council of Norway" mark. Their brand guide is explicit that a
+  funded project **must not use the institutional Forskningsrådet logo** — there
+  is a dedicated mark for exactly this purpose, and this is it. Source:
+  [identitet.forskningsradet.no](https://identitet.forskningsradet.no/verktoykasse/logo).
+
+The EU emblem must not be smaller than any other logo in that strip. Inside
+ERC's combined file the flag block is 68.8% of the file's height, so the two
+heights in `styles.css` (72px lockup, 40px RCN mark) put the flag at 49.6px
+against 40px. Both numbers carry a comment saying so; changing either one means
+re-checking the other.
+
+Still missing from the acknowledgment text: the ERC grant agreement number and
+the RCN project number.
 
 ## Deployment
 
@@ -103,9 +125,10 @@ Pushing to `main` triggers `.github/workflows/deploy.yml`, which builds the site
 and publishes it to GitHub Pages. Pull requests run the same build as a check but
 do not deploy.
 
-The self-hosted origin at [oceancoupling.eu](https://oceancoupling.eu) follows
-`main` too, but on a five-minute timer rather than through Actions — see
-[`deploy/README.md`](deploy/README.md).
+The self-hosted origin at [wavecoupling2027.eu](https://wavecoupling2027.eu)
+follows `main` too, but on a five-minute timer rather than through Actions — see
+[`deploy/README.md`](deploy/README.md). `oceancoupling.eu` was the original
+domain and now redirects there.
 
 Work on a branch and merge via pull request — `main` is published automatically
 to **both** origins, so anything landing there is immediately public.
