@@ -434,9 +434,13 @@
       padding-bottom: 8px;
   }
 
+  /* 140px rather than 160: at 375px the container is ~327px wide, so 160 puts
+     one tile per row and a nine-person section becomes a very long scroll. 140
+     fits two. Desktop is unaffected — auto-fit collapses the empty tracks and
+     the four or five real ones stretch to fill either way. */
   .people-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 24px 16px;
       margin-top: 22px;
   }
