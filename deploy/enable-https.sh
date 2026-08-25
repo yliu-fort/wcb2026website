@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-time: take the site public at https://oceancoupling.eu.
+# One-time: take the site public at https://wavecoupling2027.eu.
 #
 # Ordered because the steps genuinely depend on each other — Let's Encrypt has
 # to reach port 80 from the internet to prove we control the domain, so the
@@ -13,7 +13,13 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DOMAIN=oceancoupling.eu
+DOMAIN=wavecoupling2027.eu
+# The original domain, circulated before the August 2026 rename. It stays on
+# the certificate and 301s to the canonical one; dropping it would break links
+# already in the wild, and a name missing from the certificate cannot renew.
+LEGACY_DOMAIN=oceancoupling.eu
+NAMES=("$DOMAIN" "www.$DOMAIN" "$LEGACY_DOMAIN" "www.$LEGACY_DOMAIN")
+DOMAIN_ARGS=(); for name in "${NAMES[@]}"; do DOMAIN_ARGS+=(-d "$name"); done
 # Let's Encrypt wants an address for expiry warnings, but this repo is public and
 # a plaintext address in it is just something to be scraped. Take it from the
 # environment, falling back to the committer's git identity — which is already
@@ -30,7 +36,7 @@ echo "==> checking DNS"
 want=$(curl -s -4 --max-time 10 ifconfig.me)
 [[ -n "$want" ]] || die "could not determine this host's public IPv4"
 
-for name in "$DOMAIN" "www.$DOMAIN"; do
+for name in "${NAMES[@]}"; do
   got=$(dig +short A "$name" @1.1.1.1 | tail -1)
   [[ "$got" == "$want" ]] || die "$name resolves to '${got:-nothing}', expected $want. Update DNS at the registrar and wait for the TTL to expire."
   grn "    $name -> $got"
@@ -38,7 +44,7 @@ done
 
 # An AAAA that does not actually accept connections is worse than none: Let's
 # Encrypt prefers IPv6 when it exists, so a stale record fails issuance outright.
-for name in "$DOMAIN" "www.$DOMAIN"; do
+for name in "${NAMES[@]}"; do
   if aaaa=$(dig +short AAAA "$name" @1.1.1.1 | tail -1) && [[ -n "$aaaa" ]]; then
     curl -s -6 -o /dev/null --max-time 8 "http://[$aaaa]/" 2>/dev/null \
       || die "$name has AAAA $aaaa but it does not answer. Remove the AAAA record, or fix IPv6 first — Let's Encrypt will try it before IPv4 and fail."
@@ -64,7 +70,8 @@ sudo ufw status | grep -E '80/tcp|443/tcp' | head -4
 echo "==> obtaining certificate"
 sudo certbot certonly \
   --webroot -w /var/www/acme \
-  -d "$DOMAIN" -d "www.$DOMAIN" \
+  --cert-name "$DOMAIN" \
+  "${DOMAIN_ARGS[@]}" \
   --email "$EMAIL" --agree-tos --no-eff-email \
   --keep-until-expiring \
   --deploy-hook "systemctl reload nginx"

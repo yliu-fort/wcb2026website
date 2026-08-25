@@ -7,7 +7,7 @@
 # this host's own public IP from the host routes over loopback, which ufw
 # exempts, and every check would pass for the wrong reason:
 #
-#     deploy/verify-exposure.sh https://oceancoupling.eu
+#     deploy/verify-exposure.sh https://wavecoupling2027.eu
 #
 # The host's IP is deliberately not written down here: this repo is public, and
 # naming it would hand a scanner the target plus README.md's inventory of what
@@ -15,7 +15,9 @@
 
 set -uo pipefail
 
-DOMAIN=oceancoupling.eu
+# The canonical host. oceancoupling.eu only 301s here, so probing it would
+# test the redirect rather than the site.
+DOMAIN=wavecoupling2027.eu
 LOCAL=0
 CURL_EXTRA=()
 

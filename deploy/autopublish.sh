@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Keeps oceancoupling.eu in step with origin/main.
+# Keeps wavecoupling2027.eu in step with origin/main.
 #
 # GitHub Pages redeploys itself from main through Actions. This origin does not,
 # and on 2026-08-13 it spent a day serving a build whose form links were still

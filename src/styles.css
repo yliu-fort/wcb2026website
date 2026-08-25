@@ -877,6 +877,28 @@
       text-decoration: underline;
   }
 
+  /* The per-purpose contact address on each card. Quieter than the body copy,
+     and given the larger bottom margin so the button below it still reads as
+     the card's last element rather than as part of this line.
+
+     Qualified with the element selector because `.absreg-card p` would
+     otherwise win on specificity and put the size and colour back. */
+  .absreg-card p.absreg-contact {
+      font-size: 0.85rem;
+      color: #c2d2e4;
+      margin-bottom: 18px;
+  }
+
+  /* noreply@uib.no is set as code so it reads as an address to whitelist
+     rather than one to write to — it is a send-only mailbox. */
+  .absreg-card code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.88em;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      padding: 1px 5px;
+  }
+
   /* ============ Information for authors ============ */
   .authors-list {
       list-style: none;
@@ -942,13 +964,22 @@
   /* EU emblem rules 2021-2027: the emblem must be at least as large as the
      biggest other logo displayed with it — keep this height when real ERC and
      RCN logo files replace the text tiles. */
-  .eu-lockup {
-      flex-direction: row;
-      gap: 12px;
+  /* The two marks in this strip are sized against each other deliberately.
+     The EU emblem must not be smaller than any other logo shown beside it, and
+     inside ERC's combined file the flag block is 68.8% of the file's height
+     (measured: 862px of 1252). At 72px the flag therefore renders 49.6px tall,
+     which leaves the 40px Research Council mark below it with room to spare.
+
+     Change one of these numbers and the other has to be re-checked: dropping
+     the lockup to 56px would put the flag at 38.5px, under the RCN mark, and
+     quietly break the rule the whole arrangement exists to satisfy. */
+  .erc-eu-lockup img {
+      height: 72px;
+      display: block;
   }
 
-  .eu-lockup img {
-      height: 56px;
+  .rcn-mark img {
+      height: 40px;
       display: block;
   }
 

@@ -1,5 +1,6 @@
 import {
   CONF,
+  EMAILS,
   FORMS,
   KEY_DATES,
   SPEAKERS,
@@ -36,7 +37,7 @@ function TopBar() {
       <div className="topbar-inner">
         <span>{CONF.dates} · {CONF.city}</span>
         <span>
-          Contact: <a href={`mailto:${CONF.contactEmail}`}>{CONF.contactEmail}</a>
+          Contact: <a href={`mailto:${EMAILS.information}`}>{EMAILS.information}</a>
         </span>
       </div>
     </div>
@@ -232,7 +233,14 @@ function AbstractsRegistration() {
             </p>
             <p>
               Every submission receives an email receipt with an abstract
-              ID — keep it for later.
+              ID — keep it for later. The receipt is sent automatically from{' '}
+              <code>noreply@uib.no</code>; add it to your contacts so the
+              receipt is not filtered as spam.
+            </p>
+            <p className="absreg-contact">
+              Questions about an abstract, including replacements and
+              withdrawals:{' '}
+              <a href={`mailto:${EMAILS.abstract}`}>{EMAILS.abstract}</a>
             </p>
             <a
               className="btn btn-primary"
@@ -256,6 +264,13 @@ function AbstractsRegistration() {
               welcome. The participant registration deadline and further
               details, including any fees, will be announced.
             </p>
+            <p className="absreg-contact">
+              Questions about registration, fees or an invitation letter for a
+              visa:{' '}
+              <a href={`mailto:${EMAILS.registration}`}>
+                {EMAILS.registration}
+              </a>
+            </p>
             <a
               className="btn btn-primary"
               href={FORMS.registration.url}
@@ -267,9 +282,9 @@ function AbstractsRegistration() {
           </div>
         </div>
         <div className="register-note">
-          For questions, write to{' '}
-          <a href={`mailto:${CONF.contactEmail}`} className="register-note-link">
-            {CONF.contactEmail}
+          For anything else, write to{' '}
+          <a href={`mailto:${EMAILS.information}`} className="register-note-link">
+            {EMAILS.information}
           </a>.
         </div>
       </div>
@@ -297,6 +312,15 @@ function InfoForAuthors() {
             {CONF.abstractOpens} and {CONF.abstractDeadline}. You will receive
             an email receipt with an abstract ID; it is required when
             registering as a presenting author.
+          </li>
+          <li>
+            <strong>Corrections and withdrawals.</strong> Submissions cannot be
+            edited. To correct one, submit again and answer “Yes” to the
+            replacement question, quoting the abstract ID of the submission it
+            replaces. To withdraw an abstract, write to{' '}
+            <a href={`mailto:${EMAILS.abstract}`}>{EMAILS.abstract}</a> — the
+            committee confirms every withdrawal to the address on the original
+            submission before it takes effect.
           </li>
           <li>
             <strong>Decisions.</strong> Notifications of acceptance are
@@ -439,20 +463,29 @@ function Sponsors() {
               number to this acknowledgment once provided. */}
         </p>
         <div className="funding-strip">
-          {/* EU emblem rules (2021–2027): the emblem carries the spelled-out
-              funding statement and must be at least as large as the biggest
-              other logo in this strip — keep that invariant when the ERC and
-              RCN logo files arrive. */}
-          <div className="funding-item eu-lockup">
-            <img src={asset('eu-emblem.svg')} alt="Flag of the European Union" />
-            <span>Funded by<br />the European Union</span>
+          {/* ERC publishes this as one file: the EU emblem with the spelled-out
+              funding statement, a rule, then the ERC logo. Using it rather than
+              composing the two by hand is what satisfies "the EU emblem and the
+              ERC logo should always be represented together in equal sizing" —
+              the proportions are the ones ERC ships, not ones we chose.
+
+              It also carries the 2021–2027 obligation to spell out "Funded by
+              the European Union" next to the emblem. Sizing against the RCN mark
+              beside it is set in styles.css. */}
+          <div className="funding-item erc-eu-lockup">
+            <img
+              src={asset('logo-erc-eu.png')}
+              alt="Funded by the European Union — European Research Council, established by the European Commission"
+            />
           </div>
-          {/* TODO: replace with the official ERC logo from the grantee brand
-              pack — ERC projects display the EU emblem and ERC logo together. */}
-          <div className="funding-item text-logo">European Research Council</div>
-          {/* TODO: official logo file from the Research Council of Norway. */}
-          <div className="funding-item text-logo">
-            The Research Council of Norway
+          {/* Not the Research Council's institutional logo: their brand rules say
+              a funded project must use this dedicated "Funded by" mark instead.
+              English version of Forskningsradet_Stottet-logo. */}
+          <div className="funding-item rcn-mark">
+            <img
+              src={asset('logo-rcn-funded.svg')}
+              alt="Funded by The Research Council of Norway"
+            />
             <span className="funding-sub">EVALMIT network</span>
           </div>
         </div>
@@ -479,7 +512,18 @@ function Footer() {
         </div>
         <div>
           <h4>Contact</h4>
-          <div><a href={`mailto:${CONF.contactEmail}`}>{CONF.contactEmail}</a></div>
+          <div>
+            Abstracts:{' '}
+            <a href={`mailto:${EMAILS.abstract}`}>{EMAILS.abstract}</a>
+          </div>
+          <div>
+            Registration:{' '}
+            <a href={`mailto:${EMAILS.registration}`}>{EMAILS.registration}</a>
+          </div>
+          <div>
+            General:{' '}
+            <a href={`mailto:${EMAILS.information}`}>{EMAILS.information}</a>
+          </div>
         </div>
         <div>
           <h4>Quick Links</h4>
