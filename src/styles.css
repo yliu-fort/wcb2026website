@@ -960,6 +960,73 @@
       font-size: 1.5rem;
   }
 
+  /* --- photograph credits ------------------------------------------------
+     Only portraits whose photographer is actually named carry one, so this is
+     two circles out of sixteen rather than a caption under every tile. The
+     label follows the pointer because a 92px circle has nowhere to put it, and
+     a permanent caption would clutter a section that is otherwise just names.
+
+     On a phone it is a long press. A tap does nothing and any movement cancels,
+     so scrolling past a face never fires it. */
+  .portrait-credited {
+      display: block;
+      position: relative;
+      cursor: help;
+      /* The long press is ours. Without this, iOS opens its own save-image
+         sheet on top of the label. */
+      -webkit-touch-callout: none;
+  }
+
+  .portrait-credited:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 50%;
+  }
+
+  .portrait-credit {
+      position: fixed;
+      /* Above the sticky header, which sits at 50. */
+      z-index: 200;
+      transform: translate(14px, 16px);
+      background: rgba(11, 37, 69, 0.95);
+      color: #fff;
+      font-size: 0.72rem;
+      padding: 5px 10px;
+      border-radius: 5px;
+      white-space: nowrap;
+      box-shadow: 0 6px 16px rgba(11, 37, 69, 0.28);
+      /* Load bearing: without it the label lands under the cursor, takes the
+         mouseover from the portrait, and the two flicker against each other. */
+      pointer-events: none;
+  }
+
+  /* Near an edge, put the label on the other side of the cursor instead of
+     letting it hang off the window. */
+  .portrait-credit.flip-x {
+      transform: translate(calc(-100% - 14px), 16px);
+  }
+
+  .portrait-credit.flip-y {
+      transform: translate(14px, calc(-100% - 16px));
+  }
+
+  .portrait-credit.flip-x.flip-y {
+      transform: translate(calc(-100% - 14px), calc(-100% - 16px));
+  }
+
+  /* Read by screen readers, which have no pointer to hover with. */
+  .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      border: 0;
+      clip-path: inset(50%);
+      overflow: hidden;
+      white-space: nowrap;
+  }
+
   .speaker-name {
       font-weight: 600;
       color: var(--navy);

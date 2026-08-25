@@ -157,17 +157,29 @@ export const SPEAKERS = [
 // `photo: "organisers/<file>"` (under public/images/) when a portrait arrives;
 // until then the tile shows an initials avatar. The title in `name` is stripped
 // before the initials are taken, so "A/Prof. Yan Li" gives YL, not AL.
+//
+// `credit` is the photographer, and only the photographer — set it wherever one
+// is actually named, and leave it off otherwise rather than filling it with the
+// institution that happened to host the file. Where it is set the portrait shows
+// the name on hover or long-press. Sources and credits for every candidate are
+// in docs/portraits.md.
 export const COMMITTEES = [
   {
     title: "Local Organisers",
     members: [
-      { name: "A/Prof. Yan Li", affil: "University of Bergen, Norway", photo: "organisers/yan-li.jpg" },
+      {
+        name: "A/Prof. Yan Li",
+        affil: "University of Bergen, Norway",
+        photo: "organisers/yan-li.jpg",
+        credit: "Eivind Senneset",
+      },
       { name: "Dr. Yuxuan Liu", affil: "University of Bergen, Norway", photo: "organisers/yuxuan-liu.jpg" },
       { name: "Prof. Henrik Kalisch", affil: "University of Bergen, Norway", photo: "organisers/henrik-kalisch.jpg" },
       {
         name: "Prof. \u00d8yvind Breivik",
         affil: "Norwegian Meteorological Institute, Norway",
-        photo: "organisers/oyvind-breivik.jpg"
+        photo: "organisers/oyvind-breivik.jpg",
+        credit: "Kamilla Pedersen",
       },
     ],
   },
