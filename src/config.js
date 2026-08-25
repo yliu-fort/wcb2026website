@@ -145,6 +145,11 @@ export const SPEAKERS = [
 // committee's own announcement rather than being alphabetised -- the local
 // hosts lead, and the two host institutions appear in the order they are named
 // throughout the site.
+//
+// Rendered as portrait tiles, the same treatment as SPEAKERS. Add
+// `photo: "organisers/<file>"` (under public/images/) when a portrait arrives;
+// until then the tile shows an initials avatar. The title in `name` is stripped
+// before the initials are taken, so "A/Prof. Yan Li" gives YL, not AL.
 export const COMMITTEES = [
   {
     title: "Local Organisers",

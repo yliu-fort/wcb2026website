@@ -421,46 +421,42 @@
   }
 
   /* ============ Organization ============ */
-  .org-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 24px;
+  /* Each committee is its own full-width block rather than a column in a
+     two-up card layout: portraits need the width, and a 260px column would fit
+     two of them per row with the names wrapping. */
+  .org-block + .org-block {
+      margin-top: 34px;
   }
 
-  .org-card {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 20px 22px;
-      box-shadow: var(--shadow);
-  }
-
-  .org-card h3 {
-      margin-top: 0;
+  .org-block-title {
+      margin: 0 0 4px;
       border-bottom: 1px solid var(--line);
       padding-bottom: 8px;
   }
 
-  .org-card ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+  .people-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 24px 16px;
+      margin-top: 22px;
   }
 
-  .org-card li {
-      padding: 6px 0;
-      border-bottom: 1px dashed #e3eaf1;
+  .person-card {
+      text-align: center;
+  }
+
+  .person-name {
+      font-weight: 600;
+      color: var(--navy);
       font-size: 0.95rem;
+      line-height: 1.35;
   }
 
-  .org-card li:last-child {
-      border-bottom: none;
-  }
-
-  .org-card .affil {
+  .person-affil {
       color: var(--muted);
-      font-size: 0.85rem;
-      display: block;
+      font-size: 0.82rem;
+      margin-top: 3px;
+      line-height: 1.4;
   }
 
   /* ============ Venue ============ */
@@ -788,7 +784,9 @@
       text-align: center;
   }
 
-  .speaker-photo {
+  /* Shared by the keynote grid and the organisation grid — one portrait
+     treatment, two sections, so they cannot drift apart. */
+  .portrait {
       width: 122px;
       height: 122px;
       border-radius: 50%;
@@ -799,7 +797,7 @@
       box-shadow: var(--shadow);
   }
 
-  .speaker-initials {
+  .portrait-initials {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -808,6 +806,19 @@
       font-weight: 600;
       color: #fff;
       background: linear-gradient(135deg, var(--ocean), var(--navy));
+  }
+
+  /* Organisers: same circle, smaller. There are nine of them against eight
+     keynotes, but each tile carries no topic line, so the row is shorter and a
+     smaller portrait keeps the section from dominating the page. */
+  .portrait-sm {
+      width: 92px;
+      height: 92px;
+      margin-bottom: 10px;
+  }
+
+  .portrait-sm.portrait-initials {
+      font-size: 1.5rem;
   }
 
   .speaker-name {

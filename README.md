@@ -54,6 +54,9 @@ Common tasks:
 - **Add a speaker photo**: drop the file in `public/images/speakers/` and set
   `photo: "speakers/<file>"` on the speaker's entry in `SPEAKERS`. Until then
   the card shows an initials avatar.
+- **Add an organiser photo**: the same, in `public/images/organisers/` with
+  `photo: "organisers/<file>"` on the member's entry in `COMMITTEES`. Both
+  sections render through one `Portrait` component, so they stay consistent.
 - **Confirm a tentative speaker**: remove `tentative: true` from their entry.
 - **Add a logo**: drop the file in `public/images/`, reference it from `HOSTS`
   or `PARTNERS`. Entries with `logo: null` render as text tiles.
