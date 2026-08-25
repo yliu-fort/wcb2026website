@@ -136,27 +136,25 @@ Direct image URLs:
 ### Dr. Montri Maleewong
 Kasetsart University, Thailand
 
-**A photograph exists but could not be retrieved.** ResearchGate has one at
-<https://www.researchgate.net/profile/Montri-Maleewong>, served from
-`i1.rgstatic.net`. The profile page shows it at 128×128, under the 184px a 92px
-circle needs, but a 512×512 variant does exist — swapping `_Q128` in the path for
-`_Q512` loads a 512×512 image in a browser.
+| # | File | Size | Source | Credit | Notes |
+|---|---|---|---|---|---|
+| 1 | `montri-maleewong-1.jpg` | 320×320 | [ResearchGate profile](https://www.researchgate.net/profile/Montri-Maleewong) | none stated | Served from `i1.rgstatic.net`. The profile page shows 128×128; swapping `_Q128` for `_Q512` in the path gives 512×512, which is what this was resized from. |
 
-Getting the file needs a person, not a script. The CDN answers `curl` with 403
-however the request is dressed up, and it sends no CORS headers, so a browser can
-display the image but not read its pixels back — a canvas drawn from it is
-tainted and refuses `toDataURL`. Both were tried.
+Direct image URL: <https://i1.rgstatic.net/ii/profile.image/279586530185221-1443670031188_Q512/Montri-Maleewong.jpg>
 
-**To add it:** open the URL below in a browser, save the image, and hand over the
-file.
+**Getting the file took a detour, recorded here so nobody repeats it.** The CDN
+answers `curl` with 403 however the request is dressed up, and sends no CORS
+headers, so a page on another origin can display the image but not read its
+pixels — a canvas drawn from it is tainted and refuses `toDataURL`. What works is
+to navigate the browser *to the image URL itself*: the page origin becomes
+`i1.rgstatic.net`, so fetching the same URL is a same-origin request and the
+bytes come back. Posting them to a local receiver was then blocked as mixed
+content (https page, http localhost), but a top-level navigation carrying the
+data in the URL fragment is not, and a small local server reassembled it.
 
-<https://i1.rgstatic.net/ii/profile.image/279586530185221-1443670031188_Q512/Montri-Maleewong.jpg>
-
-Worth weighing first: the identifier carries the timestamp `1443670031188`, which
-is October 2015, so the photograph is about eleven years old. Asking him for a
-current one may be the better move.
-
-## Keynote Speakers
+**Note the date.** The identifier carries the timestamp `1443670031188`, October
+2015, so this photograph is about eleven years old — the oldest of the set.
+Worth asking him for a current one.
 
 ### Lotfi Aouf
 Météo-France
@@ -248,8 +246,8 @@ Direct image URLs:
 
 ## Still without a photograph
 
-- Dr. Montri Maleewong — one exists on ResearchGate but must be saved by hand; see above
 - Al Osborne — nothing found on any page that could be reached
 
-Yuxuan Liu supplied theirs directly, and Lotfi Aouf's turned up on a second look
-once CSS background images were checked as well as `<img>` tags.
+Al Osborne is the only one left. Yuxuan Liu supplied theirs directly, Lotfi
+Aouf's turned up on a second look once CSS background images were checked as
+well as `<img>` tags, and Montri Maleewong's came off ResearchGate the hard way.

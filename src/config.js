@@ -178,7 +178,7 @@ export const COMMITTEES = [
       { name: "Prof. Fangli Qiao", affil: "First Institute of Oceanography, China", photo: "organisers/fangli-qiao.jpg" },
       { name: "A/Prof. Lichuan Wu", affil: "Uppsala University, Sweden", photo: "organisers/lichuan-wu.jpg" },
       { name: "Dr. Jean Bidlot", affil: "ECMWF, UK", photo: "organisers/jean-bidlot.jpg" },
-      { name: "Dr. Montri Maleewong", affil: "Kasetsart University, Thailand" },
+      { name: "Dr. Montri Maleewong", affil: "Kasetsart University, Thailand", photo: "organisers/montri-maleewong.jpg" },
     ],
   },
 ];
