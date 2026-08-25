@@ -4,3 +4,10 @@ dist/
 *.local
 .vite/
 npm-debug.log*
+
+# Candidate portraits gathered from public profiles for the committee to choose
+# from. Deliberately NOT committed: this repository is public, and these are
+# other people's copyrighted photographs which we have not yet been given
+# permission to redistribute. docs/portraits.md carries the provenance instead.
+# Once a photo is chosen AND cleared, it goes into public/images/organisers/.
+photo-candidates/
