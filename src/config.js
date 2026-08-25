@@ -105,16 +105,19 @@ export const SPEAKERS = [
     affil: "NTNU, Norway",
     topic:
       "Wave–current interaction; influences in the upper ocean, wave turbulence and mixing",
+    photo: "speakers/simen-ellingsen.jpg"
   },
   {
     name: "Peter Janssen",
     affil: "ECMWF, UK",
     topic: "Air–sea interaction",
+    photo: "speakers/peter-janssen.jpg"
   },
   {
     name: "Yuzhu Pearl Li",
     affil: "National University of Singapore",
     topic: "Wave breaking and turbulence modelling",
+    photo: "speakers/yuzhu-pearl-li.jpg"
   },
   {
     // TODO: affiliation to be provided by the committee.
@@ -126,18 +129,21 @@ export const SPEAKERS = [
     name: "Zhenya Song",
     affil: "First Institute of Oceanography, China",
     topic: "Integrating surface waves into Earth system models",
+    photo: "speakers/zhenya-song.jpg"
   },
   {
     name: "Jim Thomson",
     affil: "University of Washington, USA",
     topic: "In-situ observations and wave breaking",
     tentative: true,
+    photo: "speakers/jim-thomson.jpg"
   },
   {
     name: "Takuji Waseda",
     affil: "The University of Tokyo, Japan",
     topic: "Wave–ice interactions",
     tentative: true,
+    photo: "speakers/takuji-waseda.jpg"
   },
 ];
 
@@ -154,22 +160,23 @@ export const COMMITTEES = [
   {
     title: "Local Organisers",
     members: [
-      { name: "A/Prof. Yan Li", affil: "University of Bergen, Norway" },
-      { name: "Dr. Yuxuan Liu", affil: "University of Bergen, Norway" },
-      { name: "Prof. Henrik Kalisch", affil: "University of Bergen, Norway" },
+      { name: "A/Prof. Yan Li", affil: "University of Bergen, Norway", photo: "organisers/yan-li.jpg" },
+      { name: "Dr. Yuxuan Liu", affil: "University of Bergen, Norway", photo: "organisers/yuxuan-liu.jpg" },
+      { name: "Prof. Henrik Kalisch", affil: "University of Bergen, Norway", photo: "organisers/henrik-kalisch.jpg" },
       {
         name: "Prof. \u00d8yvind Breivik",
         affil: "Norwegian Meteorological Institute, Norway",
+        photo: "organisers/oyvind-breivik.jpg"
       },
     ],
   },
   {
     title: "Organising Committee",
     members: [
-      { name: "Prof. Alexander Babanin", affil: "The University of Melbourne, Australia" },
-      { name: "Prof. Fangli Qiao", affil: "First Institute of Oceanography, China" },
-      { name: "A/Prof. Lichuan Wu", affil: "Uppsala University, Sweden" },
-      { name: "Dr. Jean Bidlot", affil: "ECMWF, UK" },
+      { name: "Prof. Alexander Babanin", affil: "The University of Melbourne, Australia", photo: "organisers/alexander-babanin.jpg" },
+      { name: "Prof. Fangli Qiao", affil: "First Institute of Oceanography, China", photo: "organisers/fangli-qiao.jpg" },
+      { name: "A/Prof. Lichuan Wu", affil: "Uppsala University, Sweden", photo: "organisers/lichuan-wu.jpg" },
+      { name: "Dr. Jean Bidlot", affil: "ECMWF, UK", photo: "organisers/jean-bidlot.jpg" },
       { name: "Dr. Montri Maleewong", affil: "Kasetsart University, Thailand" },
     ],
   },
