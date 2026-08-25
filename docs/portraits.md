@@ -136,14 +136,36 @@ Direct image URLs:
 ### Dr. Montri Maleewong
 Kasetsart University, Thailand
 
-**No photograph found.** Searched institutional profile pages, research-group sites, society and award pages. Ask this person directly.
+**A photograph exists but could not be retrieved.** ResearchGate has one at
+<https://www.researchgate.net/profile/Montri-Maleewong>, served from
+`i1.rgstatic.net`. The profile page shows it at 128×128, under the 184px a 92px
+circle needs, but a 512×512 variant does exist — swapping `_Q128` in the path for
+`_Q512` loads a 512×512 image in a browser.
+
+Getting the file needs a person, not a script. The CDN answers `curl` with 403
+however the request is dressed up, and it sends no CORS headers, so a browser can
+display the image but not read its pixels back — a canvas drawn from it is
+tainted and refuses `toDataURL`. Both were tried.
+
+**To add it:** open the URL below in a browser, save the image, and hand over the
+file.
+
+<https://i1.rgstatic.net/ii/profile.image/279586530185221-1443670031188_Q512/Montri-Maleewong.jpg>
+
+Worth weighing first: the identifier carries the timestamp `1443670031188`, which
+is October 2015, so the photograph is about eleven years old. Asking him for a
+current one may be the better move.
 
 ## Keynote Speakers
 
 ### Lotfi Aouf
 Météo-France
 
-**No photograph found.** Searched institutional profile pages, research-group sites, society and award pages. Ask this person directly.
+| # | File | Size | Source | Credit | Notes |
+|---|---|---|---|---|---|
+| 1 | `lotfi-aouf-1.png` | 240×320 | [Digital Ocean Pavilion — speaker profile](https://www.digitaloceanpavilion.eu/speaker/64eee813-2d19-f011-8b3d-6045bdf3ac94/lotfi-aouf) | none stated | Missed on the first pass: the page renders speaker photos as a CSS `background-image` on `div.userpicture-photo` rather than as an `<img>`, with the initials "LA" underneath as a fallback. An `<img>`-based scrape sees only the fallback. |
+
+Direct image URL: <https://cdn.inwink.com/77b388b7-b64d-43c3-985a-e50d021a12f8/c8c196e6-a084-4fff-9b0e-b6596d6556d1>
 
 ### Simen Ellingsen
 NTNU, Norway
@@ -224,11 +246,10 @@ Direct image URLs:
 1. <https://www.otpe.k.u-tokyo.ac.jp/en/wp-content/uploads/sites/2/2023/03/waseda-prof.jpg>
 2. <https://www.otpe.k.u-tokyo.ac.jp/en/wp-content/uploads/sites/2/2023/03/waseda-prof02.jpg>
 
-## Nobody found a photograph for these
+## Still without a photograph
 
-- Dr. Yuxuan Liu
-- Dr. Montri Maleewong
-- Lotfi Aouf
-- Al Osborne
+- Dr. Montri Maleewong — one exists on ResearchGate but must be saved by hand; see above
+- Al Osborne — nothing found on any page that could be reached
 
-Ask them directly. For Yuxuan Liu that is an internal matter; the other three have no portrait on any institutional page that could be found.
+Yuxuan Liu supplied theirs directly, and Lotfi Aouf's turned up on a second look
+once CSS background images were checked as well as `<img>` tags.

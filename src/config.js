@@ -99,6 +99,7 @@ export const SPEAKERS = [
     name: "Lotfi Aouf",
     affil: "Météo-France",
     topic: "Data assimilation and observations from satellites",
+    photo: "speakers/lotfi-aouf.jpg",
   },
   {
     name: "Simen Ellingsen",
