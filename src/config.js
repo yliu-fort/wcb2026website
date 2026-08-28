@@ -16,7 +16,7 @@
 // so the registration URL is legitimately a placeholder during the months when
 // authors most need to find this site in a search.
 export const SITE = {
-  indexable: false,
+  indexable: true,
 };
 
 export const CONF = {
@@ -99,45 +99,53 @@ export const SPEAKERS = [
     name: "Lotfi Aouf",
     affil: "Météo-France",
     topic: "Data assimilation and observations from satellites",
+    photo: "speakers/lotfi-aouf.jpg",
   },
   {
     name: "Simen Ellingsen",
     affil: "NTNU, Norway",
     topic:
       "Wave–current interaction; influences in the upper ocean, wave turbulence and mixing",
+    photo: "speakers/simen-ellingsen.jpg"
   },
   {
     name: "Peter Janssen",
     affil: "ECMWF, UK",
     topic: "Air–sea interaction",
+    photo: "speakers/peter-janssen.jpg"
   },
   {
     name: "Yuzhu Pearl Li",
     affil: "National University of Singapore",
     topic: "Wave breaking and turbulence modelling",
+    photo: "speakers/yuzhu-pearl-li.jpg"
   },
   {
     // TODO: affiliation to be provided by the committee.
     name: "Al Osborne",
     affil: "",
     topic: "Dynamics of nonlinear waves",
+    photo: "speakers/al-osborne.jpg",
   },
   {
     name: "Zhenya Song",
     affil: "First Institute of Oceanography, China",
     topic: "Integrating surface waves into Earth system models",
+    photo: "speakers/zhenya-song.jpg"
   },
   {
     name: "Jim Thomson",
     affil: "University of Washington, USA",
     topic: "In-situ observations and wave breaking",
     tentative: true,
+    photo: "speakers/jim-thomson.jpg"
   },
   {
     name: "Takuji Waseda",
     affil: "The University of Tokyo, Japan",
     topic: "Wave–ice interactions",
     tentative: true,
+    photo: "speakers/takuji-waseda.jpg"
   },
 ];
 
@@ -150,27 +158,40 @@ export const SPEAKERS = [
 // `photo: "organisers/<file>"` (under public/images/) when a portrait arrives;
 // until then the tile shows an initials avatar. The title in `name` is stripped
 // before the initials are taken, so "A/Prof. Yan Li" gives YL, not AL.
+//
+// `credit` is the photographer, and only the photographer — set it wherever one
+// is actually named, and leave it off otherwise rather than filling it with the
+// institution that happened to host the file. Where it is set the portrait shows
+// the name on hover or long-press. Sources and credits for every candidate are
+// in docs/portraits.md.
 export const COMMITTEES = [
   {
     title: "Local Organisers",
     members: [
-      { name: "A/Prof. Yan Li", affil: "University of Bergen, Norway" },
-      { name: "Dr. Yuxuan Liu", affil: "University of Bergen, Norway" },
-      { name: "Prof. Henrik Kalisch", affil: "University of Bergen, Norway" },
+      {
+        name: "A/Prof. Yan Li",
+        affil: "University of Bergen, Norway",
+        photo: "organisers/yan-li.jpg",
+        credit: "Eivind Senneset",
+      },
+      { name: "Dr. Yuxuan Liu", affil: "University of Bergen, Norway", photo: "organisers/yuxuan-liu.jpg" },
+      { name: "Prof. Henrik Kalisch", affil: "University of Bergen, Norway", photo: "organisers/henrik-kalisch.jpg" },
       {
         name: "Prof. \u00d8yvind Breivik",
         affil: "Norwegian Meteorological Institute, Norway",
+        photo: "organisers/oyvind-breivik.jpg",
+        credit: "Kamilla Pedersen",
       },
     ],
   },
   {
     title: "Organising Committee",
     members: [
-      { name: "Prof. Alexander Babanin", affil: "The University of Melbourne, Australia" },
-      { name: "Prof. Fangli Qiao", affil: "First Institute of Oceanography, China" },
-      { name: "A/Prof. Lichuan Wu", affil: "Uppsala University, Sweden" },
-      { name: "Dr. Jean Bidlot", affil: "ECMWF, UK" },
-      { name: "Dr. Montri Maleewong", affil: "Kasetsart University, Thailand" },
+      { name: "Prof. Alexander Babanin", affil: "The University of Melbourne, Australia", photo: "organisers/alexander-babanin.jpg" },
+      { name: "Prof. Fangli Qiao", affil: "First Institute of Oceanography, China", photo: "organisers/fangli-qiao.jpg" },
+      { name: "A/Prof. Lichuan Wu", affil: "Uppsala University, Sweden", photo: "organisers/lichuan-wu.jpg" },
+      { name: "Dr. Jean Bidlot", affil: "ECMWF, UK", photo: "organisers/jean-bidlot.jpg" },
+      { name: "Dr. Montri Maleewong", affil: "Kasetsart University, Thailand", photo: "organisers/montri-maleewong.jpg" },
     ],
   },
 ];

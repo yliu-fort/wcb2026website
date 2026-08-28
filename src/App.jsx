@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   CONF,
@@ -185,20 +185,114 @@ const TITLE = /^(a\/prof|assoc|associate|prof|professor|dr|mr|ms|mrs|mx)\.?$/i;
 //
 // Shared by the keynote grid and the organisation grid so the two cannot drift;
 // `size` picks the modifier class rather than a second implementation.
-function Portrait({ name, photo, size }) {
+function Portrait({ name, photo, credit, size }) {
+  // Where the credit label currently sits, in viewport coordinates, or null
+  // when it is hidden. Hooks run before the early returns below, unconditionally.
+  const [tip, setTip] = useState(null);
+  const holdRef = useRef(null);
+  const wrapRef = useRef(null);
+
+  // A press that never ends — the finger leaves, the component unmounts — would
+  // otherwise fire its timer into a dead component.
+  useEffect(() => () => clearTimeout(holdRef.current), []);
+
   const cls = `portrait${size === 'sm' ? ' portrait-sm' : ''}`;
-  if (photo) {
-    return <img className={cls} src={asset(photo)} alt={name} />;
+
+  if (!photo) {
+    const parts = name.split(/\s+/).filter(Boolean).filter((p) => !TITLE.test(p));
+    const initials =
+      parts.length === 0
+        ? '?'
+        : (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    return (
+      <div className={`${cls} portrait-initials`} aria-hidden="true">
+        {initials}
+      </div>
+    );
   }
-  const parts = name.split(/\s+/).filter(Boolean).filter((p) => !TITLE.test(p));
-  const initials =
-    parts.length === 0
-      ? '?'
-      : (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+
+  const img = <img className={cls} src={asset(photo)} alt={name} />;
+  if (!credit) return img;
+
+  const creditId = `credit-${photo.replace(/[^a-z0-9]+/gi, '-')}`;
+  const show = (x, y) => setTip({ x, y });
+  const hide = () => {
+    clearTimeout(holdRef.current);
+    holdRef.current = null;
+    setTip(null);
+  };
+
+  // Pointer events rather than separate mouse and touch handlers: one code path
+  // for both, and `pointerType` says which one is asking. Touch also raises
+  // compatibility mouse events, so handling both would fire twice on a phone.
+  const onDown = (e) => {
+    if (e.pointerType === 'mouse') return;
+    const { clientX, clientY } = e;
+    // Long press, not tap. A tap does nothing and any movement cancels, so
+    // scrolling past a face never pops the label open.
+    holdRef.current = setTimeout(() => show(clientX, clientY), 450);
+  };
+  const onMove = (e) => {
+    if (e.pointerType === 'mouse') show(e.clientX, e.clientY);
+    else if (holdRef.current) hide();
+  };
+  // Keyboard focus has no pointer to follow, so anchor under the circle.
+  const fromFocus = () => {
+    const r = wrapRef.current.getBoundingClientRect();
+    show(r.left + r.width / 2, r.bottom - 10);
+  };
+
+  // Flip the label rather than let it hang off the edge of the window.
+  const flipX = tip && tip.x > window.innerWidth - 190;
+  const flipY = tip && tip.y > window.innerHeight - 60;
+
+  // Two spans, and the split matters. The inner one is clipped to the circle so
+  // that only the visible portrait answers the pointer — the square's corners
+  // and the empty width of the card do not. The label cannot live inside it: a
+  // clip-path clips its descendants, fixed-position ones included, so the label
+  // would be cut away the moment it appeared. It sits outside as a sibling.
+  //
+  // Focus is on the outer span for the same reason: an outline drawn on the
+  // clipped element would be clipped off with everything else outside the
+  // circle. Pointer in, keyboard out.
   return (
-    <div className={`${cls} portrait-initials`} aria-hidden="true">
-      {initials}
-    </div>
+    <span
+      ref={wrapRef}
+      className="portrait-credited"
+      tabIndex={0}
+      aria-describedby={creditId}
+      onFocus={fromFocus}
+      onBlur={hide}
+    >
+      <span
+        className="portrait-hit"
+        onPointerEnter={(e) => e.pointerType === 'mouse' && show(e.clientX, e.clientY)}
+        onPointerMove={onMove}
+        onPointerLeave={hide}
+        onPointerDown={onDown}
+        onPointerUp={hide}
+        onPointerCancel={hide}
+        onContextMenu={(e) => {
+          // Only while our own long press is open, so right-click still offers
+          // "save image" on a desktop.
+          if (tip) e.preventDefault();
+        }}
+      >
+        {img}
+      </span>
+      <span id={creditId} className="visually-hidden">
+        Photograph by {credit}
+      </span>
+      {tip && (
+        <span
+          className={`portrait-credit${flipX ? ' flip-x' : ''}${flipY ? ' flip-y' : ''}`}
+          style={{ left: tip.x, top: tip.y }}
+          aria-hidden="true"
+        >
+          Photo: {credit}
+        </span>
+      )}
+    </span>
   );
 }
 
@@ -210,11 +304,11 @@ function Speakers() {
         <div className="speakers-grid">
           {SPEAKERS.map((s) => (
             <div key={s.name} className="speaker-card">
-              <Portrait name={s.name} photo={s.photo} />
+              <Portrait name={s.name} photo={s.photo} credit={s.credit} />
               <div className="speaker-name">{s.name}</div>
               {s.affil && <div className="speaker-affil">{s.affil}</div>}
               <div className="speaker-topic">{s.topic}</div>
-              {s.tentative && <span className="speaker-tag">To be confirmed</span>}
+              {s.tentative && <span className="speaker-tag">Tentative</span>}
             </div>
           ))}
         </div>
@@ -444,7 +538,12 @@ function Organization() {
             <div className="people-grid">
               {c.members.map((m) => (
                 <div key={m.name} className="person-card">
-                  <Portrait name={m.name} photo={m.photo} size="sm" />
+                  <Portrait
+                    name={m.name}
+                    photo={m.photo}
+                    credit={m.credit}
+                    size="sm"
+                  />
                   <div className="person-name">{m.name}</div>
                   <div className="person-affil">{m.affil}</div>
                 </div>

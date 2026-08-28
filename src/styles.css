@@ -960,6 +960,102 @@
       font-size: 1.5rem;
   }
 
+  /* --- photograph credits ------------------------------------------------
+     Only portraits whose photographer is actually named carry one, so this is
+     two circles out of sixteen rather than a caption under every tile. The
+     label follows the pointer because a 92px circle has nowhere to put it, and
+     a permanent caption would clutter a section that is otherwise just names.
+
+     On a phone it is a long press. A tap does nothing and any movement cancels,
+     so scrolling past a face never fires it. */
+  /* Shrink-wrapped to the portrait rather than spanning the card: as a full
+     block it measured 263px wide against a 92px circle, so most of the row
+     answered the pointer while looking like nothing was there.
+
+     `fit-content` keeps it a block box on purpose. An inline-block shrink-wraps
+     too, but it sits on the text baseline and the line box adds descender space
+     under it, which pushed the name 9px lower on the two credited tiles than on
+     the seven without a credit.
+
+     No margin of its own below: the portrait's own bottom margin collapses
+     through, so the credited tiles keep whatever spacing their size class sets
+     — 12px at full size, 10px for `.portrait-sm`. Restating it here got the
+     organisers wrong by 2px. */
+  .portrait-credited {
+      display: block;
+      width: fit-content;
+      position: relative;
+      margin: 0 auto;
+  }
+
+  /* The actual target. `clip-path` is not decoration here — clipped-away area
+     genuinely stops receiving pointer events, so the square's corners, which
+     sit outside the visible circle, no longer count as the portrait. */
+  .portrait-hit {
+      display: block;
+      clip-path: circle(50%);
+      cursor: help;
+      /* The long press is ours. Without this, iOS opens its own save-image
+         sheet on top of the label. */
+      -webkit-touch-callout: none;
+  }
+
+  /* On the outer span, not the clipped one: an outline drawn inside the clip
+     would be cut away with everything else outside the circle. */
+  .portrait-credited:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 50%;
+  }
+
+  .portrait-credit {
+      position: fixed;
+      /* Above the sticky header, which sits at 50. */
+      z-index: 200;
+      transform: translate(14px, 16px);
+      background: rgba(11, 37, 69, 0.95);
+      color: #fff;
+      font-size: 0.72rem;
+      /* Stated rather than inherited: this floats over arbitrary parts of the
+         page and should not pick up the line spacing of whatever it happens to
+         be nested under. */
+      line-height: 1.4;
+      padding: 5px 10px;
+      border-radius: 5px;
+      white-space: nowrap;
+      box-shadow: 0 6px 16px rgba(11, 37, 69, 0.28);
+      /* Load bearing: without it the label lands under the cursor, takes the
+         mouseover from the portrait, and the two flicker against each other. */
+      pointer-events: none;
+  }
+
+  /* Near an edge, put the label on the other side of the cursor instead of
+     letting it hang off the window. */
+  .portrait-credit.flip-x {
+      transform: translate(calc(-100% - 14px), 16px);
+  }
+
+  .portrait-credit.flip-y {
+      transform: translate(14px, calc(-100% - 16px));
+  }
+
+  .portrait-credit.flip-x.flip-y {
+      transform: translate(calc(-100% - 14px), calc(-100% - 16px));
+  }
+
+  /* Read by screen readers, which have no pointer to hover with. */
+  .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      border: 0;
+      clip-path: inset(50%);
+      overflow: hidden;
+      white-space: nowrap;
+  }
+
   .speaker-name {
       font-weight: 600;
       color: var(--navy);
