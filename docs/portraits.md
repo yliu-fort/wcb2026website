@@ -2,28 +2,28 @@
 Gathered from public profiles on 2026-08-25, so the committee can
 verify where each photograph came from and choose one per person.
 
-## Read this before using any of them
+## Status
 
-**Nothing here has been cleared for use.** These are photographs owned by their
-photographers or by the institutions that published them, collected from pages
-that are public to *read*. Public to read is not a licence to republish. The
-files themselves are deliberately **not committed** — this repository is public,
-and committing them would be republication in itself. They live in
-`photo-candidates/`, which `.gitignore` excludes.
+**Permission to use the chosen photographs was confirmed by the organisers on
+28 August 2026**, and the sixteen in use are published on the site. This file
+stays as the record of where each one came from and who took it, which is what
+makes the credits on the site checkable and what anyone re-licensing or replacing
+a photograph later will need.
 
-The safe order is: pick a photo, get permission from the person (who can usually
-say which photo they are happy with and who took it), then add that one file to
-`public/images/organisers/` with the credit recorded here.
+The candidates that were *not* chosen are still only candidates. They remain
+uncommitted in `photo-candidates/`, which `.gitignore` excludes, because this
+repository is public and committing them would be republication of pictures
+nobody asked to have republished. Only the chosen crops are in
+`public/images/organisers/` and `public/images/speakers/`.
 
-**The best first move is usually to ask each person for a photo they like.**
-Everyone on this list gives talks and has been asked for a headshot before. It
-costs one email, it produces a picture they are happy to be seen in, and it
-settles the rights question in the same message.
+Two photographs name their photographer — Yan Li's by Eivind Senneset,
+Øyvind Breivik's by Kamilla Pedersen. Those two carry the name on the site, shown
+on hover or a long press. The rest name nobody at source, and an institution is
+not a photographer, so they carry nothing.
 
-One source is different from the rest: **NTNU publishes Simen Ellingsen's photo
-as a press photo**, offered for download under that heading, which is a much
-better starting position than an institutional page that merely happens to be
-public.
+One source is worth remembering: **NTNU publishes Simen Ellingsen's photo as a
+press photo**, offered for download under that heading, which is a better
+starting position than a page that merely happens to be readable.
 
 ## What the site needs
 
@@ -55,7 +55,9 @@ Direct image URLs:
 ### Dr. Yuxuan Liu
 University of Bergen, Norway
 
-**No photograph found.** Searched institutional profile pages, research-group sites, society and award pages. Ask this person directly.
+| # | File | Size | Source | Credit | Notes |
+|---|---|---|---|---|---|
+| 1 | — | 1086×1448 | Supplied directly, 25 August 2026 | none stated | The UiB staff page carries no portrait, so this came from the subject. A studio identity photograph; cropped from the top fifth rather than the centre, since the head sits high in a tall frame. |
 
 ### Prof. Henrik Kalisch
 University of Bergen, Norway
@@ -207,7 +209,10 @@ Direct image URLs:
 1. <https://img1.wsimg.com/isteam/ip/162e380c-f8d7-4600-9a1f-0382d34d32d0/pearl.png/:/rs=w:600,h:600,cg:true>
 
 ### Al Osborne
-**No photograph found.** Searched institutional profile pages, research-group sites, society and award pages. Ask this person directly.
+
+| # | File | Size | Source | Credit | Notes |
+|---|---|---|---|---|---|
+| 1 | `al-osborne-1.jpg` | 204×315 | Supplied by the organisers, 28 August 2026 | none stated | Nothing was found for him on any reachable page — institutional profile, research group, society and award pages were all checked, and his own site refused every request. This came from the committee instead. A casual photograph rather than a studio portrait, and at 204px on the short side it is the smallest in use, just over the 184px a 92px circle needs. |
 
 ### Zhenya Song
 First Institute of Oceanography, China
@@ -244,10 +249,14 @@ Direct image URLs:
 1. <https://www.otpe.k.u-tokyo.ac.jp/en/wp-content/uploads/sites/2/2023/03/waseda-prof.jpg>
 2. <https://www.otpe.k.u-tokyo.ac.jp/en/wp-content/uploads/sites/2/2023/03/waseda-prof02.jpg>
 
-## Still without a photograph
+## Everyone has one
 
-- Al Osborne — nothing found on any page that could be reached
+All seventeen people now have a portrait. Three took a detour worth recording:
+Lotfi Aouf's only turned up on a second look, once CSS background images were
+checked as well as `<img>` tags; Montri Maleewong's came off ResearchGate against
+a CDN that refuses scripts; and Al Osborne's was supplied by the committee after
+nothing could be found for him anywhere.
 
-Al Osborne is the only one left. Yuxuan Liu supplied theirs directly, Lotfi
-Aouf's turned up on a second look once CSS background images were checked as
-well as `<img>` tags, and Montri Maleewong's came off ResearchGate the hard way.
+The one still worth replacing is **A/Prof. Lichuan Wu's**. It is his own Uppsala
+staff photo, so it is the most legitimate source of the lot, but it is a casual
+selfie in a baseball cap and reads oddly beside fifteen studio portraits.

@@ -16,7 +16,7 @@
 // so the registration URL is legitimately a placeholder during the months when
 // authors most need to find this site in a search.
 export const SITE = {
-  indexable: false,
+  indexable: true,
 };
 
 export const CONF = {
@@ -125,6 +125,7 @@ export const SPEAKERS = [
     name: "Al Osborne",
     affil: "",
     topic: "Dynamics of nonlinear waves",
+    photo: "speakers/al-osborne.jpg",
   },
   {
     name: "Zhenya Song",

@@ -308,7 +308,7 @@ function Speakers() {
               <div className="speaker-name">{s.name}</div>
               {s.affil && <div className="speaker-affil">{s.affil}</div>}
               <div className="speaker-topic">{s.topic}</div>
-              {s.tentative && <span className="speaker-tag">To be confirmed</span>}
+              {s.tentative && <span className="speaker-tag">Tentative</span>}
             </div>
           ))}
         </div>
