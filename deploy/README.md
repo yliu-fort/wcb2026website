@@ -169,6 +169,67 @@ while IFS='|' read -r want c; do [ -z "$c" ] && continue; \
   [ "$?" = "$want" ] && echo "ok   $c" || echo "FAIL $c"; done < deploy/hook-cases.txt
 ```
 
+## Maintenance window
+
+**Sundays, 19:00–21:00 UTC.** Reboots, kernel updates, nginx changes and
+anything else that can take the site down go in this slot.
+
+It is fixed in UTC because that is the server's clock and the audience spans
+time zones. In Oslo it is 21:00–23:00 in summer and 20:00–22:00 in winter; in
+Beijing, 03:00–05:00 all year.
+
+Why this slot:
+
+- **Nobody is visiting.** Two weeks of access logs (2–16 October 2026) showed
+  no human visitors in it on any of the four weekend days, and five across all
+  fourteen days — against 29 in the busiest two hours, 08:00–10:00 UTC.
+- **Someone can be awake for it.** It is evening in Norway, so whoever reboots
+  can stay until the site is back. The quietest slot overall, Sunday
+  02:00–05:00 UTC, lost on this point alone: it would need an unattended
+  reboot, and a server that failed to come back would stay down until morning.
+- **It is night in China.** Mainland-China visitors are why this origin exists,
+  and they have no fallback while it is down. Everyone else still has the
+  GitHub Pages copy.
+- **It collects the week's updates.** unattended-upgrades installs packages
+  every morning around 06:00 UTC, but a new kernel or libc does nothing until
+  the next reboot; `/var/run/reboot-required.pkgs` lists what is waiting. By
+  October 2026 the VM had been up 71 days, running 6.8.0-136 with 6.8.0-147
+  installed.
+
+"Human visitor" needs defining, because the obvious measure is wrong. Most
+requests are scanners, and the SPA fallback answers their made-up paths with a
+200, so neither request counts nor status codes separate them. What scanners
+almost never do is fetch the bundle, so a visitor here is a non-bot IP that
+loaded the JS or CSS under `/assets/` with a 200 or 304.
+
+The sample is small: 3 to 18 visitors a day, and nginx keeps 14 days of logs.
+Re-check the hourly profile before the abstract deadline (30 November 2026) and
+the presenting-author registration deadline (12 January 2027), when traffic
+will rise, and move the window if it stops being empty.
+
+A reboot, in order:
+
+```bash
+sudo nginx -t
+sudo certbot renew --dry-run
+systemctl is-active bergen2027-autopublish.service   # wait while it says active
+sudo shutdown -r +1
+```
+
+`nginx -t` comes first because a running nginx keeps its old configuration
+until it restarts: a broken file on disk goes unnoticed until the reboot, and
+then the site does not come back. The dry-run exercises both certificate
+lineages — `wavecoupling2027.eu` and `oceancoupling.eu`, with their `www` names
+— against the staging CA, so it costs nothing against the production rate
+limit. Waiting out a running publish is tidiness rather than necessity: an
+interrupted publish never advances the state file, so the next tick after
+boot republishes.
+
+After boot, `verify-exposure` runs by itself five minutes in
+(`OnBootSec=5min`); `journalctl -u verify-exposure.service -b` shows the result.
+Then confirm from another machine that the site loads, since this host cannot
+reach its own public IP.
+
 ## Files
 
 Tracked here, installed to the system by `enable-https.sh`:
