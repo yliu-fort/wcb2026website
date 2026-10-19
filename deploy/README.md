@@ -140,11 +140,14 @@ bound to a wildcard address. A systemd timer (`verify-exposure.timer`) runs it
 hourly; `systemctl status verify-exposure` shows the last result.
 
 Run the second form **from a different machine** — and it has to be a real one.
-This host cannot reach its own public IP at all: NREC does not hairpin, so
-`curl https://oceancoupling.eu/` from here dies in the TLS handshake while the
-site is perfectly healthy. Locally the script uses `curl --resolve` to pin the
-hostname to `127.0.0.1`, which exercises the real server blocks rather than the
-catch-all.
+A request from this host to its own public IP never leaves the host: the
+address is configured on the local interface, so the kernel delivers it over
+loopback, past both the NREC security group and ufw, and
+`curl https://wavecoupling2027.eu/` from here returns 200 even when nobody
+outside can reach the site. The same goes for anything else running on the
+host, Claude Code's WebFetch included. Locally the script uses `curl --resolve`
+to pin the hostname to `127.0.0.1`, which exercises the real server blocks
+rather than the catch-all.
 
 Two results are easy to misread:
 
@@ -157,8 +160,9 @@ Two results are easy to misread:
   result flips to LEAK.
 - **Free CORS proxies are not a reachability test.** allorigins and codetabs
   return 520/522 from their own Cloudflare edge whether or not this server is
-  up. The trustworthy signal is `/var/log/nginx/access.log`: if a request from a
-  non-127.0.0.1 address appears there, it arrived.
+  up. The trustworthy signal is `/var/log/nginx/access.log`: if a request appears
+  there from an address that is neither loopback nor this host's own public IP,
+  it came from outside.
 
 The hook's own test cases live in `hook-cases.txt`:
 
@@ -227,8 +231,10 @@ boot republishes.
 
 After boot, `verify-exposure` runs by itself five minutes in
 (`OnBootSec=5min`); `journalctl -u verify-exposure.service -b` shows the result.
-Then confirm from another machine that the site loads, since this host cannot
-reach its own public IP.
+Then confirm that the site loads from outside: from another machine, or by
+finding a request in the access log from an address that is neither loopback
+nor this host's own. A check run on this host stays on this host (see
+[Checking](#checking)).
 
 ## Files
 
