@@ -784,6 +784,9 @@ function RegistrationPage() {
             <a href={`mailto:${EMAILS.application}`}>{EMAILS.application}</a>,
             quoting your abstract ID.
           </p>
+          {/* The committee has not yet settled who counts as early career or
+              what an application must contain. */}
+          <p>More details will follow once applications open.</p>
           <p className="section-note">
             This address is for fee-waiver applications only. Every other
             question — about registration, an abstract, or an invitation
