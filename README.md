@@ -58,6 +58,15 @@ Common tasks:
   `photo: "organisers/<file>"` on the member's entry in `COMMITTEES`. Both
   sections render through one `Portrait` component, so they stay consistent.
 - **Confirm a tentative speaker**: remove `tentative: true` from their entry.
+- **Change registration dates or the fee**: `registrationOpens`,
+  `registrationDeadline`, `registrationFee` and `waiverDeadline` in `CONF`, plus
+  the matching rows in `KEY_DATES`. The registration form in Skjemaker quotes
+  the deadline too and has to be changed there by hand.
+
+The site is two pages built from one bundle: the workshop page (`index.html`)
+and the registration page (`registration/index.html`, served at
+`/registration/`). Each HTML file names its page in `data-page` on the root
+element, and `src/App.jsx` renders accordingly.
 - **Add a logo**: drop the file in `public/images/`, reference it from `HOSTS`
   or `PARTNERS`. Entries with `logo: null` render as text tiles.
 

@@ -225,16 +225,6 @@ Direct image URLs:
 
 1. <https://en.fio.org.cn/files/attached/2021112915855604205.jpg>
 
-### Jim Thomson
-University of Washington, USA
-
-| # | File | Size | Source | Credit | Notes |
-|---|---|---|---|---|---|
-| 1 | `jim-thomson-1.png` | 320×420 | [Applied Physics Laboratory, University of Washington — staff profile](https://www.apl.uw.edu/people/profile.php?last_name=Thomson&first_name=Jim) | none stated | Served from the APL 'portraits/large' path. |
-
-Direct image URLs:
-
-1. <https://www.apl.uw.edu/people/images/portraits/large/employee_10298.png>
 
 ### Takuji Waseda
 The University of Tokyo, Japan

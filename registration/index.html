@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registration — Bergen 2027, 8th Workshop on Waves and Wave-Coupled Processes</title>
+    <meta name="description"
+        content="Registration for the 8th Workshop on Waves and Wave-Coupled Processes, 12–15 April 2027, Bergen, Norway: opening date, deadline, fee and the fee waiver for early-career presenters." />
+
+    <!-- Both origins serve this file, so both name the official domain as the
+         canonical one. Without it the GitHub Pages copy competes with
+         wavecoupling2027.eu for the same searches: the Pages workflow writes no
+         robots.txt, so that copy has always been indexable, and the site itself
+         became indexable at launch. -->
+    <link rel="canonical" href="https://wavecoupling2027.eu/registration/" />
+    <!-- %BASE_URL% is substituted by Vite, so this follows `base` in vite.config.js. -->
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+
+    <!-- Link previews when the site is shared in email, Slack, X, etc. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Registration — Bergen 2027, 8th Workshop on Waves and Wave-Coupled Processes" />
+    <meta property="og:description"
+        content="12–15 April 2027, Bergen, Norway. Hosted by the University of Bergen and the Norwegian Meteorological Institute." />
+    <!-- The official domain, not the Pages copy. A link shared into email or
+         Slack should take the reader to wavecoupling2027.eu. -->
+    <meta property="og:url" content="https://wavecoupling2027.eu/registration/" />
+    <meta property="og:image" content="https://wavecoupling2027.eu/images/wave-hero.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Fonts are self-hosted; see the @font-face block at the top of
+         src/styles.css for why. These two carry the whole first screen, so
+         preloading them removes the flash of fallback text that font-display:
+         swap would otherwise show. The latin-ext files are deliberately not
+         preloaded: unicode-range means most visitors never fetch them. -->
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/lora-latin.woff2" as="font" type="font/woff2" crossorigin />
+</head>
+
+<body>
+    <!-- data-page tells the shared bundle which page to render; see PAGE in
+         src/App.jsx. -->
+    <div id="root" data-page="registration"></div>
+    <script type="module" src="/src/main.jsx"></script>
+</body>
+
+</html>

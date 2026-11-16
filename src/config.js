@@ -33,7 +33,16 @@ export const CONF = {
   abstractOpens: "30 August 2026",
   abstractDeadline: "30 November 2026",
   decisionDate: "December 2026",
-  presenterRegistrationDeadline: "12 January 2027",
+  // One registration deadline for everyone, presenting or not. It replaced a
+  // presenters-only deadline of 12 January 2027 in November 2026 — the
+  // Skjemaker registration form quotes the date too, so change both.
+  registrationOpens: "mid-December 2026",
+  registrationDeadline: "12 February 2027",
+  // "Approximately" is the committee's word: the exact amount is not fixed yet.
+  registrationFee: "approximately NOK 5,500",
+  // Fee waiver for early-career presenters, applied for by email (see
+  // EMAILS.application) once registration has opened.
+  waiverDeadline: "30 January 2027",
 };
 
 // Both forms are built in Skjemaker (skjemaker.app.uib.no), UiB's self-hosted
@@ -42,15 +51,20 @@ export const CONF = {
 // external respondents; and merges the entry number into its auto-responder,
 // which is how the abstract receipt issues the B27-… abstract ID the registration
 // form asks presenting authors to quote. See docs/forms.md.
-// Three mailboxes on the conference domain. They replaced wwcp2027@uib.no, an
+// Four mailboxes on the conference domain. The first three replaced wwcp2027@uib.no, an
 // alias that was written into the site and both forms but never actually
 // created -- every use of it bounced.
 //
-// The split is by *direction*, not by topic. `information` is the only address
-// a visitor is ever shown: every question, whatever it is about, goes there, so
-// nobody has to guess which mailbox their question belongs in. The other two are
-// delivery addresses for the forms and are deliberately never published — a
-// published address collects questions whether you want it to or not.
+// The split is by *direction*, not by topic. `information` is where every
+// question goes, whatever it is about, so nobody has to guess which mailbox
+// their question belongs in. `abstract` and `registration` are delivery
+// addresses for the forms and are deliberately never published — a published
+// address collects questions whether you want it to or not.
+//
+// `application` is the one exception, added November 2026: it is published, on
+// the registration page only, because fee-waiver applications arrive by email
+// rather than through a form and the committee wants them kept apart from
+// general questions.
 //
 // Whatever changes here has to be carried across to Skjemaker by hand. See
 // docs/forms.md.
@@ -62,6 +76,9 @@ export const EMAILS = {
   // The published contact address: header, footer, both forms' Reply-To, and
   // every "write to us" on the site.
   information: "information@wavecoupling2027.eu",
+  // Fee-waiver applications from early-career presenters. Shown only in the
+  // fee-waiver section of the registration page.
+  application: "application@wavecoupling2027.eu",
 };
 
 export const FORMS = {
@@ -83,15 +100,14 @@ export const KEY_DATES = [
   { label: "Abstract submission opens", value: "30 Aug 2026" },
   { label: "Abstract submission deadline", value: "30 Nov 2026", deadline: true },
   { label: "Notification of acceptance", value: "Dec 2026" },
-  {
-    label: "Registration deadline — presenting authors",
-    value: "12 Jan 2027",
-    deadline: true,
-  },
+  { label: "Registration opens", value: "Mid-Dec 2026" },
+  { label: "Fee waiver application deadline", value: "30 Jan 2027", deadline: true },
+  { label: "Registration deadline", value: "12 Feb 2027", deadline: true },
   { label: "Workshop", value: "12 – 15 April 2027" },
 ];
 
-// Alphabetical by surname. `tentative: true` renders a "to be confirmed" tag.
+// Alphabetical by surname. `tentative: true` renders a "Tentative" tag; nobody
+// carries it at the moment.
 // Add `photo: "speakers/<file>"` (under public/images/) when portraits arrive —
 // until then the card shows an initials avatar.
 export const SPEAKERS = [
@@ -134,17 +150,9 @@ export const SPEAKERS = [
     photo: "speakers/zhenya-song.jpg"
   },
   {
-    name: "Jim Thomson",
-    affil: "University of Washington, USA",
-    topic: "In-situ observations and wave breaking",
-    tentative: true,
-    photo: "speakers/jim-thomson.jpg"
-  },
-  {
     name: "Takuji Waseda",
     affil: "The University of Tokyo, Japan",
     topic: "Wave–ice interactions",
-    tentative: true,
     photo: "speakers/takuji-waseda.jpg"
   },
 ];
@@ -246,3 +254,10 @@ export const asset = (file) => `${import.meta.env.BASE_URL}images/${file}`;
 
 // Same, for files in public/downloads/ (abstract templates).
 export const download = (file) => `${import.meta.env.BASE_URL}downloads/${file}`;
+
+// The site is two HTML pages built from one bundle: the workshop page at the
+// root and the registration page in registration/. Functions, like `asset`, and
+// not constants: scripts/ imports this file under plain Node, where
+// import.meta.env does not exist, so it must not be read at module load.
+export const homeUrl = () => import.meta.env.BASE_URL;
+export const registrationUrl = () => `${import.meta.env.BASE_URL}registration/`;
