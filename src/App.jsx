@@ -15,7 +15,24 @@ import {
   placeholderForms,
   asset,
   download,
+  homeUrl,
+  registrationUrl,
 } from './config.js';
+
+const HOME_URL = homeUrl();
+const REGISTRATION_URL = registrationUrl();
+
+// Which of the two pages this is. Each HTML entry point (index.html and
+// registration/index.html) names itself on the root element, and both load the
+// same bundle.
+const PAGE =
+  (typeof document !== 'undefined' &&
+    document.getElementById('root')?.dataset.page) ||
+  'home';
+
+// Link to a section of the workshop page. On that page it is a plain in-page
+// anchor; from the registration page it has to name the page as well.
+const section = (id) => (PAGE === 'home' ? `#${id}` : `${HOME_URL}#${id}`);
 
 // ============ Components ============
 
@@ -47,16 +64,21 @@ function TopBar() {
 }
 
 // Nav labels are shorter than the section headings they point at, which is
-// what lets eight of them sit on one row inside the 1100px column. Two are not
-// just abbreviations: 'Abstracts' points at the section headed 'Abstracts &
-// Registration', because a nav item called 'Registration' next to a 'Register'
-// button that opens a different thing (the form) is a genuine trap.
+// what lets eight of them sit on one row inside the 1100px column — and eight is
+// the limit: the row was measured at 760px and the breakpoint in styles.css is
+// set from that. So when 'Registration' arrived, 'Introduction' became 'About'
+// and 'Authors' gave up its place; Information for Authors is still linked from
+// the hero and from the Abstracts section it sits directly beneath.
+//
+// 'Registration' is the one item that leaves the workshop page (id null): it
+// opens the registration page — dates, fee, fee waiver — while the 'Register'
+// button beside it opens the form itself.
 const NAV_ITEMS = [
-  ['Introduction', 'introduction'],
+  ['About', 'introduction'],
   ['Speakers', 'speakers'],
   ['Key Dates', 'key-dates'],
-  ['Abstracts', 'registration'],
-  ['Authors', 'for-authors'],
+  ['Abstracts', 'abstracts'],
+  ['Registration', null],
   ['Venue', 'venue'],
   ['Organisation', 'organization'],
   ['Sponsors', 'sponsors'],
@@ -82,7 +104,7 @@ function Header() {
   return (
     <header className="site-header">
       <div className="site-header-inner">
-        <a href="#top" className="brand" onClick={() => setOpen(false)}>
+        <a href={section('top')} className="brand" onClick={() => setOpen(false)}>
           <span className="brand-mark" aria-hidden="true"></span>
           <span className="brand-text">
             <span className="brand-title">{CONF.shortName}</span>
@@ -103,7 +125,12 @@ function Header() {
         </button>
         <nav className={`nav${open ? ' nav-open' : ''}`} id="site-nav">
           {NAV_ITEMS.map(([label, id]) => (
-            <a key={id} href={`#${id}`} onClick={() => setOpen(false)}>
+            <a
+              key={label}
+              href={id ? section(id) : REGISTRATION_URL}
+              aria-current={!id && PAGE === 'registration' ? 'page' : undefined}
+              onClick={() => setOpen(false)}
+            >
               {label}
             </a>
           ))}
@@ -138,7 +165,7 @@ function Hero() {
           <span>Hosted by {CONF.host}</span>
         </div>
         <div className="hero-actions">
-          <a className="btn btn-primary" href="#registration">Submit an Abstract</a>
+          <a className="btn btn-primary" href="#abstracts">Submit an Abstract</a>
           <a className="btn btn-outline" href="#for-authors">Information for Authors</a>
         </div>
       </div>
@@ -349,10 +376,6 @@ function KeyDates() {
             </div>
           ))}
         </div>
-        <p className="section-note">
-          Further dates, including the participant registration deadline, will
-          be announced in due course.
-        </p>
       </div>
     </section>
   );
@@ -360,7 +383,10 @@ function KeyDates() {
 
 function AbstractsRegistration() {
   return (
-    <section className="register scroll-anchor" id="registration">
+    <section className="register scroll-anchor" id="abstracts">
+      {/* The section was #registration until the registration page existed.
+          Links already sent out in emails still point there. */}
+      <span id="registration" className="scroll-anchor" aria-hidden="true"></span>
       <div className="container">
         <h2>Abstracts &amp; Registration</h2>
         <p className="lead">
@@ -395,23 +421,16 @@ function AbstractsRegistration() {
           <div className="absreg-card">
             <h3>Registration</h3>
             <p>
-              <strong>Presenting authors</strong> must register by{' '}
-              <strong>{CONF.presenterRegistrationDeadline}</strong>. The
-              registration form asks for the abstract ID issued with your
-              abstract receipt.
+              Registration opens in <strong>{CONF.registrationOpens}</strong>{' '}
+              and closes on <strong>{CONF.registrationDeadline}</strong>, for
+              presenting authors and other participants alike.
             </p>
             <p>
-              <strong>Participants</strong> who are not presenting are equally
-              welcome. The participant registration deadline and further
-              details, including any fees, will be announced.
+              The fee, the fee waiver for early-career presenters and how to
+              register are set out on the registration page.
             </p>
-            <a
-              className="btn btn-primary"
-              href={FORMS.registration.url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Register ↗
+            <a className="btn btn-primary" href={REGISTRATION_URL}>
+              Registration details
             </a>
           </div>
         </div>
@@ -443,7 +462,7 @@ function InfoForAuthors() {
           </li>
           <li>
             <strong>Submission.</strong> Abstracts are submitted through the{' '}
-            <a href="#registration">abstract submission form</a> between{' '}
+            <a href="#abstracts">abstract submission form</a> between{' '}
             {CONF.abstractOpens} and {CONF.abstractDeadline}. You will receive
             an email receipt with an abstract ID; it is required when
             registering as a presenting author.
@@ -463,8 +482,9 @@ function InfoForAuthors() {
           </li>
           <li>
             <strong>Presentation.</strong> Presentations can only be given by
-            registered participants: presenting authors must complete
-            registration by {CONF.presenterRegistrationDeadline}. The meeting
+            registered participants: presenting authors must complete{' '}
+            <a href={REGISTRATION_URL}>registration</a> by{' '}
+            {CONF.registrationDeadline}. The meeting
             is conducted in plenary; presentation formats and allocated times
             will be communicated with the notification of acceptance.
           </li>
@@ -656,9 +676,10 @@ function Footer() {
         <div>
           <h4>Quick Links</h4>
           <div>
-            <a href="#speakers">Speakers</a> ·{' '}
-            <a href="#registration">Abstracts &amp; Registration</a> ·{' '}
-            <a href="#venue">Venue</a>
+            <a href={section('speakers')}>Speakers</a> ·{' '}
+            <a href={section('abstracts')}>Abstracts</a> ·{' '}
+            <a href={REGISTRATION_URL}>Registration</a> ·{' '}
+            <a href={section('venue')}>Venue</a>
           </div>
         </div>
       </div>
@@ -669,7 +690,125 @@ function Footer() {
   );
 }
 
+// ============ Registration page ============
+// Its own page (registration/index.html) rather than a section of the workshop
+// page, so the fee and the waiver can be linked to directly from emails.
+function RegistrationPage() {
+  return (
+    <main>
+      <section className="hero hero-compact">
+        <div className="hero-inner">
+          <span className="tag">{CONF.shortName}</span>
+          <h1>Registration</h1>
+          <p className="lede">
+            {CONF.fullName} · {CONF.dates} · {CONF.city}
+          </p>
+        </div>
+      </section>
+
+      <section className="band">
+        <div className="container">
+          <div className="dates-grid">
+            <div className="date-card">
+              <div className="label">Registration opens</div>
+              <div className="value">Mid-December 2026</div>
+            </div>
+            <div className="date-card">
+              <div className="label">Registration fee</div>
+              <div className="value">Approx. NOK 5,500</div>
+            </div>
+            <div className="date-card deadline">
+              <div className="label">Fee waiver application deadline</div>
+              <div className="value">{CONF.waiverDeadline}</div>
+            </div>
+            <div className="date-card deadline">
+              <div className="label">Registration deadline</div>
+              <div className="value">{CONF.registrationDeadline}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="band alt">
+        <div className="container reg-body">
+          <h2 className="section-title">How to register</h2>
+          <p>
+            Registration opens in {CONF.registrationOpens} and must be
+            completed by <strong>{CONF.registrationDeadline}</strong>. The
+            workshop is open to everyone with an interest in waves and
+            wave-coupled processes, and the same deadline applies whether or
+            not you are presenting.
+          </p>
+          <ul className="authors-list">
+            <li>
+              <strong>Presenting authors.</strong> Presentations can only be
+              given by registered participants. The registration form asks for
+              the abstract ID issued with your abstract receipt, so have it to
+              hand.
+            </li>
+            <li>
+              <strong>Other participants.</strong> Participants who are not
+              presenting are equally welcome and register through the same
+              form.
+            </li>
+            <li>
+              <strong>Registration fee.</strong> The fee is{' '}
+              {CONF.registrationFee}. The exact amount and how to pay will be
+              confirmed when registration opens.
+            </li>
+          </ul>
+          <p>
+            <a
+              className="btn btn-primary"
+              href={FORMS.registration.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Register ↗
+            </a>
+          </p>
+        </div>
+      </section>
+
+      <section className="band scroll-anchor" id="fee-waiver">
+        <div className="container reg-body">
+          <h2 className="section-title">Fee waiver for early-career presenters</h2>
+          <p>
+            Presenters at an early career stage may apply to have the
+            registration fee waived. A waiver is granted on application and is
+            not automatic.
+          </p>
+          <p>
+            Applications are accepted once registration has opened and must
+            arrive by <strong>{CONF.waiverDeadline}</strong>. Send yours to{' '}
+            <a href={`mailto:${EMAILS.application}`}>{EMAILS.application}</a>,
+            quoting your abstract ID.
+          </p>
+          <p className="section-note">
+            This address is for fee-waiver applications only. Every other
+            question — about registration, an abstract, or an invitation
+            letter for a visa — goes to{' '}
+            <a href={`mailto:${EMAILS.information}`}>{EMAILS.information}</a>.
+          </p>
+        </div>
+      </section>
+    </main>
+  );
+}
+
 export default function App() {
+  if (PAGE === 'registration') {
+    return (
+      <>
+        <ConfigWarning />
+        <TopBar />
+        <Header />
+        <RegistrationPage />
+        <Footer />
+      </>
+    );
+  }
+
   return (
     <>
       <ConfigWarning />

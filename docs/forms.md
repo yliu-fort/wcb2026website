@@ -94,7 +94,7 @@ submit abstract  →  auto-responder carries the abstract ID:  B27-042
                         ↓
 acceptance email  →  same abstract ID, now with a decision attached
                         ↓
-   registration  →  author quotes B27-042 (deadline 12 Jan 2027)
+   registration  →  author quotes B27-042 (deadline 12 Feb 2027)
 ```
 
 One identifier for the whole lifecycle, issued the moment the abstract arrives.
@@ -318,6 +318,7 @@ by purpose:
 |---|---|---|
 | `abstract@wavecoupling2027.eu` | Where Form 1 delivers submissions | No |
 | `registration@wavecoupling2027.eu` | Where Form 2 delivers registrations | No |
+| `application@wavecoupling2027.eu` | Fee-waiver applications from early-career presenters, which arrive by email and not through a form. Added November 2026 | Yes — in the fee-waiver section of the registration page only |
 | `information@wavecoupling2027.eu` | Every question, whatever it is about: site header and footer, both forms' Reply-To, the withdrawal instruction, and the "if your receipt does not arrive" line on both confirmation pages | Yes — the only one |
 
 **The split is by direction, not by topic.** One published address means nobody
@@ -326,7 +327,7 @@ registration that arrives while someone is reading abstracts is not lost. The
 other two are delivery addresses only — publishing one would collect questions
 there whether or not that was intended, which is the situation this avoids.
 
-They are the same three in `EMAILS` in `src/config.js`. Nothing keeps the two in
+They are the same four in `EMAILS` in `src/config.js`. Nothing keeps the two in
 sync — change one, change the other.
 
 **All three currently forward a copy to `wwcp2027@gmail.com`,** which was the
@@ -419,7 +420,10 @@ put back.
 >
 > Please quote the same abstract ID when you register — it has not changed.
 >
-> Presenting authors must register by **12 January 2027**: `<registration link>`
+> Registration closes on **12 February 2027**: `<registration link>`
+>
+> Presenters at an early career stage may apply for a waiver of the registration
+> fee by **30 January 2027**: https://wavecoupling2027.eu/registration/#fee-waiver
 
 **Registration receipt (auto-responder, Form 2).** Echo the category and any
 abstract IDs, so a mistyped one is visible to the author while it can
@@ -446,15 +450,28 @@ From `KEY_DATES` in `src/config.js`:
 | 30 Aug 2026 | Abstract submission opens |
 | 30 Nov 2026 | Abstract submission deadline |
 | Dec 2026 | Notification of acceptance — the ID is reused, not reissued |
-| 12 Jan 2027 | Registration deadline, presenting authors |
+| Mid-Dec 2026 | Registration opens |
+| 30 Jan 2027 | Fee waiver application deadline (early-career presenters) |
+| 12 Feb 2027 | Registration deadline, everyone |
 | 12–15 Apr 2027 | Workshop |
 
-Two gaps, both open decision 7: there is **no "registration opens" date** and
-**no deadline for non-presenting attendees**.
+**Changed November 2026.** The deadline used to be 12 January 2027 and applied to
+presenting authors only, with nothing decided for anyone else. It is now one
+date, 12 February 2027, for presenters and other participants alike, and
+registration opens in mid-December. Form 2's description quoted the old date
+("Presenting authors must register by 12 January 2027") and has to be changed in
+Skjemaker by hand — the site cannot do it.
 
 ## The registration fee has a hard deadline of December 2026
 
-Registration is being designed as free because the fee model is undecided. That
+**Update, November 2026:** the fee is announced as approximately NOK 5,500, with a
+waiver for early-career presenters on application. The amount is not final and
+the payment route below is still open, so the rest of this section stands. Note
+that the Register buttons on the site link to Form 2 already, ahead of the
+mid-December opening — an organiser's decision — so the form is reachable before
+the exact fee is published.
+
+Registration was designed as free because the fee model was undecided. That
 is workable, but it constrains the calendar in a way worth stating plainly:
 
 **Do not open registration before the fee is settled.** Someone who registers
@@ -519,7 +536,8 @@ Settled:
 | Review step | Yes — committee reviews, acceptance notification sent |
 | Form structure | Two separate forms |
 | Abstract ID | One ID for the whole lifecycle, issued in the submission receipt and reused in the acceptance email. Skjemaker entry number, prefixed: `B27-{entry_no}` — **built and working** |
-| Registration fee | Will be charged; model undecided; designed as free for now |
+| Registration fee | Approximately NOK 5,500 (November 2026); exact amount and payment route still to be confirmed. Presenters at an early career stage may apply for a waiver by email to `application@wavecoupling2027.eu` by 30 January 2027 |
+| Timeline | Registration opens mid-December 2026 and closes 12 February 2027, one deadline for everyone |
 | Who builds the forms | Organiser, with their own UiB account |
 | Multiple abstracts per person | Allowed; registration accepts several IDs |
 | Co-author registration | Only the presenting author registers per abstract |
@@ -535,8 +553,8 @@ Open:
 | Decision | Blocking what |
 |---|---|
 | File formats, template enforcement, size limits | Built permissively (`pdf, docx, doc`, one file, no cap); tighten once UiB IT answers q1 |
-| Timeline: registration opening, non-presenter deadline | Site copy |
-| Fee model | Opening registration; **must be settled before December 2026** |
+| Exact fee, and how it is paid | Opening registration in mid-December. The site says "approximately NOK 5,500" until then |
+| Who counts as early career, and what a waiver application must contain | The fee-waiver section of the registration page, which currently says neither |
 | Cap on presentations per person | Field 6 help text, site copy |
 | Withdrawal deadline, and whether self-service stops once the programme is published | Building Form 3 |
 | Whether post-payment withdrawals belong in Form 3 or stay on email | Building Form 3 |

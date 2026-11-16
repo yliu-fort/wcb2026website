@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { resolve } from 'node:path';
 
 // The site is published at https://yliu-fort.github.io/wcb2026website/, i.e. under
 // a sub-path rather than the domain root. `base` makes Vite emit asset URLs with
@@ -19,5 +20,14 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    // Two pages, one bundle: the workshop page and registration/. Each HTML
+    // file is an entry so Vite emits dist/registration/index.html, which both
+    // nginx and GitHub Pages serve at /registration/ with no rewrite rule.
+    rollupOptions: {
+      input: {
+        main: resolve(import.meta.dirname, 'index.html'),
+        registration: resolve(import.meta.dirname, 'registration/index.html'),
+      },
+    },
   },
 });
