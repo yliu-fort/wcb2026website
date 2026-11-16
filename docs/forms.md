@@ -330,7 +330,7 @@ there whether or not that was intended, which is the situation this avoids.
 They are the same four in `EMAILS` in `src/config.js`. Nothing keeps the two in
 sync — change one, change the other.
 
-**All three currently forward a copy to `wwcp2027@gmail.com`,** which was the
+**All four currently forward a copy to `wwcp2027@gmail.com`** (`application@` since 16 November 2026, at the organiser's request, to match the others)**,** which was the
 throwaway debugging inbox. That is fine while the forms carry only test
 submissions and it is what makes the wiring checkable. It must be switched off
 before 30 August 2026, when abstract submission opens: notifications carry
@@ -561,4 +561,4 @@ Open:
 | Whether travel support or a prize exists | Field 11 of Form 1 — built, delete it if neither exists |
 | Whether a conference dinner is held | Field 10 of Form 2 — built, delete it if there is none |
 | China reachability of `skjemaker.app.uib.no` | Being checked by the organiser |
-| The `wwcp2027@gmail.com` forward on all three mailboxes | Opening submissions. Harmless for test traffic, but it copies every real submission to Google once the abstract window opens on 30 Aug 2026 — turn it off first |
+| The `wwcp2027@gmail.com` forward on all four mailboxes | Opening submissions. Harmless for test traffic, but it copies every real submission to Google once the abstract window opens on 30 Aug 2026 — turn it off first |
