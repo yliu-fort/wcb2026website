@@ -240,11 +240,14 @@ export const PARTNERS = [
 
 // Venue. Coordinates drive the OpenStreetMap embed in the Venue section
 // (chosen over a Google Maps embed, which is blocked in mainland China).
+// lat/lon are the centre of the hotel's building footprint in OpenStreetMap
+// (way 375965904), not a rounded guess: the embed drops its marker on exactly
+// these numbers, and a ~200 m error puts it on the far side of the station.
 export const VENUE = {
   name: "Grand Hotel Terminus",
   address: ["Zander Kaaes gate 6", "5015 Bergen, Norway"],
-  lat: 60.3897,
-  lon: 5.3316,
+  lat: 60.39074,
+  lon: 5.33439,
 };
 
 // Resolves a file in public/images/ to a URL that respects `base` from
