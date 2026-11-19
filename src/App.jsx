@@ -34,6 +34,14 @@ const PAGE =
 // anchor; from the registration page it has to name the page as well.
 const section = (id) => (PAGE === 'home' ? `#${id}` : `${HOME_URL}#${id}`);
 
+// Facts in config.js are written to read inside a sentence — "Registration
+// opens in mid-December 2026", "The fee is approximately NOK 5,500" — and the
+// date tiles want the same words standing on their own. Capitalising the first
+// letter here is what lets a tile use the config value directly; the tiles used
+// to carry their own shortened copies, which is one fee change away from the
+// page contradicting itself.
+const tile = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
 // ============ Components ============
 
 // Rendered only during development, so a placeholder form URL cannot be missed
@@ -526,8 +534,13 @@ function Venue() {
               announced.
             </p>
             <p>
+              {/* Name and city, not the street address: a full address of this
+                  hotel fails to geocode (Nominatim returns nothing for it),
+                  while "<name>, Bergen, Norway" resolves to the building. */}
               <a
-                href="https://www.google.com/maps/search/?api=1&query=Grand+Hotel+Terminus+Bergen"
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                  `${VENUE.name}, ${CONF.city}`,
+                )}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -711,11 +724,11 @@ function RegistrationPage() {
           <div className="dates-grid">
             <div className="date-card">
               <div className="label">Registration opens</div>
-              <div className="value">Mid-December 2026</div>
+              <div className="value">{tile(CONF.registrationOpens)}</div>
             </div>
             <div className="date-card">
               <div className="label">Registration fee</div>
-              <div className="value">Approx. NOK 5,500</div>
+              <div className="value">{tile(CONF.registrationFee)}</div>
             </div>
             <div className="date-card deadline">
               <div className="label">Fee waiver application deadline</div>
