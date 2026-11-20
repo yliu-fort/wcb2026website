@@ -140,11 +140,14 @@ bound to a wildcard address. A systemd timer (`verify-exposure.timer`) runs it
 hourly; `systemctl status verify-exposure` shows the last result.
 
 Run the second form **from a different machine** — and it has to be a real one.
-This host cannot reach its own public IP at all: NREC does not hairpin, so
-`curl https://oceancoupling.eu/` from here dies in the TLS handshake while the
-site is perfectly healthy. Locally the script uses `curl --resolve` to pin the
-hostname to `127.0.0.1`, which exercises the real server blocks rather than the
-catch-all.
+A request from this host to its own public IP never leaves the host: the
+address is configured on the local interface, so the kernel delivers it over
+loopback, past both the NREC security group and ufw, and
+`curl https://wavecoupling2027.eu/` from here returns 200 even when nobody
+outside can reach the site. The same goes for anything else running on the
+host, Claude Code's WebFetch included. Locally the script uses `curl --resolve`
+to pin the hostname to `127.0.0.1`, which exercises the real server blocks
+rather than the catch-all.
 
 Two results are easy to misread:
 
@@ -157,8 +160,9 @@ Two results are easy to misread:
   result flips to LEAK.
 - **Free CORS proxies are not a reachability test.** allorigins and codetabs
   return 520/522 from their own Cloudflare edge whether or not this server is
-  up. The trustworthy signal is `/var/log/nginx/access.log`: if a request from a
-  non-127.0.0.1 address appears there, it arrived.
+  up. The trustworthy signal is `/var/log/nginx/access.log`: if a request appears
+  there from an address that is neither loopback nor this host's own public IP,
+  it came from outside.
 
 The hook's own test cases live in `hook-cases.txt`:
 
@@ -168,6 +172,69 @@ while IFS='|' read -r want c; do [ -z "$c" ] && continue; \
   | ~/.claude/hooks/guard-public-exposure.sh >/dev/null 2>&1; \
   [ "$?" = "$want" ] && echo "ok   $c" || echo "FAIL $c"; done < deploy/hook-cases.txt
 ```
+
+## Maintenance window
+
+**Sundays, 19:00–21:00 UTC.** Reboots, kernel updates, nginx changes and
+anything else that can take the site down go in this slot.
+
+It is fixed in UTC because that is the server's clock and the audience spans
+time zones. In Oslo it is 21:00–23:00 in summer and 20:00–22:00 in winter; in
+Beijing, 03:00–05:00 all year.
+
+Why this slot:
+
+- **Nobody is visiting.** Two weeks of access logs (2–16 October 2026) showed
+  no human visitors in it on any of the four weekend days, and five across all
+  fourteen days — against 29 in the busiest two hours, 08:00–10:00 UTC.
+- **Someone can be awake for it.** It is evening in Norway, so whoever reboots
+  can stay until the site is back. The quietest slot overall, Sunday
+  02:00–05:00 UTC, lost on this point alone: it would need an unattended
+  reboot, and a server that failed to come back would stay down until morning.
+- **It is night in China.** Mainland-China visitors are why this origin exists,
+  and they have no fallback while it is down. Everyone else still has the
+  GitHub Pages copy.
+- **It collects the week's updates.** unattended-upgrades installs packages
+  every morning around 06:00 UTC, but a new kernel or libc does nothing until
+  the next reboot; `/var/run/reboot-required.pkgs` lists what is waiting. By
+  October 2026 the VM had been up 71 days, running 6.8.0-136 with 6.8.0-147
+  installed.
+
+"Human visitor" needs defining, because the obvious measure is wrong. Most
+requests are scanners, and the SPA fallback answers their made-up paths with a
+200, so neither request counts nor status codes separate them. What scanners
+almost never do is fetch the bundle, so a visitor here is a non-bot IP that
+loaded the JS or CSS under `/assets/` with a 200 or 304.
+
+The sample is small: 3 to 18 visitors a day, and nginx keeps 14 days of logs.
+Re-check the hourly profile before the abstract deadline (30 November 2026) and
+the presenting-author registration deadline (12 January 2027), when traffic
+will rise, and move the window if it stops being empty.
+
+A reboot, in order:
+
+```bash
+sudo nginx -t
+sudo certbot renew --dry-run
+systemctl is-active bergen2027-autopublish.service   # wait while it says active
+sudo shutdown -r +1
+```
+
+`nginx -t` comes first because a running nginx keeps its old configuration
+until it restarts: a broken file on disk goes unnoticed until the reboot, and
+then the site does not come back. The dry-run exercises both certificate
+lineages — `wavecoupling2027.eu` and `oceancoupling.eu`, with their `www` names
+— against the staging CA, so it costs nothing against the production rate
+limit. Waiting out a running publish is tidiness rather than necessity: an
+interrupted publish never advances the state file, so the next tick after
+boot republishes.
+
+After boot, `verify-exposure` runs by itself five minutes in
+(`OnBootSec=5min`); `journalctl -u verify-exposure.service -b` shows the result.
+Then confirm that the site loads from outside: from another machine, or by
+finding a request in the access log from an address that is neither loopback
+nor this host's own. A check run on this host stays on this host (see
+[Checking](#checking)).
 
 ## Files
 
