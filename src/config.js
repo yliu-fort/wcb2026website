@@ -167,6 +167,9 @@ export const SPEAKERS = [
 // until then the tile shows an initials avatar. The title in `name` is stripped
 // before the initials are taken, so "A/Prof. Yan Li" gives YL, not AL.
 //
+// `affil` is a string, or an array of strings for someone with more than one
+// affiliation; each one renders on its own line, in the order given.
+//
 // `credit` is the photographer, and only the photographer — set it wherever one
 // is actually named, and leave it off otherwise rather than filling it with the
 // institution that happened to host the file. Where it is set the portrait shows
@@ -186,7 +189,12 @@ export const COMMITTEES = [
       { name: "Prof. Henrik Kalisch", affil: "University of Bergen, Norway", photo: "organisers/henrik-kalisch.jpg" },
       {
         name: "Prof. \u00d8yvind Breivik",
-        affil: "Norwegian Meteorological Institute, Norway",
+        // MET Norway first, as before; UiB is his Professor II post at the
+        // Geophysical Institute (see docs/portraits.md).
+        affil: [
+          "Norwegian Meteorological Institute, Norway",
+          "University of Bergen, Norway",
+        ],
         photo: "organisers/oyvind-breivik.jpg",
         credit: "Kamilla Pedersen",
       },

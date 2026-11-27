@@ -584,6 +584,12 @@
       line-height: 1.4;
   }
 
+  /* A second affiliation sits directly under the first, as one more line of
+     the same block rather than a new paragraph. */
+  .person-affil + .person-affil {
+      margin-top: 0;
+  }
+
   /* ============ Venue ============ */
   .venue-grid {
       display: grid;

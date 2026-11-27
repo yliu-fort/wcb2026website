@@ -578,7 +578,9 @@ function Organization() {
                     size="sm"
                   />
                   <div className="person-name">{m.name}</div>
-                  <div className="person-affil">{m.affil}</div>
+                  {[].concat(m.affil).map((a) => (
+                    <div key={a} className="person-affil">{a}</div>
+                  ))}
                 </div>
               ))}
             </div>
