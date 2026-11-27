@@ -465,11 +465,21 @@ Skjemaker by hand — the site cannot do it.
 **Abstract deadline extended, 30 November 2026.** It moved from 30 November to
 15 December 2026, announced on 30 November itself. The site marks the date
 "(extended)" in red wherever it gives it (`abstractDeadlineExtended` in
-`src/config.js`), so that nobody counts on a second extension. Form 1's
-description quotes the old date — "Submission opens 30 August 2026 and closes
-30 November 2026" — and has to be changed in Skjemaker by hand, like Form 2's
-was. Nothing in this repository closes Form 1 on 15 December either: that is
-the form's own schedule in Skjemaker, or a person.
+`src/config.js`), so that nobody counts on a second extension. It was set to
+go live at 08:00 Oslo time on 30 November, with nobody at hand, by a timer on
+the self-hosting VM that merges the pull request.
+
+Form 1's description used to quote the date — "Submission opens 30 August 2026
+and closes 30 November 2026" — and Skjemaker cannot change copy on a schedule.
+So on 27 November, ahead of the extension, it was made date-neutral in
+Skjemaker: "Submission opened on 30 August 2026. The deadline is given under
+Key Dates on the workshop website, wavecoupling2027.eu." That is true on
+either side of the extension, so the form never contradicts the site.
+
+**Form 1 does not close by itself.** Its Automatic Scheduling and Limit
+Submission are both off (checked 27 November 2026), so it went on accepting
+abstracts past 30 November without any change, and it will go on past
+15 December until someone closes it or schedules it in Skjemaker.
 
 ## The registration fee has a hard deadline of December 2026
 
