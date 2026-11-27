@@ -448,7 +448,7 @@ From `KEY_DATES` in `src/config.js`:
 | Date | Event |
 |---|---|
 | 30 Aug 2026 | Abstract submission opens |
-| 30 Nov 2026 | Abstract submission deadline |
+| 15 Dec 2026 | Abstract submission deadline, extended from 30 Nov 2026 |
 | Dec 2026 | Notification of acceptance — the ID is reused, not reissued |
 | Mid-Dec 2026 | Registration opens |
 | 30 Jan 2027 | Fee waiver application deadline (early-career presenters) |
@@ -461,6 +461,15 @@ date, 12 February 2027, for presenters and other participants alike, and
 registration opens in mid-December. Form 2's description quoted the old date
 ("Presenting authors must register by 12 January 2027") and has to be changed in
 Skjemaker by hand — the site cannot do it.
+
+**Abstract deadline extended, 30 November 2026.** It moved from 30 November to
+15 December 2026, announced on 30 November itself. The site marks the date
+"(extended)" in red wherever it gives it (`abstractDeadlineExtended` in
+`src/config.js`), so that nobody counts on a second extension. Form 1's
+description quotes the old date — "Submission opens 30 August 2026 and closes
+30 November 2026" — and has to be changed in Skjemaker by hand, like Form 2's
+was. Nothing in this repository closes Form 1 on 15 December either: that is
+the form's own schedule in Skjemaker, or a person.
 
 ## The registration fee has a hard deadline of December 2026
 

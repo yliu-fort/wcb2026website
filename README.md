@@ -62,6 +62,11 @@ Common tasks:
   `registrationDeadline`, `registrationFee` and `waiverDeadline` in `CONF`, plus
   the matching rows in `KEY_DATES`. The registration form in Skjemaker quotes
   the deadline too and has to be changed there by hand.
+- **Mark a deadline as extended**: while `abstractDeadlineExtended` in `CONF`
+  is true, the abstract deadline carries a red "(extended)" everywhere the site
+  gives it, the Key Dates tile included. Any other `KEY_DATES` row takes
+  `extended: true` for the same marker. Form 1 in Skjemaker quotes the abstract
+  deadline as well.
 
 The site is two pages built from one bundle: the workshop page (`index.html`)
 and the registration page (`registration/index.html`, served at

@@ -541,6 +541,23 @@
       color: #b14a37;
   }
 
+  /* "(extended)" after a deadline that has been moved once. Pure red and bold,
+     deliberately not the brick red of a deadline tile's date, which it sits
+     beside: it has to read as a warning rather than as more of the date.
+     #cc0000 is 5.9:1 on white. */
+  .extended-mark {
+      color: #cc0000;
+      font-weight: 700;
+      white-space: nowrap;
+  }
+
+  /* The Abstracts & Registration band is dark, where #cc0000 all but
+     disappears. #ff9e9e is 4.5–5.1:1 across the part of the gradient the
+     abstract card's text sits on. */
+  .register .extended-mark {
+      color: #ff9e9e;
+  }
+
   /* ============ Organization ============ */
   /* Each committee is its own full-width block rather than a column in a
      two-up card layout: portraits need the width, and a 260px column would fit

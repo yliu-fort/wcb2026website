@@ -44,6 +44,20 @@ const tile = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 // ============ Components ============
 
+// The red "(extended)" after a deadline that has already been moved once, so
+// that nobody plans on it moving again. One component, so that the places that
+// give the same deadline cannot disagree about how it looks. Renders nothing
+// when `when` is false, which is how the marker comes off again.
+function Extended({ when }) {
+  if (!when) return null;
+  return (
+    <>
+      {' '}
+      <span className="extended-mark">(extended)</span>
+    </>
+  );
+}
+
 // Rendered only during development, so a placeholder form URL cannot be missed
 // the way an earlier dead registration link in production was.
 function ConfigWarning() {
@@ -380,7 +394,10 @@ function KeyDates() {
           {KEY_DATES.map((d, i) => (
             <div key={i} className={`date-card ${d.deadline ? 'deadline' : ''}`}>
               <div className="label">{d.label}</div>
-              <div className="value">{d.value}</div>
+              <div className="value">
+                {d.value}
+                <Extended when={d.extended} />
+              </div>
             </div>
           ))}
         </div>
@@ -407,7 +424,8 @@ function AbstractsRegistration() {
             <p>
               Submit a one-page abstract in PDF format between{' '}
               <strong>{CONF.abstractOpens}</strong> and{' '}
-              <strong>{CONF.abstractDeadline}</strong>. Please start from the
+              <strong>{CONF.abstractDeadline}</strong>
+              <Extended when={CONF.abstractDeadlineExtended} />. Please start from the
               template and follow the instructions in{' '}
               <a href="#for-authors">Information for Authors</a>.
             </p>
@@ -471,7 +489,8 @@ function InfoForAuthors() {
           <li>
             <strong>Submission.</strong> Abstracts are submitted through the{' '}
             <a href="#abstracts">abstract submission form</a> between{' '}
-            {CONF.abstractOpens} and {CONF.abstractDeadline}. You will receive
+            {CONF.abstractOpens} and {CONF.abstractDeadline}
+            <Extended when={CONF.abstractDeadlineExtended} />. You will receive
             an email receipt with an abstract ID; it is required when
             registering as a presenting author.
           </li>

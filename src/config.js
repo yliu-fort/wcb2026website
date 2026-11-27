@@ -31,7 +31,14 @@ export const CONF = {
 
   // Month-precision values are deliberate — the committee will refine them.
   abstractOpens: "30 August 2026",
-  abstractDeadline: "30 November 2026",
+  // Extended from 30 November 2026, announced on 30 November. While
+  // `abstractDeadlineExtended` is true the site puts a red "(extended)" after
+  // the date wherever it gives it, so that nobody counts on a second
+  // extension; the Key Dates tile follows the same switch. Form 1's description
+  // in Skjemaker quotes the deadline as well and has to be changed there by
+  // hand.
+  abstractDeadline: "15 December 2026",
+  abstractDeadlineExtended: true,
   decisionDate: "December 2026",
   // One registration deadline for everyone, presenting or not. It replaced a
   // presenters-only deadline of 12 January 2027 in November 2026 — the
@@ -96,9 +103,15 @@ export const placeholderForms = () =>
     .filter(([, f]) => f.url.includes("REPLACE_WITH"))
     .map(([name]) => name);
 
+// `extended: true` puts a red "(extended)" after the value.
 export const KEY_DATES = [
   { label: "Abstract submission opens", value: "30 Aug 2026" },
-  { label: "Abstract submission deadline", value: "30 Nov 2026", deadline: true },
+  {
+    label: "Abstract submission deadline",
+    value: "15 Dec 2026",
+    deadline: true,
+    extended: CONF.abstractDeadlineExtended,
+  },
   { label: "Notification of acceptance", value: "Dec 2026" },
   { label: "Registration opens", value: "Mid-Dec 2026" },
   { label: "Fee waiver application deadline", value: "30 Jan 2027", deadline: true },
