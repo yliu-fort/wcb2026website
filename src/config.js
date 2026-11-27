@@ -34,9 +34,9 @@ export const CONF = {
   // Extended from 30 November 2026, announced on 30 November. While
   // `abstractDeadlineExtended` is true the site puts a red "(extended)" after
   // the date wherever it gives it, so that nobody counts on a second
-  // extension; the Key Dates tile follows the same switch. Form 1's description
-  // in Skjemaker quotes the deadline as well and has to be changed there by
-  // hand.
+  // extension; the Key Dates tile follows the same switch. Form 1 in Skjemaker
+  // deliberately gives no date and sends authors to Key Dates instead (see
+  // docs/forms.md), so a change here needs no change there.
   abstractDeadline: "15 December 2026",
   abstractDeadlineExtended: true,
   decisionDate: "December 2026",

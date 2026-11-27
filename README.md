@@ -65,8 +65,9 @@ Common tasks:
 - **Mark a deadline as extended**: while `abstractDeadlineExtended` in `CONF`
   is true, the abstract deadline carries a red "(extended)" everywhere the site
   gives it, the Key Dates tile included. Any other `KEY_DATES` row takes
-  `extended: true` for the same marker. Form 1 in Skjemaker quotes the abstract
-  deadline as well.
+  `extended: true` for the same marker. The abstract form in Skjemaker gives no
+  date of its own and sends authors to Key Dates, so moving the abstract
+  deadline needs no change there.
 
 The site is two pages built from one bundle: the workshop page (`index.html`)
 and the registration page (`registration/index.html`, served at
