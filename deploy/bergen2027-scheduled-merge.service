@@ -1,0 +1,28 @@
+[Unit]
+Description=Merge the scheduled pull request, if it is still the commit that was reviewed
+Documentation=file:///home/ubuntu/wcb2026website/deploy/README.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# gh is signed in as this user; its token lives in ~/.config/gh.
+User=ubuntu
+
+# Which pull request, pinned to which commit, and what to look for once it is
+# live. Not tracked: it changes with every release. See deploy/README.md.
+EnvironmentFile=/etc/bergen2027-scheduled-merge.env
+Environment=GH_PROMPT_DISABLED=1 GH_NO_UPDATE_NOTIFIER=1
+
+# Not a git working tree, so gh has no repository to pick up from where it
+# runs; the script names the repository explicitly.
+WorkingDirectory=/
+StateDirectory=bergen2027-scheduled-merge
+
+# An installed copy, never a path inside a working tree, for the same reason
+# as bergen2027-autopublish.service.
+ExecStart=/usr/local/sbin/bergen2027-scheduled-merge
+
+# Up to two hours of retrying a pending check or a GitHub hiccup, then up to
+# fifty minutes of watching both origins pick the change up.
+TimeoutStartSec=4h

@@ -1,0 +1,16 @@
+[Unit]
+Description=Merge the scheduled pull request at its release time
+
+[Timer]
+# The abstract deadline extension, PR #17: 08:00 in Bergen on Monday
+# 30 November 2026, which is 07:00 UTC. The zone is written out so that the
+# release follows Oslo time whatever the server's own clock is set to.
+OnCalendar=2026-11-30 08:00:00 Europe/Oslo
+AccuracySec=1s
+
+# If the VM is down at that moment, merge as soon as it is back rather than
+# not at all.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

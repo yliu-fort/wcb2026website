@@ -62,6 +62,71 @@ State lives in `/var/lib/bergen2027-autopublish/`: `last-published` is the SHA
 that reached the docroot, `npm-lock-hash` is what decides whether `npm ci` needs
 to run again, `lock` serialises overlapping ticks.
 
+### At a set time, from a pull request
+
+`bergen2027-scheduled-merge.timer` merges one pull request at a set time, so a
+change can go live when nobody is around. It was built for the abstract
+deadline extension (PR #17), which had to appear at 08:00 Oslo time on
+30 November 2026.
+
+It only merges. Everything after that is the normal path: GitHub Pages deploys
+from the push to `main`, and `bergen2027-autopublish` brings this origin along
+within five minutes. The script then watches both origins until the change
+shows, and records the outcome. It merges as the account `gh` is signed in
+with, whose push triggers the Pages workflow. A merge made with an Actions
+`GITHUB_TOKEN` would not, which is one reason this runs here and not in a
+scheduled workflow. The other is that GitHub's cron can start late or not at
+all, while systemd's runs to the second and, with `Persistent=true`, catches
+up after downtime.
+
+It refuses, rather than publishes, whenever what would go out is not what was
+reviewed:
+
+- the head is not the commit it was armed with (`--match-head-commit`), so a
+  push to the branch after arming means arming again;
+- a check failed, the pull request is closed or a draft, or it conflicts with
+  `main`.
+
+A check still running, or GitHub being briefly unavailable, is retried for
+about two hours. **To call a release off from anywhere, convert the pull
+request to a draft**, which needs only a browser. On the VM,
+`sudo systemctl disable --now bergen2027-scheduled-merge.timer` does the same.
+
+Arming one, with the time in the timer's `OnCalendar=`, zone written out:
+
+```bash
+sudo install -m 755 deploy/scheduled-merge.sh /usr/local/sbin/bergen2027-scheduled-merge
+sudo install -m 644 deploy/bergen2027-scheduled-merge.service \
+                    deploy/bergen2027-scheduled-merge.timer /etc/systemd/system/
+printf 'RELEASE_PR=%s\nRELEASE_SHA=%s\nRELEASE_EXPECT="%s"\n' \
+  17 "$(gh pr view 17 --json headRefOid --jq .headRefOid)" '15 December 2026' \
+  | sudo tee /etc/bergen2027-scheduled-merge.env
+sudo systemctl daemon-reload
+sudo systemctl enable --now bergen2027-scheduled-merge.timer
+```
+
+`RELEASE_EXPECT` is text the published bundle contains after the release and
+not before. The environment file is not tracked, since it changes with every
+release.
+
+Then rehearse it. The dry run runs every check except the merge, in the same
+context as the real unit (no TTY, no login session, gh's token read from
+`~/.config/gh`), then runs the live checks against what is published now:
+
+```bash
+sudo systemd-run --wait --pipe --collect -p User=ubuntu \
+  -p EnvironmentFile=/etc/bergen2027-scheduled-merge.env -p WorkingDirectory=/ \
+  -p StateDirectory=bergen2027-scheduled-merge \
+  -E GH_PROMPT_DISABLED=1 -E DRYRUN_EXPECT='Bergen 2027' \
+  /usr/local/sbin/bergen2027-scheduled-merge --dry-run
+```
+
+```bash
+systemctl list-timers bergen2027-scheduled-merge.timer  # when, in UTC
+journalctl -u bergen2027-scheduled-merge.service         # what it did
+cat /var/lib/bergen2027-scheduled-merge/result          # one line per outcome
+```
+
 ## Going live (one time)
 
 ```bash
@@ -197,6 +262,9 @@ sudo systemctl enable --now bergen2027-autopublish.timer verify-exposure.timer
 Re-run the relevant line after changing a script or a unit; nothing picks those
 up on its own, deliberately. `autopublish.sh` warns on each publish if its
 installed copy has drifted from `main`.
+
+`bergen2027-scheduled-merge` is installed the same way, but per release and
+only when one is scheduled; see "At a set time, from a pull request" above.
 
 `verify-exposure`'s units used to exist only in `/etc`, written there by hand and
 never tracked — invisible to review and lost with the VM. They are in the repo
